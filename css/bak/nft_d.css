@@ -1,0 +1,317 @@
+.Currency_box {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  box-shadow: 0rem 0.5rem 0.3rem #999999;
+  background-color: #F2F2F2;
+  border-radius: 0.5rem;
+  border: 0.1rem solid #F3F3F3;
+  overflow: auto;
+  /*margin: 1rem  auto;*/
+  margin: 0.6rem auto auto;
+  padding-bottom: 0.5rem;
+  max-width: 65rem;
+  width: 94%;
+}
+
+.tipsdetail{
+	border:1px solid #e6e7e9 !important;
+}
+.Currency_box .Currency_box_btn {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  display: inline-block;
+  color: #2962EF;
+  border-radius: 5rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  float: left;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  text-align: center;
+  height: 2rem;
+  line-height: 2rem;
+}
+#onBtn {
+  background: linear-gradient(90deg, #5eafe7 0%, #6e5de7 100%);
+  color: white;
+}
+.tfbox {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  padding-bottom: 2rem;
+  max-width: 70rem;
+  min-width: 16rem;
+  margin: 0 auto;
+  overflow: auto;
+  margin-top: -1rem;
+}
+.tfbox .tfbox_title {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  height: 3.5rem;
+  width: 100%;
+  float: left;
+  margin-top: 2rem;
+  margin-bottom: -1rem;
+  margin-left: 35px;
+}
+.tfbox .tfbox_title > img {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  float: left;
+  /*width: 3rem;*/
+  height: 3rem;
+  /*border-radius: 5rem;*/
+}
+.tfbox .tfbox_title .tfbox_title_text {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-left: 1rem;
+  height: 3rem;
+  line-height: 3rem;
+  float: left;
+}
+.tfbox .box {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  box-shadow: 0rem 0.5rem 0.3rem #888888;
+  padding: 1rem;
+  border: 1px solid #e6e7e9;
+  float: left;
+  margin-top: 1.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  width: 25%;
+  margin-left: 3.5%;
+}
+.tfbox .box {
+  -webkit-tap-highlight-color: transparent;
+  font-family: Graphik, sans-serif;
+  font-size: 1rem;
+  box-shadow: 0rem 0.5rem 0.3rem #888888;
+  padding: 1rem;
+  border: 1px solid #e6e7e9;
+  float: left;
+  margin-top: 1.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  width: 25%;
+  margin-left: 3.5%;
+}
+.tfbox .box .box_top {
+  border-bottom: 0.1rem solid #f3f3f3;
+  height: 4rem;
+  width: 100%;
+}
+.tfbox .box .box_top .box_top_img {
+  float: left;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  margin-left: 1rem;
+  height: 2rem;
+  width: 2rem;
+}
+.tfbox .box .box_top .box_top_img img {
+  border-radius: 5rem;
+  height: 2rem;
+  width: 2rem;
+}
+.tfbox .box .box_top .box_top_text {
+  font-size: 1.2rem;
+  float: left;
+  height: 4rem;
+  line-height: 4rem;
+}
+.tfbox .box .box_top .box_top_tips {
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+}
+.tfbox .box .box_top .box_top_tips {
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  color: #2962ef;
+  background-color: #f2f2f2;
+  line-height: 2rem;
+  margin-top: 1rem;
+  height: 2rem;
+  border-radius: 0.2rem;
+  float: left;
+}
+.tfbox .box .box_body .box_body_row {
+  display: flex;
+  justify-content: space-between;
+  line-height: 32px;
+}
+.tfbox .box .box_body .box_body_row .box_body_row_c1 {
+  font-size: 0.9rem;
+  margin-left: 1rem;
+  /* width: 65%; */
+  color: #666666;
+}
+.tfbox .box .box_body .box_body_row .box_body_row_c2 {
+/*  flex: 1;
+  width: 0;*/
+  font-weight: 700;
+  text-align: right; 
+}
+.tfbox .box .box_foot {
+  font-size: 0.9rem;
+  border-radius: 5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0.5rem;
+  line-height: 2.5rem;
+  width: 94%;
+  margin-left: 3%;
+  color: white;
+  background: #2962ef;
+  cursor: pointer;
+  transition: all 0.1s ease; /* 添加过渡效果 */
+}
+.tfbox .box .box_foot:active {
+  transform: scale(0.9); /* 缩小按钮的大小 */
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8); /* 减小阴影的深度 */
+  background: #0001ff; /* 这是点击时的高亮颜色，你可以根据需要更改 */
+}
+@media screen and (max-width: 768px) {
+  .tfbox {
+    -webkit-tap-highlight-color: transparent;
+    font-family: Graphik, sans-serif;
+    font-size: 1rem;
+    padding-bottom: 2rem;
+    max-width: 70rem;
+    min-width: 16rem;
+    /*margin: 0 auto;*/
+    overflow: auto;
+  }
+  .tfbox .tfbox_title {
+    width: 90%;
+    margin-left: 3%;
+    padding-top: 0.5rem;
+    background: url(../assets/images/foot-bg.e302a637.png);
+    padding-left: 1rem;
+    height: 3.5rem;
+    margin-top: 1.6rem;
+    overflow: auto;
+  }
+  .tfbox .tfbox_title > img {
+    -webkit-tap-highlight-color: transparent;
+    font-family: Graphik, sans-serif;
+    font-size: 1rem;
+    float: left;
+    /*width: 3rem;*/
+    height: 3rem;
+    /*border-radius: 5rem;*/
+  }
+  .tfbox .tfbox_title .tfbox_title_text {
+    -webkit-tap-highlight-color: transparent;
+    font-family: Graphik, sans-serif;
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-left: 1rem;
+    height: 3rem;
+    line-height: 3rem;
+    float: left;
+  }
+  .tfbox .box {
+    box-sizing: border-box;
+    box-shadow: 0rem 0.5rem 0.3rem #999999;
+    border: 1px solid #F3F3F3;
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+    background-color: white;
+    border-radius: 0.3rem;
+    width: 96%;
+    margin-left: 2%;
+  }
+  .tfbox .box .box_top {
+    border-bottom: 0.1rem solid #f3f3f3;
+    height: 4rem;
+    width: 100%;
+  }
+  .tfbox .box .box_top .box_top_img {
+    float: left;
+    margin-right: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    height: 2rem;
+    width: 2rem;
+  }
+  .tfbox .box .box_top .box_top_img img {
+    border-radius: 5rem;
+    height: 2rem;
+    width: 2rem;
+  }
+  .tfbox .box .box_top .box_top_text {
+    font-size: 1.2rem;
+    float: left;
+    height: 4rem;
+    line-height: 4rem;
+  }
+  .tfbox .box .box_top .box_top_tips {
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+  }
+  .tfbox .box .box_top .box_top_tips {
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    color: #2962ef;
+    background-color: #f2f2f2;
+    line-height: 2rem;
+    margin-top: 1rem;
+    height: 2rem;
+    border-radius: 0.2rem;
+    float: left;
+  }
+  .tfbox .box .box_body .box_body_row {
+    display: flex;
+    justify-content: space-between;
+    line-height: 32px;
+  }
+  .tfbox .box .box_body .box_body_row .box_body_row_c1 {
+    font-size: 0.9rem;
+    margin-left: 1rem;
+    width: 65%;
+    color: #666666;
+  }
+  .tfbox .box .box_body .box_body_row .box_body_row_c2 {
+/*    flex: 1;
+    width: 0; */
+    font-weight: 700;
+    text-align: right;
+  }
+  .tfbox .box .box_foot {
+    font-size: 0.9rem;
+    border-radius: 5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0.5rem;
+    line-height: 2.5rem;
+    width: 94%;
+    margin-left: 3%;
+    color: white;
+    background: #2962ef;
+	cursor: pointer;
+	transition: all 0.1s ease; /* 添加过渡效果 */
+  }
+  .tfbox .box .box_foot:active {
+    transform: scale(0.9); /* 缩小按钮的大小 */
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8); /* 减小阴影的深度 */      
+    background: #0001ff; /* 这是点击时的高亮颜色，你可以根据需要更改 */
+  }
+}

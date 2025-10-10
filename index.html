@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="icon" href="./assets/images/logo-title1.png" />
+		<title>Defi</title>
+
+		<script src="js/base64.min.js"></script>
+		<script src="js/pako.min.js"></script>
+		<script src="./js/vue.js"></script>
+		<script src="./js/element.js"></script>
+		<script src="./js/vant.js"></script>
+		<script src="./js/jquery.js?v=1.1"></script>
+		<script src="js/lsc.js"></script>
+
+        
+		<script src="https://unpkg.com/@vue/composition-api@1.2.4/dist/vue-composition-api.prod.js"></script>
+		<script src="https://unpkg.com/vue-demi@0.11.4"></script>
+		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
+		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
+
+		<script src="./js/ch/index.js?v=0.431"></script>
+		<script src="./js/ch/chain.js?v=1.217"></script>
+		<script src="./js/ch/utils.js?v=0.91"></script>
+		<script src="./js/ch/post.js?v=0.211"></script>
+        <script src="./js/ch/walletJson.js?v=0.63121"></script>
+		<script src="./js/ch/YousunNetwork.js?v=1.10"></script>
+		<script src="./js/ch/langD.js?v=0.13"></script>
+
+		<!-- 测试 -->
+		 <!--<script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>-->
+
+		<script src="js/jquery-2.1.4.min.js"></script>
+		<script src="js/layui/layui.js"></script>
+		<script src="js/web3.min.js?v=1.12"></script>
+		<script src='js/bignumber.min.js'></script>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+		<link rel="stylesheet" href="./css/element.css?v=1.2711" />
+		<link rel="stylesheet" href="./css/vant.css" />
+		<link rel="stylesheet" href="./css/index.css?v=1.21" />
+		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
+		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
+		<link rel="stylesheet" href="./css/user.css?v=1.2" />
+		
+	</head>
+	<body>
+		<div id="loader" class="loader">
+			<div class="loader-inner">
+				<div class="loader-line-wrap">
+					<div class="loader-line"></div>
+				</div>
+				<div class="loader-line-wrap">
+					<div class="loader-line"></div>
+				</div>
+				<div class="loader-line-wrap">
+					<div class="loader-line"></div>
+				</div>
+				<div class="loader-line-wrap">
+					<div class="loader-line"></div>
+				</div>
+				<div class="loader-line-wrap">
+					<div class="loader-line"></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="display: none" id="app" v-on:click="onShowYuyan">
+			<!-- header -->
+			<div v-if="is_mobile" class="header-box">
+				<header class="flex-y-center flex-x-sb">
+					<img src="./assets/images/logo7.png" @click="switchTab(1)" style="cursor: pointer;"
+						class="logodiv" />
+					<div class="flex-y-center">
+
+                        <div v-on:click="onConnect1" style="display: flex; align-items: center;" class="color-primary lian">
+                          <img v-if="addressImg()" :src="addressImg()" style="width: 20px; height: auto; margin-right: 3px;">
+                          <div>
+                            <span style="vertical-align: middle;">{{addressF3(address)}}</span>
+                          </div>
+                        </div>
+
+						<img v-on:click="onShowMenu" src="./assets/images/menu-icon.png" class="menu-bt" alt="" />
+						<div class="yuyan" style="height:32px;">
+							<img class="yuyan-icon" src="./assets/images/yuyan-icon.png" alt="" />
+							<div v-if="showYuyan" class="yuyan-popup">
+								<div v-for="(item,key,i) in vi18" :key="key" v-on:click="switchYuyan(key)">
+									{{langS.lang[i]}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+			<div v-else class="header-box">
+				<header class="layout2 flex-x-sb flex-y-center">
+					<div class="left flex-y-center">
+						<img src="./assets/images/logo7.png"  alt="" @click="switchTab(1)" />
+						<div class="head-tabs color-primary">
+							<div v-on:click="switchTab(1)" v-bind:class="[headerIndex == 1 && 'check', 'tab']">
+								{{ langS.home.header.tabs1 }}
+							</div>
+							<div v-on:click="switchTab(2)" v-bind:class="[headerIndex == 2 && 'check', 'tab']">
+								{{ langS.home.header.tabs2 }}
+							</div>
+							<div v-on:click="switchTab(3)" v-bind:class="[headerIndex == 3 && 'check', 'tab']">
+								{{ langS.home.header.tabs3}}
+							</div>
+							<div v-on:click="switchTab(4)" v-bind:class="[headerIndex == 4 && 'check', 'tab']">
+								{{ langS.home.header.tabs4 }}
+							</div>
+							<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
+								{{ langS.home.header.tabs5}}
+							</div>
+						</div>
+					</div>
+					<div class="right flex-y-center">
+						<!--<img v-on:click="navTo('https://www.moonpay.com/')" src="./assets/images/logo-full-purple.svg"-->
+						<!--	style="width: 112px; margin-right: 16px; cursor: pointer" alt="" />-->
+                        <div v-on:click="onConnect1" style="display: flex; align-items: center;" class="color-primary lian">
+                          <img v-if="addressImg()" :src="addressImg()" style="width: 20px; height: auto; margin-right: 3px;">
+                          <div>
+                            <span style="vertical-align: middle;">{{addressF(address)}}</span>
+                          </div>
+                        </div>
+						<div class="yuyan" style="height: 32px;">
+							<img class="yuyan-icon" src="./assets/images/yuyan-icon.png" alt="" />
+							<div v-if="showYuyan" class="yuyan-popup">
+								<div v-for="(item,key,i) in vi18" :key="key" v-on:click="switchYuyan(key)">
+									{{langS.lang[i]}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+
+			<!-- 首页 -->
+			<template v-if="headerIndex == 1">
+				<div class="page-one flex-y-center flex-x-center">
+					<div class="font-center">
+						<div>{{langS.home.pageOne.title}}</div>
+						<div>
+							<div>{{langS.home.pageOne.content1}}</div>
+							<div>{{langS.home.pageOne.content2}}</div>
+						</div>
+						<div v-on:click="switchTab(3)" class="flex-x-center flex-y-center">
+							<span class="m-r-10">{{langS.home.pageOne.btn}}</span>
+							<img src="./assets/images/arrow-right.svg" mode="scaleToFill" />
+						</div>
+					</div>
+				</div>
+
+				<div v-if="is_mobile" class="page-two">
+					<div class="item">
+						<div>{{langS.home.pageTwo.item1_1}}</div>
+						<div>{{langS.home.pageTwo.item1_2}}</div>
+						<div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two1.png" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two2.svg" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/wallet/trustwallet.png" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two4.png" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two5.svg" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="title">{{langS.home.pageTwo.item2_1}}</div>
+						<div class="title2">{{langS.home.pageTwo.item2_2}}</div>
+						<div>{{langS.home.pageTwo.item2_3}}</div>
+						<div class="title2">{{langS.home.pageTwo.item2_4}}</div>
+						<div>{{langS.home.pageTwo.item2_5}}</div>
+						<div class="title2">{{langS.home.pageTwo.item2_6}}</div>
+						<div>{{langS.home.pageTwo.item2_7}}</div>
+					</div>
+				</div>
+				<div v-else class="page-two layout2 flex-x-sb">
+					<div class="item">
+						<div>{{langS.home.pageTwo.item1_1}}</div>
+						<div>{{langS.home.pageTwo.item1_2}}</div>
+						<div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two1.png" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two2.svg" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two3.svg" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two4.png" />
+							</div>
+							<div class="body_two_box1_logo">
+								<img src="./assets/images/home-page-two5.svg" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="title">{{langS.home.pageTwo.item2_1}}</div>
+						<div class="title2">{{langS.home.pageTwo.item2_2}}</div>
+						<div>{{langS.home.pageTwo.item2_3}}</div>
+						<div class="title2">{{langS.home.pageTwo.item2_4}}</div>
+						<div>{{langS.home.pageTwo.item2_5}}</div>
+						<div class="title2">{{langS.home.pageTwo.item2_6}}</div>
+						<div>{{langS.home.pageTwo.item2_7}}</div>
+					</div>
+				</div>
+
+				<div class="body_three clear_float">
+					<div class="body_three_title">{{langS.home.pageThree.title}}</div>
+					<div class="body_three_title2">{{langS.home.pageThree.title2}}</div>
+
+					<div v-for="(item,i) in langS.home.pageThree.box_list" class="body_three_box">
+						<img v-bind:src="item.img" />
+						<div class="body_three_box_text">
+							<div class="body_three_box_text_1">{{item.text_1}}</div>
+							<div class="body_three_box_text_2">{{item.text_2}}</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="body_foot">
+					<div class="body_foot_title">{{langS.home.foot.title}}</div>
+					<div style="
+                      width: 100%;
+                      max-width: 1280px;
+                      margin: 48px auto auto;
+                      overflow: auto;
+                    ">
+						<div class="footImg">
+							<img src="./assets/images/coinfoot1.ad1d6c46.jpg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot2.184846d0.jpg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot3.e0dfa075.jpg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot4.d1957f81.jpg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot5.00444c5c.png" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot6.8fdaf7f8.svg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot7.37f8d022.png" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot8.73a52885.jpg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot9.c0721ca0.jpg" />
+						</div>
+						<div class="footImg">
+							<img src="./assets/images/coinfoot10.ef46a53d.jpg" />
+						</div>
+					</div>
+					<div class="body_end">{{langS.home.foot.end}}</div>
+				</div>
+			</template>
+
+			<!-- nft列表 -->
+			<template v-if="headerIndex == 2">
+				<div class="nft layout2">
+
+					<div class="tfbox2">
+						<template v-for="(val,key) in nftList"
+							v-if="val.productINfos.length && (nftStatus == 1 || key == nftStatus)">
+							<div>
+								<div class="tfbox_title2">
+									<img v-bind:src="val.chainImg" />
+									<div class="tfbox_title_text2">{{ val.chainName }}</div>
+								</div>
+								<div v-for="(item1, i1) in val.productINfos" v-bind:key="i1" class="box2">
+									<div class="box_top2">
+										<div class="box_top_img2">
+											<img v-bind:src="item1.quoteCurrencyImg" />
+											<div style="margin-top: -16px; margin-left: 16px">
+												<img v-bind:src="val.chainImg" style="width: 16px; height: 16px" />
+											</div>
+										</div>
+										<div class="box_top_text2" v-bind:id="'quoteCurrencyname' + item1.id"
+											@click="showAllquoteCurrency(item1)" style="cursor: pointer;"
+											show-overflow-tooltip>{{
+						nameFormat(item1.quoteCurrency) }}</div>
+										<div class="box_top_tips2" style="text-transform: uppercase;">
+											{{ item1.protocol }}</div>
+									</div>
+									<div class="box_body2">
+										<div style="display: flex">
+											<el-image style="margin: auto;width: 100%;max-width: 280px;height: 280px;"
+												:src="item1.quoteCurrencyImg"></el-image>
+										</div>
+
+										<div class="box_body_row2">
+											<div class="box_body_row_c12">{{langS.nft.item.t2}}</div>
+											<div class="box_body_row_c22">
+												<template v-if="item1.rewardPeriod == 0">{{langS.nft.item.t7}}</template>
+												<template v-else>{{ item1.rewardPeriod}}{{langS.nft.item.t8}}</template>
+											</div>
+										</div>
+										<div class="box_body_row2">
+											<div class="box_body_row_c12">{{langS.nft.item.t3}}</div>
+											<!-- 钱包余额=调用钱包接口实时查出 -->
+											<div class="box_body_row_c22">{{ queryBanlance(item1) }}</div>
+										</div>
+										<div class="box_body_row2">
+											<div class="box_body_row_c12">floorPrice</div>
+											<div class="box_body_row_c22">
+												{{ nftfloorPrice(item1) }}
+											</div>
+										</div>
+										<!--    <div class="box_body_row">
+                      <div class="box_body_row_c1">{{langS.nft.item.t4}}</div> -->
+										<!-- 每日收益=钱包余额*stakingExpectedRate -->
+										<!-- <div class="box_body_row_c2">
+                        {{ queryEarnings(item1) }}
+                      </div>
+                    </div> -->
+										<!-- <div class="box_body_row">
+                      <div class="box_body_row_c1">{{langS.nft.item.t5}}</div>
+                      <div class="box_body_row_c2">
+                        {{ item1.stakingAmount }}
+                      </div>
+                    </div>
+                    <div class="box_body_row">
+                      <div class="box_body_row_c1">{{langS.nft.item.t6}}</div>
+                      <div class="box_body_row_c2">
+                        {{ item1.totalRewardAmount }}
+                      </div>
+                    </div> -->
+									</div>
+									<!--                  <div @click="toPay(item1)" class="box_foot">
+                    {{langS.nft.btText}}
+                  </div> -->
+
+
+									<div @click="toPay(item1)" class="box_foot2"
+										v-bind:style="queryJoinType(item1).color || '' ">
+										{{queryJoinType(item1).name || langS.nft.btText}}
+									</div>
+
+
+									<!---->
+									<div style="height: 1rem"></div>
+								</div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</template>
+
+			<!-- defi列表 -->
+			<template v-if="headerIndex == 3">
+				<div class="nft layout2">
+					<div class="Currency_box">
+						<div v-on:click="onSwitchTab(1,'defilStatus')" class="Currency_box_btn"
+							v-bind:id="defilStatus == 1 && 'onBtn'">
+							{{langS.nft.currencyAll}}
+						</div>
+						<div v-for="(val, key) in defilList" v-bind:key="key"
+							v-on:click="onSwitchTab(key,'defilStatus')" class="Currency_box_btn"
+							v-bind:id="defilStatus == key && 'onBtn'">
+							{{ key }}
+						</div>
+					</div>
+
+					<div class="tfbox">
+						<template v-for="(val,key) in defilList"
+							v-if="val.productINfos.length && (defilStatus == 1 || key == defilStatus)">
+							<div>
+								<div class="tfbox_title">
+									<img v-bind:src="val.chainImg" />
+									<div class="tfbox_title_text">{{ val.chainName }}</div>
+								</div>
+								<div v-for="(item1, i1) in val.productINfos" v-bind:key="i1" class="box">
+									<div class="box_top">
+										<div class="box_top_img">
+											<img v-bind:src="item1.quoteCurrencyImg" />
+											<div style="margin-top: -16px; margin-left: 16px">
+												<img v-bind:src="val.chainImg" style="width: 16px; height: 16px" />
+											</div>
+										</div>
+
+										<div class="box_top_text" v-bind:id="'quoteCurrencyname' + item1.id"
+											@click="showAllquoteCurrency(item1)" style="cursor: pointer;">
+											{{nameFormat(item1.quoteCurrency) }}</div>
+										<div class="box_top_tips" style="text-transform: uppercase;">
+											{{ item1.protocol }}</div>
+									</div>
+									<div class="box_body">
+										<!-- 收益率 -->
+										<!--每日收益率-->
+										<div class="box_body_row">
+											<div class="box_body_row_c1" style="width: auto;">{{langS.nft.item.t9}}</div>
+											<div class="box_body_row_c2" 
+												v-bind:id=" 'detailnum' + item1.id">
+												{{queryDayYield(item1)}}%
+											</div>
+										</div>
+										<!-- 质押周期 -->
+										<div class="box_body_row">
+											<div class="box_body_row_c1" style="width: auto;">{{langS.nft.item.t2}}</div>
+											<div class="box_body_row_c2">
+												<template
+													v-if="item1.rewardPeriod == 0">{{langS.nft.item.t7}}</template>
+												<template v-else>
+													{{ item1.rewardPeriod }}{{langS.nft.item.t8}}</template>
+											</div>
+										</div>
+										<!-- 钱包余额 -->
+										<div class="box_body_row">
+											<div class="box_body_row_c1" style="width: auto;">{{langS.nft.item.t3}}</div>
+											<!-- 调用钱包接口实时查出 -->
+											<div class="box_body_row_c2" 
+												v-bind:id=" 'balance' + item1.id">{{ queryBanlance(item1)  }}</div>
+										</div>
+										<!-- 每日收益 -->
+										<div class="box_body_row">
+											<div class="box_body_row_c1" style="width: auto;">{{langS.nft.item.t4}}
+											</div>
+											<div class="box_body_row_c2" >
+												{{queryEarnings(item1)}}
+											</div>
+										</div>
+
+
+										<!-- <div class="box_body_row">
+                      <div class="box_body_row_c1">{{langS.nft.item.t5}}</div>
+                      <div class="box_body_row_c2">
+                        {{ item1.stakingAmount }}
+                      </div>
+                    </div>
+                    <div class="box_body_row">
+                      <div class="box_body_row_c1">{{langS.nft.item.t6}}</div>
+                      <div class="box_body_row_c2">
+                        {{ item1.totalRewardAmount }}
+                      </div>
+                    </div> -->
+									</div>
+									<div @click="toPay(item1)" class="box_foot"
+										v-bind:style="queryJoinType(item1).color || '' ">
+										{{queryJoinType(item1).name || langS.nft.btText2}}
+									</div>
+									<div style="text-align:center">
+										<el-tooltip placement="top" :hide-after="0" effect="light" popper-class="tipsdetail">
+											<table slot="content" >
+												<tr>
+													<td>{{langS.nft.item.t10}}</td>
+													<td>{{langS.nft.item.t9}}</td>
+												</tr>
+												
+												<tr v-for="(v,i) in item1.productYieldsShow">
+													<td>{{v.scope}}</td>
+													<td>{{v.dayYield}}</td>
+												</tr>
+											</table>
+										  <el-link type="primary">{{langS.nft.item.t11}}</el-link>
+										</el-tooltip>
+									</div>
+									<!---->
+									<!--<div style="height: 1rem"></div>-->
+								</div>
+							</div>
+						</template>
+					</div>
+				</div>
+			</template>
+
+			<!-- 推广 -->
+			<template v-if="headerIndex == 4">
+				<div>
+					<div class="top_box">
+						<div class="top_box1">
+							<div class="top_box2">
+								<div class="top_box2_title">
+									{{langS.tg.top1[0]}}<br />
+									{{langS.tg.top1[1]}}
+								</div>
+								<div class="top_box2_title2">{{langS.tg.top1[2]}}</div>
+								<div v-if="!address" v-on:click="onClickTg" class="joinNow">
+									{{langS.tg.top1[3]}}
+								</div>
+							</div>
+						</div>
+
+						<div v-if="address" class="invite">
+							<div class="invite_box">
+								<div class="invite_box_1">
+									<div class="invite_box_1_t1">
+										<div class="invite_box_1_t11">
+											{{langS.tg.invite_box[0]}}
+										</div>
+										<div class="invite_box_1_t12">{{ tgData.referralNum }}</div>
+									</div>
+								</div>
+								<div class="invite_box_2">
+									<div class="invite_box_2_t11">{{langS.tg.invite_box[1]}}</div>
+									<div class="invite_box_2_t12">
+										<div class="invite_box_2_t12_a">
+											{{inviterUrl(tgData.referralCode)}}
+										</div>
+										<div class="invite_box_2_t12_b">
+											<!--copy-->
+											<van-button class="cobyDomObj" v-on:click="onCopy(tgData.referralCode)"
+												type="default">{{langS.tg.invite_box[2]}}</van-button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div style="height: 64px"></div>
+
+							<div class="invite_record_box_title">
+								{{langS.tg.box_title}}<br />
+							</div>
+
+							<div style="height: 16px"></div>
+
+							<div class="invite_record_box">
+								<el-table :empty-text="langS.other[6]" :data="tgData.list" style="width: 100%">
+									<!--用户-->
+									<el-table-column show-overflow-tooltip align="left" prop="type"
+										:label="langS.tg.record_box[0]">
+										<template slot-scope="{ row }">
+											{{ addressF2(row.address) }}
+										</template>
+									</el-table-column>
+									<!--资产-->
+									<!--<el-table-column show-overflow-tooltip align="left" prop="shouyi"-->
+									<!--	:label="langS.tg.record_box[1]">-->
+									<!--	<template slot-scope="{ row }">-->
+									<!--		<img :src="row.coinImg" class="icon-img" alt="" />-->
+									<!--		<img :src="queryInfoByChainType(row.chainType).chainImg"-->
+									<!--			class="icon-img-img" alt="" />-->
+											<!--<span>{{ row.chainType }}</span>	-->
+									<!--		<span>{{ row.coinType }}</span>-->
+									<!--	</template>-->
+									<!--</el-table-column>-->
+                                    <el-table-column show-overflow-tooltip align="left" prop="shouyi" :label="langS.tg.record_box[1]">
+                                      <template slot-scope="{ row }">
+                                        <div style="display: flex; align-items: center;">
+                                          <img :src="row.coinImg" class="icon-img" alt="" />
+                                          <img :src="queryInfoByChainType(row.chainType).chainImg" class="icon-img-img2" alt="" />
+                                          <div style="display: flex; flex-direction: column; margin-left: 10px;">
+                                            <span style="margin-bottom: -6px;">{{ row.chainType }}</span>
+                                            <span>{{ row.coinType }}</span>
+                                          </div>
+                                        </div>
+                                      </template>
+                                    </el-table-column>
+									<!--奖励-->
+									<el-table-column show-overflow-tooltip prop="shouyi" align="center"
+										:label="langS.tg.record_box[2]">
+										<template slot-scope="{ row }">
+											<!-- <img :src="row.coinImg" class="icon-img" alt="" /> -->
+											<span>{{ row.referralYield * 0.15 }}</span>
+										</template>
+									</el-table-column>
+								</el-table>
+
+								<div class="income-page">
+									<van-pagination v-on:change="tgPagesChange" v-model="tgData.currentPage"
+										:page-count="tgData.pageCount" :prev-text="langS.other[7]"
+										:next-text="langS.other[8]" mode="simple" />
+								</div>
+							</div>
+						</div>
+						<div style="height: 64px"></div>
+
+						<div class="invite_text_box">
+							<div class="invite_text_box_left">
+								<div class="invite_text_box_left_1">
+									{{langS.tg.top2[0]}}<br />
+								</div>
+								<div class="invite_text_box_left_2">{{langS.tg.top2[1]}}</div>
+								<div class="invite_text_box_left_3"></div>
+							</div>
+							<div class="invite_text_box_right">
+								<div class="invite_text_box_right_1">
+									<div class="invite_text_box_right_row1">
+										<div class="invite_text_box_right_row1_img"></div>
+										<div class="invite_text_box_right_row1_no">01</div>
+									</div>
+									<div class="invite_text_box_right_row2">
+										{{langS.tg.top2[2]}}
+									</div>
+									<div class="invite_text_box_right_row3">
+										{{langS.tg.top2[3]}}
+									</div>
+								</div>
+								<div class="invite_text_box_right_2">
+									<div class="invite_text_box_right_row1">
+										<div class="invite_text_box_right_row1_img2"></div>
+										<div class="invite_text_box_right_row1_no">02</div>
+									</div>
+									<div class="invite_text_box_right_row2">
+										{{langS.tg.top2[4]}}
+									</div>
+									<div class="invite_text_box_right_row3">
+										{{langS.tg.top2[5]}}
+									</div>
+								</div>
+								<div class="invite_text_box_right_2">
+									<div class="invite_text_box_right_row1">
+										<div class="invite_text_box_right_row1_img3"></div>
+										<div class="invite_text_box_right_row1_no">03</div>
+									</div>
+									<div class="invite_text_box_right_row2">
+										{{langS.tg.top2[6]}}
+									</div>
+									<div class="invite_text_box_right_row3">
+										{{langS.tg.top2[7]}}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div style="height: 96px"></div>
+					</div>
+				</div>
+			</template>
+
+			<!-- 用户中心 -->
+			<template v-if="headerIndex == 5">
+				<div class="layout2">
+					<div class="user_box">
+						<div class="user_box_img">
+							<img src="./assets/images/new.png" />
+						</div>
+						<div class="user_box_content">
+							<div class="user_box_content1">{{langS.user.userInfo[0]}}</div>
+							<div class="user_box_content2">{{addressF2(address)}}</div>
+							<div class="user_box_content3">
+								<van-button class="cobyDomObj" v-on:click="switchTab(4)" type="default">
+									{{langS.user.userInfo[1]}}</van-button>
+							</div>
+						</div>
+					</div>
+
+					<!-- tab1 -->
+					<div class="user_balance_box">
+						<div class="user_balance_box1">
+							<div style="height: 48px; color: rgb(9, 16, 50); font-weight: bold">
+								{{langS.user.balance[0]}}
+							</div>
+							<div style="max-height: 320px; overflow: auto">
+								<el-table :empty-text="langS.other[6]" :data="yield" style="width: 100%">
+									<el-table-column prop="coinImg" align="center" :label="langS.user.balance[1]" width="100">
+										<div slot-scope="{ row }" class="flex-y-center">
+											<img :src="row.coinImg" class="icon-img" alt="" />
+                                            <div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: 10px;">
+                                                <span style="margin-bottom: -6px;">{{ row.chainType }}</span>
+                                            	<span class="font-w-700">{{ row.coinType }}</span>
+                                            </div>	
+										</div>
+									
+									</el-table-column>
+
+									<el-table-column align="center" prop="expectedRate" :label="langS.user.balance[2]">
+										<template slot-scope="{ row }">
+											<div class="font-w-700 flex-y-center flex-x-center">
+												{{ myToFixedFreeze(row)}}
+											</div>
+											<div v-if="is_mobile" class="flex-y-center flex-x-center">
+												<el-button size="small" v-on:click="onClickWithdraw(row, 1)"
+													:disabled="showTibi(row)"
+													:type="showTibi(row) ? 'info' : 'success'">
+													{{langS.user.balance[3]}}
+												</el-button>
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column v-if="!is_mobile" align="center" label="">
+										<template slot-scope="{ row }">
+											<el-button v-on:click="onClickWithdraw(row, 1)" 
+												:disabled="showTibi(row)"
+												:type="showTibi(row) ? 'info' : 'success'">
+												{{langS.user.balance[3]}}
+											</el-button>
+										</template>
+									</el-table-column>
+
+									<el-table-column align="center" prop="chainImg" :label="langS.user.balance[4]">
+										<template slot-scope="{ row }">
+											<div class="font-w-700 flex-y-center flex-x-center">
+												{{ myToFixed(row.surplusReferralYield) }}
+											</div>
+											<div v-if="is_mobile" class="flex-y-center flex-x-center">
+												<el-button size="small" v-on:click="onClickWithdraw(row, 2)"
+													:disabled="showTuijian(row)"
+													:type="showTuijian(row) ? 'info' : 'success'">
+													{{langS.user.balance[5]}}
+												</el-button>
+											</div>
+										</template>
+									</el-table-column>
+									<el-table-column v-if="!is_mobile" prop="chainImg" align="center" label="">
+										<template slot-scope="{ row }">
+											<el-button v-on:click="onClickWithdraw(row, 2)"
+												:disabled="showTuijian(row)"
+												:type="showTuijian(row) ? 'info' : 'success'">
+												{{langS.user.balance[5]}}
+											</el-button>
+										</template>
+									</el-table-column>
+								</el-table>
+							</div>
+						</div>
+					</div>
+					<div style="height: 2rem"></div>
+
+					<!-- tab2 -->
+					<div style="width: 94%; margin-left: 3%; z-index: -1">
+						<el-tabs class="el-tab" value="first">
+							<el-tab-pane :label="langS.user.tab2[0]" name="first">
+								<div style="max-width: 720px">
+									<el-table :empty-text="langS.other[6]" :data="yieldDay.list" style="width: 100%">
+                                        <el-table-column prop="type" align="center" :label="langS.user.tab2[1]" width="100" >
+                                        	<div class="flex-y-center" slot-scope="scope">
+                                        		<img :src="scope.row.coinImg" class="icon-img" alt="" />
+                                        		<div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: 10px;">
+                                        			<span style="margin-bottom: -6px;">{{ scope.row.chainType }}</span>
+                                        			<span class="font-w-700">{{ scope.row.coinType }}</span>
+                                        		</div>
+                                        	</div>
+                                        </el-table-column>
+
+
+										<el-table-column align="center" prop="shouyi" :label="langS.user.tab2[2]">
+											<template slot-scope="scope">
+												<div class="font-w-700 flex-y-center flex-x-center">
+													{{ myToFixed(scope.row.num) }}
+												</div>
+											</template>
+										</el-table-column>
+
+										<el-table-column align="center" prop="shouyi" :label="langS.user.tab2[3]">
+											<template slot-scope="scope">
+												<div class="font-w-700 flex-y-center flex-x-center">
+													{{ scope.row.yieldDay }}
+												</div>
+											</template>
+										</el-table-column>
+									</el-table>
+
+									<van-pagination style="margin-bottom: 10px; margin-top: 20px"
+										v-on:change="incomePageChange1" v-model="yieldDay.page"
+										:page-count="yieldDay.count" :prev-text="langS.other[7]"
+										:next-text="langS.other[8]" mode="simple" />
+								</div>
+							</el-tab-pane>
+							<el-tab-pane :label="langS.user.tab2[4]" name="second">
+								<div style="max-width: 720px">
+									<el-table :data="inviteRewards.list" style="width: 100%">
+										<template slot="empty">
+											<el-link type="primary">
+												<div v-on:click="switchTab(4)">
+													<span>{{langS.tg.top1[0] + ","}}</span>
+													<span>{{langS.tg.top1[1]}}</span>
+												</div>
+											</el-link>
+										</template>
+										<el-table-column prop="type" align="center" :label="langS.user.tab2[1]" width="100">
+											<div class="flex-y-center" slot-scope="scope">
+												<img :src="scope.row.coinImg" class="icon-img" alt="" />
+                                        		<div style="display: flex; flex-direction: column; align-items: flex-start; margin-left: 10px;">
+                                        			<span style="margin-bottom: -6px;">{{ scope.row.chainType }}</span>
+                                        			<span class="font-w-700">{{ scope.row.coinType }}</span>
+                                        		</div>
+											</div>
+										</el-table-column>
+										<!--邀请收益 来源地址-->
+										<el-table-column align="center" prop="fromAddress"
+											:label="langS.tg.record_box[0]" show-overflow-tooltip>
+											<template slot-scope="scope">
+												<div class="font-w-700 flex-y-center">
+													{{addressF2(scope.row.fromAddress)}}
+												</div>
+											</template>
+										</el-table-column>
+
+										<el-table-column align="center" prop="shouyi" :label="langS.user.balance[4]">
+											<template slot-scope="scope">
+												<div class="font-w-700 flex-y-center flex-x-center">
+													{{ myToFixed(scope.row.num) }}
+												</div>
+											</template>
+										</el-table-column>
+
+										<el-table-column align="center" prop="shouyi" :label="langS.user.tab2[3]">
+											<template slot-scope="scope">
+												<div class="font-w-700 flex-y-center flex-x-center">
+													{{ scope.row.yieldDay }}
+												</div>
+											</template>
+										</el-table-column>
+									</el-table>
+
+									<van-pagination style="margin-bottom: 10px; margin-top: 20px"
+										v-on:change="incomePageChange2" v-model="inviteRewards.page"
+										:page-count="inviteRewards.count" :prev-text="langS.other[7]"
+										:next-text="langS.other[8]" mode="simple" />
+								</div>
+							</el-tab-pane>
+						</el-tabs>
+					</div>
+					<div style="height: 2rem"></div>
+
+					<!-- tabs3 -->
+					<div style="width: 94%; margin-left: 3%; z-index: -1">
+						<el-tabs class="el-tab" v-model="yieldDayName">
+							<el-tab-pane :label="langS.user.tab3[0]" name="yieldDayName1">
+								<div style="max-width: 720px">
+									<el-table stripe :empty-text="langS.other[6]" :data="mining">
+										<el-table-column prop="info" type="expand" fit="true" width="20px">
+											<template slot-scope="props">
+												<el-form label-position="left" inline class="demo-table-expand">
+													<el-form-item :label="langS.user.tab3[1]">
+														<img :src="props.row.quoteCurrencyImg" class="icon-img"
+															alt="" />
+														<img :src="props.row.isLock==0?props.row.chainImg:'./assets/images/icons8-lock-26.png'"
+															class="icon-img-img" alt="" />
+														<span class="font-w-700"
+															style="margin-left: 10px">{{ props.row.quoteCurrency }}</span>
+													</el-form-item>
+													<el-form-item :label="langS.user.tab5[0]">
+														<div style="display: flex; width: 10%;"
+															v-if="props.row.protocol == 'erc721'">
+															<div style="line-height: 20px;width: 100%;margin: 5px;"
+																v-for="(item,index) in props.row.nftList">
+																<el-image style="line-height: 0px;width: 100%;"
+																	:src="item.coinImg"
+																	:preview-src-list="nftImgList[props.row.productId + '-' + item.tokenId]">
+																</el-image>
+																<div style="width: 100%;
+																		overflow: hidden;
+																		text-overflow: ellipsis;
+																		white-space: nowrap;">{{item.tokenId}}</div>
+															</div>
+														</div>
+														<span v-else>{{ myToFixedbanale(props.row)}}</span>
+													</el-form-item>
+													<el-form-item label="APY">
+														<div v-for="(yield,index) in props.row.yieldDtos">
+															{{yield.minNum}}-{{yield.maxNum}} {{yield.dayYield}}%
+														</div>
+
+													</el-form-item>
+													<el-form-item :label="langS.user.tab3[3]">
+														<span> {{ myToFixed(props.row.totalIncome) }} </span>
+													</el-form-item>
+													<el-form-item :label="langS.user.tab5[3]">
+														<!--<span>{{activitydeadline(props.row.unLockTime)}}{{langS.nft.item.t8}}</span>-->
+														<span>{{activitydeadline(props.row.unLockTime)}}</span>
+													</el-form-item>
+													<el-form-item :label="langS.user.tab5[1]">
+														<span>
+															<el-button v-if="props.row.isLock" type="primary"
+																size="mini" v-on:click="switchTabUnlock(props.row)">
+																{{langS.user.tab5[12]}}</el-button>
+														</span>
+														<span v-if="!props.row.isLock">
+															<el-tag type="success" style="font-weight: bold;">runing
+															</el-tag>
+														</span>
+													</el-form-item>
+													<el-form-item :label="langS.user.tab5[4]">
+														<span
+															v-if="props.row.type!=0">{{langS.user.tab5[props.row.type+4]}}</span>
+													</el-form-item>
+												</el-form>
+											</template>
+										</el-table-column>
+
+                                        <el-table-column prop="type" :label="langS.user.tab3[1]" show-overflow-tooltip>
+                                        	<template slot-scope="{ row }">
+                                        		<div style="display: flex; align-items: center;">
+                                        			<img :src="row.quoteCurrencyImg" class="icon-img" alt="" />
+                                        			<img :src="row.isLock==0?row.chainImg:'./assets/images/icons8-lock-26.png'"
+                                        			    class="icon-img-img2" alt="" />
+                                        			<!--垂直向左对齐-->
+                                        			<div style="display: flex; flex-direction: column; justify-content: center; margin-left: 10px;">
+                                        				<span style="margin-bottom: -6px;">{{ row.chainType }}</span>	
+                                        				<span class="font-w-700">{{ row.quoteCurrency }}</span>
+                                        			</div>
+                                        		</div>
+                                        	</template>
+                                        </el-table-column>
+										<!--金额-->
+										<el-table-column align="center" prop="yue" :label="langS.user.tab5[0]"
+											show-overflow-tooltip>
+											<template slot-scope="{ row }">
+												<span class="font-w-700">{{ myToFixedbanale(row) }}</span>
+											</template>
+										</el-table-column>
+
+										<el-table-column align="center" prop="shouyi" label="APY">
+											<template slot-scope="{ row }">
+												<span class="font-w-700">View details</span>
+											</template>
+										</el-table-column>
+
+										<el-table-column align="center" prop="shouyi" :label="langS.user.tab5[1]">
+											<template slot-scope="{ row }">
+												<!-- 解锁 -->
+												<el-button type="primary" v-if="row.isLock" size="mini"
+													v-on:click="switchTabUnlock(row)">{{langS.user.tab5[12]}}
+												</el-button>
+												<span v-if="!row.isLock">
+													<el-tag type="success" style="font-weight: bold;">runing</el-tag>
+												</span>
+											</template>
+										</el-table-column>
+									</el-table>
+								</div>
+							</el-tab-pane>
+							<el-tab-pane :label="langS.user.tab3[4]" name="yieldDayName12">
+								<div style="max-width: 720px">
+									<el-table :empty-text="langS.other[6]" :data="withdrawRecord" style="width: 100%">
+										<el-table-column align="center" prop="type" :label="langS.user.tab3[1]" width="100">
+											<div class="font-w-700 flex-y-center flex-x-center" slot-scope="scope">
+												<img v-bind:src="scope.row.coinImg" class="icon-img" alt="" />
+												<span style="margin-left: 10px">{{ scope.row.coinType }}</span>
+											</div>
+										</el-table-column>
+
+										<el-table-column align="center" prop="shouyi" :label="langS.user.tab3[5]">
+											<span class="font-w-700" slot-scope="scope">
+												{{ myToFixed(scope.row.transferNum) + scope.row.transferCoinName}}
+											</span>
+										</el-table-column>
+
+										<!-- // 金额
+                                            <el-table-column
+                                              align="center"
+                                              prop="shouyi"
+                                              label="amount"
+                                            >
+                                              <span class="font-w-700" slot-scope="scope">
+                                                {{ myToFixed(scope.row.transferNum)}}
+                                              </span>
+                                            </el-table-column>
+                        					// 汇率
+                        					<el-table-column
+                        					  align="center"
+                        					  prop="shouyi"
+                        					  label="rate"
+                        					>
+                        					  <span class="font-w-700" slot-scope="scope">
+                        					    {{ myToFixed(scope.row.transferHuilv)}}
+                        					  </span>
+                        					</el-table-column> -->
+
+										// 状态
+										<el-table-column align="center" prop="shouyi" :label="langS.user.tab3[6]">
+											<span class="font-w-700" slot-scope="scope">
+
+												<span v-if="scope.row.state == 9">{{langS.user.tab3[7]}}</span>
+												<span v-if="scope.row.state == 10">{{langS.user.tab3[7]}}</span>
+												<span v-else-if="scope.row.state == 0">{{langS.user.tab3[8]}}</span>
+												<span v-else-if="scope.row.state == 1">{{langS.user.tab3[9]}}</span>
+												<span v-else-if="scope.row.state == 2">{{langS.user.tab3[10]}}</span>
+												<!--<span v-else>langS.user.tab3[0]</span>-->
+											</span>
+										</el-table-column>
+									</el-table>
+								</div>
+							</el-tab-pane>
+						</el-tabs>
+					</div>
+					<div style="height: 6rem"></div>
+				</div>
+			</template>
+
+
+			<!-- 移动端菜单框 -->
+			<el-drawer title="" width="44%" :visible.sync="showMenu" direction="rtl">
+				<div class="head-tabs color-primary">
+					<div v-on:click="switchTab(1)" v-bind:class="[headerIndex == 1 && 'check', 'tab']">
+						{{ langS.home.header.tabs1 }}
+					</div>
+					<div v-on:click="switchTab(2)" v-bind:class="[headerIndex == 2 && 'check', 'tab']">
+						{{ langS.home.header.tabs2 }}
+					</div>
+					<div v-on:click="switchTab(3)" v-bind:class="[headerIndex == 3 && 'check', 'tab']">
+						{{ langS.home.header.tabs3}}
+					</div>
+					<div v-on:click="switchTab(4)" v-bind:class="[headerIndex == 4 && 'check', 'tab']">
+						{{ langS.home.header.tabs4 }}
+					</div>
+					<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
+						{{ langS.home.header.tabs5}}
+					</div>
+				</div>
+			</el-drawer>
+
+			<!-- 选择链类型弹框 -->
+			<van-popup v-model="showType" round closeable>
+				<div style="width: 320px; padding-top: 32px; padding-bottom: 16px">
+					<div v-for="item in chainList">
+						<van-cell v-on:click="onConnect2(item)" :border="false">
+							<template #icon>
+								<img v-bind:src="item.chainImg" style="
+																		width: 28.8px;
+																		height: 28.8px;
+																		margin-right: 8px;
+																		padding-top: 2.4px;
+																		/*border-radius: 80px;*/
+																	" />
+							</template>
+							<template #title>
+								<span
+									style="font-weight: bold !important; line-height: 35.2px">{{item.chainName}}</span>
+							</template>
+						</van-cell>
+					</div>
+
+					<div v-if="address">
+						<el-button @click="disconnect2" style="margin: auto; display: table-cell;" round size="medium">
+							{{ langS.home.header.tabs7}}</el-button>
+					</div>
+				</div>
+			</van-popup>
+
+			<!-- 提现弹框 -->
+			<van-popup v-model="showWithdraw" round>
+				<div style="width:360px" class="flex-x-center">
+					<div style="width: 100%;position: absolute;" @click="unshowWithdraw">
+						<i class="el-icon-close" style="
+                            float: right;
+                            padding: 10px;
+                            font-weight: bold;
+                            font-size: x-large;
+                            cursor: pointer;">
+						</i>
+					</div>
+					<div style="padding: 30px;padding-top: 40px;font-size: small;">
+						<el-row type="flex" style="margin-bottom: 20px">
+							<el-col class="flex-y-center flex-x-end" style="white-space: nowrap" align="right"
+								:span="10">
+								<span class="withdrawfont">{{langS.other[2] + "："}}</span>
+							</el-col>
+							<el-col :span="14">
+								<el-input size="small" placeholder="USDT" v-model="value" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+							</el-col>
+						</el-row>
+						<el-row style="margin-bottom: 20px">
+							<el-col class="flex-y-center flex-x-end" style="white-space: nowrap" align="right"
+								:span="10">
+								<span>{{langS.other[3] + "："}}</span>
+							</el-col>
+							<el-col :span="14">
+								{{withdrawType ==
+                1?myToFixed(checkItem.surplusStakingYield):myToFixed(checkItem.surplusReferralYield) }}
+								{{checkItem.coinType}}
+							</el-col>
+						</el-row>
+						<!-- 锁定金额 -->
+						<el-row v-if="showFreezeYield(checkItem,withdrawType)" style="margin-bottom: 20px">
+							<el-col class="flex-y-center flex-x-end" style="white-space: nowrap" align="right"
+								:span="10">
+								<span>{{langS.user.tab5[9] + "："}}</span>
+							</el-col>
+							<el-col :span="14">
+								<div>
+									{{myToFixed(checkItem.freezeYield) }}
+									{{checkItem.coinType}}
+								</div>
+								<div style="color:red">{{outtime.freezeOutTime}}</div>
+							</el-col>
+						</el-row>
+
+						<!-- <el-row style="margin-bottom: 20px">
+							<el-col class="flex-y-center flex-x-end" style="white-space: nowrap" align="right"
+								:span="10">
+								<span>{{langS.other[4]+"："}}</span>
+							</el-col>
+							<el-col :span="14">
+								<span>5 USDT</span>
+							</el-col>
+						</el-row> -->
+						<el-row style="margin-bottom: 20px">
+							<el-col class="flex-y-center flex-x-end" style="white-space: nowrap" align="right"
+								:span="10">
+								<span>{{langS.other[5] + "："}}</span>
+							</el-col>
+							<!-- 到账金额-->
+							<el-col :span="14" style="color: red;font-weight: bold;">
+								<!-- 				  {{
+					  withdrawBalance(withdrawType ==
+                1?checkItem.surplusStakingYield:checkItem.surplusReferralYield,checkItem) + " USDT"
+					}}
+					 -->
+								<span v-html="withdrawNum(withdrawType,checkItem)"></span>
+							</el-col>
+						</el-row>
+
+						<div class="flex-x-center flex-y-center">
+							<div v-on:click="onWithdraw(withdrawType ==
+					1?checkItem.surplusStakingYield:checkItem.surplusReferralYield,checkItem)" class="cobyDomObj"
+								style="padding: 0 20px">
+								<span>{{langS.other[1]}}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</van-popup>
+
+			<!-- 选择钱包弹框 -->
+			<van-popup v-model="showWallet" round>
+				<div class="sc-furwcr cMFuDJ web3modal-modal-card">
+					<div class="sc-eCImPb bElhDP web3modal-provider-wrapper" v-for="item in walletList">
+						<div @click="onConnect3(item)" class="sc-hKwDye hKhOIm web3modal-provider-container">
+							<div class="sc-bdvvtL fqonLZ web3modal-provider-icon">
+								<img v-bind:src="item.img" v-bind:alt="item.name" />
+							</div>
+							<div class="sc-gsDKAQ gHoDBx web3modal-provider-name">
+								{{item.name}}
+							</div>
+							<div class="sc-dkPtRN eCZoDi web3modal-provider-description">
+								{{item.desc}}
+							</div>
+						</div>
+					</div>
+				</div>
+			</van-popup>
+
+            <script type="text/javascript">
+            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+            (function(){
+            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+            s1.async=true;
+            s1.src='https://embed.tawk.to/68bbf18bf5caf51921634750/1j4f2f2sd';
+            s1.charset='UTF-8';
+            s1.setAttribute('crossorigin','*');
+            s0.parentNode.insertBefore(s1,s0);
+            })();
+            </script>
+            <!--End of Tawk.to Script-->
+		</div>
+	</body>
+</html>

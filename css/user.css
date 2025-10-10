@@ -1,0 +1,165 @@
+.cobyDomObj {
+  cursor: pointer;
+  border-radius: 5rem;
+  height: 2rem;
+  line-height: 2rem;
+  background: #2962ef;
+  color: white;
+  font-weight: bold;
+}
+@media screen and (min-width: 768px) {
+  .icon-img {
+    width: 25px;
+    height: 25px;
+  }
+  .icon-img-img {
+    width: 16px;
+    height: 16px;
+    margin-left: -16px;
+    margin-bottom: -3px;
+  }
+  
+  .icon-img-img2 {
+    width: 16px;
+    height: 16px;
+    margin-left: -14px;
+    margin-bottom: -15px;
+  }
+  .user_box {
+    -webkit-tap-highlight-color: transparent;
+    font-family: Graphik, sans-serif;
+    font-size: 1rem;
+    overflow: hidden;
+    width: 94%;
+    margin: 2rem auto;
+    margin-bottom: 3rem;
+  }
+  .user_box .user_box_img {
+    float: left;
+    width: 6rem;
+    height: 6rem;
+  }
+  .user_box .user_box_img img {
+    padding: 1rem;
+    width: 4rem;
+    height: 4rem;
+  }
+  .user_box .user_box_content {
+    -webkit-tap-highlight-color: transparent;
+    font-family: Graphik, sans-serif;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    float: left;
+  }
+  .user_box .user_box_content .user_box_content1 {
+    padding-top: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: rgba(50, 50, 50, 0.3);
+  }
+  .user_box .user_box_content .user_box_content2 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(50, 50, 50, 0.3);
+  }
+  .user_box .user_box_content .user_box_content3 {
+    padding-top: 0.5rem;
+  }
+  .user_box .user_box_content .cobyDomObj {
+    border-radius: 5rem;
+    height: 2rem;
+    background: #2962ef;
+    color: white;
+    font-weight: bold;
+  }
+  .user_balance_box {
+    max-width: 80rem;
+    min-width: 16rem;
+    margin: 0 auto;
+  }
+  .user_balance_box .user_balance_box1 {
+    margin-left: 3rem;
+    max-width: 50rem;
+    width: 100%;
+    padding: 2rem;
+    background-color: #f8fafd;
+    border-radius: 1rem;
+    flex: 1 1 0%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .icon-img {
+    width: 25px;
+    height: 25px;
+  }
+  .icon-img-img {
+    width: 16px;
+    height: 16px;
+    margin-left: -16px;
+    margin-bottom: -3px;
+  }
+  .icon-img-img2 {
+    width: 16px;
+    height: 16px;
+    margin-left: -14px;
+    margin-bottom: -15px;
+  }
+  .cobyDomObj {
+    border-radius: 5rem;
+    height: 2rem;
+    line-height: 2rem;
+    background: #2962ef;
+    color: white;
+    font-weight: bold;
+  }
+  .user_box {
+    overflow: auto;
+    width: 94%;
+    margin: 1rem auto;
+    margin-bottom: 3rem;
+  }
+  .user_box .user_box_img {
+    float: left;
+    width: 6rem;
+    height: 6rem;
+  }
+  .user_box .user_box_img img {
+    padding: 1rem;
+    width: 4rem;
+    height: 4rem;
+  }
+  .user_box .user_box_content {
+    margin-left: 0.5rem;
+    float: left;
+  }
+  .user_box .user_box_content .user_box_content1 {
+    padding-top: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: rgba(50, 50, 50, 0.3);
+  }
+  .user_box .user_box_content .user_box_content2 {
+    max-width: 13rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    word-break: break-all;
+    font-weight: 500;
+    color: rgba(50, 50, 50, 0.3);
+  }
+  .user_box .user_box_content .user_box_content3 {
+    padding-top: 0.5rem;
+  }
+  .user_balance_box {
+    width: 100%;
+  }
+  .user_balance_box .user_balance_box1 {
+    box-sizing: border-box;
+    /*width: 94%;*/
+    padding: 3%;
+    background-color: #f8fafd;
+    flex: 1 1 0%;
+    padding-bottom: 2rem;
+  }
+}
