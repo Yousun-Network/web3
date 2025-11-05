@@ -1,5 +1,5 @@
 // defi主链列表
-const hosturl = "https://port.web3chain.cc";
+const hosturl = "https://port.web3de.cc";
 function queryChain(_async,fnc,_that){
 	let _url = hosturl + "/api/defi/queryChain";
 	return post(_url, null,_async,fnc,_that);
