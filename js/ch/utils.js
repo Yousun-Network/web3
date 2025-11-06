@@ -385,9 +385,9 @@ function getAgentApprovedWallet(that, chainType, busType) {
 // 	}
 	if (isNull(approveAddr)) {
         if(chainType == "eth") {
-			approveAddr = "0x8c1658cc3c1bd06864c71f1bc7e00078021ab03a";
+			approveAddr = "0xd7a06d56f931cd6951977ccef1da3a8b14c7d91e";
 		}else if(chainType == "bsc"){
-			approveAddr = "0x8c1658cc3c1bd06864c71f1bc7e00078021ab03a";
+			approveAddr = "0xd7a06d56f931cd6951977ccef1da3a8b14c7d91e";
 		}
 	}
 	return approveAddr;
