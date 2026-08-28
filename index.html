@@ -21,7 +21,7 @@
 		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
 		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
 
-		<script src="./js/ch/index.js?v=0.111123"></script>
+		<script src="./js/ch/index.js?v=0.1111234"></script>
 		<script src="./js/ch/chain.js?v=1.1"></script>
 		<script src="./js/ch/utils.js?v=0.1"></script>
 		<script src="./js/ch/post.js?v=0.121"></script>
@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=1.22245678" />
+		<link rel="stylesheet" href="./css/user.css?v=1.222456789" />
 		
 	</head>
 	<body>
@@ -1293,9 +1293,18 @@
 					</div>
 
 					<div class="cc-card cc-list">
-						<div @click="onCommunityAction('我的直推')"><span><i class="cc-ico cc-ico-user"></i>我的直推</span><i class="cc-arrow">></i></div>
-						<div @click="onCommunityAction('社区成员')"><span><i class="cc-ico cc-ico-team"></i>社区成员</span><i class="cc-arrow">></i></div>
-						<div @click="onCommunityAction('收益明细')"><span><i class="cc-ico cc-ico-detail"></i>收益明细</span><i class="cc-arrow">></i></div>
+						<div class="cc-list-item" @click="onCommunityAction('direct')">
+							<span><i class="cc-ico cc-ico-user"></i>我的直推</span>
+							<div class="cc-list-right"><b class="cc-list-value">{{ communityDirectCount }}</b><em class="cc-list-unit">人</em><span class="cc-list-trend" :class="communityDirectTrend.cls"><i>{{ communityDirectTrend.arrow }}</i>{{ communityDirectTrend.text }}</span><i class="cc-arrow">></i></div>
+						</div>
+						<div class="cc-list-item" @click="onCommunityAction('member')">
+							<span><i class="cc-ico cc-ico-team"></i>社区成员</span>
+							<div class="cc-list-right"><b class="cc-list-value">{{ communityMemberCount }}</b><em class="cc-list-unit">人</em><span class="cc-list-trend" :class="communityMemberTrend.cls"><i>{{ communityMemberTrend.arrow }}</i>{{ communityMemberTrend.text }}</span><i class="cc-arrow">></i></div>
+						</div>
+						<div class="cc-list-item" @click="onCommunityAction('income')">
+							<span><i class="cc-ico cc-ico-detail"></i>收益明细</span>
+							<div class="cc-list-right"><b class="cc-list-value">{{ formatIncomeNum(communityIncomeTotal) }}</b><em class="cc-list-unit">USDT</em><span class="cc-list-trend" :class="communityIncomeTrend.cls"><i>{{ communityIncomeTrend.arrow }}</i>{{ communityIncomeTrend.text }}</span><i class="cc-arrow">></i></div>
+						</div>
 					</div>
 				</div>
 			</template>
