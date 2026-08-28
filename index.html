@@ -1046,14 +1046,15 @@
 							<div><p>待领取</p><h4>$1,286.00</h4></div>
 							<div><p>已领取</p><h4>$11,574.50</h4></div>
 						</div>
-						<div class="income-claim-all">全部领取</div>
+						<div class="income-claim-all" @click="onIncomeClaimAll">全部领取</div>
 					</div>
 
 					<div class="income-tabs-row">
-						<span class="active">收益总览</span>
-						<span>收益明细</span>
+						<span :class="{ active: incomeTab === 'overview' }" @click="setIncomeTab('overview')">收益总览</span>
+						<span :class="{ active: incomeTab === 'detail' }" @click="setIncomeTab('detail')">收益明细</span>
 					</div>
 
+					<template v-if="incomeTab === 'overview'">
 					<div class="income-card income-chart-card">
 						<div class="income-card-head">
 							<h3>近7日收益</h3>
@@ -1095,7 +1096,7 @@
 							</div>
 							<div class="asset-right">
 								<div>待领取 860 牛来</div>
-								<a href="javascript:void(0)">领取</a>
+								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset('牛来')">领取</a>
 							</div>
 						</div>
 						<div class="income-asset-item">
@@ -1108,7 +1109,7 @@
 							</div>
 							<div class="asset-right">
 								<div>待领取 426 币安人生</div>
-								<a href="javascript:void(0)">领取</a>
+								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset('币安人生')">领取</a>
 							</div>
 						</div>
 					</div>
@@ -1119,13 +1120,27 @@
 							<h3>$1,286.00</h3>
 							<span>统一提现手续费 3%</span>
 						</div>
-						<button type="button">申请提现</button>
+						<button type="button" @click="onIncomeWithdrawApply">申请提现</button>
 					</div>
 
-					<div class="income-record income-card">
+					<div class="income-record income-card" @click="onIncomeOpenRecords">
 						<span>查看全部收益记录</span>
 						<i>></i>
 					</div>
+					</template>
+
+					<template v-else>
+						<div class="income-card income-detail-card">
+							<div class="income-card-head">
+								<h3>收益明细</h3>
+								<span>最近记录</span>
+							</div>
+							<div class="income-detail-row" @click="onIncomeDetailClick('直推收益 +260 USDT')"><span>直推收益</span><b>+260 USDT</b></div>
+							<div class="income-detail-row" @click="onIncomeDetailClick('间推收益 +120 USDT')"><span>间推收益</span><b>+120 USDT</b></div>
+							<div class="income-detail-row" @click="onIncomeDetailClick('社区级差 +350 USDT')"><span>社区级差</span><b>+350 USDT</b></div>
+							<div class="income-detail-row" @click="onIncomeDetailClick('平级收益 +80 USDT')"><span>平级收益</span><b>+80 USDT</b></div>
+						</div>
+					</template>
 				</div>
 			</template>
 
@@ -1133,7 +1148,7 @@
 			<template v-if="headerIndex == 7">
 				<div class="community-center-lite layout2">
 					<div class="cc-card cc-level">
-						<div class="cc-badge">V3</div>
+						<div class="cc-badge"><img src="./assets/images/vip-3.svg" alt="v3" /></div>
 						<div class="cc-level-main">
 							<div class="cc-level-title"><i class="cc-ico cc-ico-level"></i>当前社区等级</div>
 							<div class="cc-level-row">
@@ -1170,8 +1185,8 @@
 							<div class="cc-code"><i class="cc-ico cc-ico-code"></i>AP886520</div>
 						</div>
 						<div class="cc-invite-right">
-							<button type="button">邀请好友</button>
-							<a href="javascript:void(0)">分享邀请链接</a>
+							<button type="button" @click="onCommunityInvite">邀请好友</button>
+							<a href="javascript:void(0)" @click.prevent="onCommunityShareLink">分享邀请链接</a>
 						</div>
 					</div>
 
@@ -1197,21 +1212,21 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr><td>V1</td><td>3</td><td>5,000U</td><td>10%</td></tr>
-								<tr><td>V2</td><td>5</td><td>20,000U</td><td>20%</td></tr>
-								<tr class="active"><td>V3</td><td>8</td><td>50,000U</td><td>30%</td></tr>
-								<tr><td>V4</td><td>10</td><td>100,000U</td><td>40%</td></tr>
-								<tr><td>V5</td><td>15</td><td>200,000U</td><td>50%</td></tr>
-								<tr><td>V6</td><td>20</td><td>500,000U</td><td>60%</td></tr>
-								<tr><td>V7</td><td>30</td><td>1,000,000U</td><td>80%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V1' }" @click="selectCommunityLevel('V1')"><td>V1</td><td>3</td><td>5,000U</td><td>10%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V2' }" @click="selectCommunityLevel('V2')"><td>V2</td><td>5</td><td>20,000U</td><td>20%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V3' }" @click="selectCommunityLevel('V3')"><td>V3</td><td>8</td><td>50,000U</td><td>30%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V4' }" @click="selectCommunityLevel('V4')"><td>V4</td><td>10</td><td>100,000U</td><td>40%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V5' }" @click="selectCommunityLevel('V5')"><td>V5</td><td>15</td><td>200,000U</td><td>50%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V6' }" @click="selectCommunityLevel('V6')"><td>V6</td><td>20</td><td>500,000U</td><td>60%</td></tr>
+								<tr :class="{ active: communityLevelSelected === 'V7' }" @click="selectCommunityLevel('V7')"><td>V7</td><td>30</td><td>1,000,000U</td><td>80%</td></tr>
 							</tbody>
 						</table>
 					</div>
 
 					<div class="cc-card cc-list">
-						<div><span><i class="cc-ico cc-ico-user"></i>我的直推</span><i class="cc-arrow">></i></div>
-						<div><span><i class="cc-ico cc-ico-team"></i>社区成员</span><i class="cc-arrow">></i></div>
-						<div><span><i class="cc-ico cc-ico-detail"></i>收益明细</span><i class="cc-arrow">></i></div>
+						<div @click="onCommunityAction('我的直推')"><span><i class="cc-ico cc-ico-user"></i>我的直推</span><i class="cc-arrow">></i></div>
+						<div @click="onCommunityAction('社区成员')"><span><i class="cc-ico cc-ico-team"></i>社区成员</span><i class="cc-arrow">></i></div>
+						<div @click="onCommunityAction('收益明细')"><span><i class="cc-ico cc-ico-detail"></i>收益明细</span><i class="cc-arrow">></i></div>
 					</div>
 				</div>
 			</template>
@@ -1244,7 +1259,7 @@
 
 					<div class="np-section-title">选择节点等级</div>
 					<div class="np-level-list">
-						<div class="np-card np-level-item">
+						<div class="np-card np-level-item" :class="{ active: selectedNodeLevel === 'lv1' }" @click="selectNodeLevel('lv1')">
 							<div class="np-level-icon"><img src="./assets/images/vip-1.svg" alt="vip1" /></div>
 							<div class="np-level-main">
 								<h3>初级节点</h3>
@@ -1254,12 +1269,12 @@
 							<div class="np-level-side">
 								<div>剩余 62 席</div>
 								<span>手续费分红池 30%</span>
-								<a href="javascript:void(0)">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('初级节点')">查看权益 ></a>
 							</div>
-							<div class="np-radio"></div>
+							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv1' }"></div>
 						</div>
 
-						<div class="np-card np-level-item active">
+						<div class="np-card np-level-item" :class="{ active: selectedNodeLevel === 'lv2' }" @click="selectNodeLevel('lv2')">
 							<div class="np-level-icon"><img src="./assets/images/vip-2.svg" alt="vip2" /></div>
 							<div class="np-level-main">
 								<h3>中级节点</h3>
@@ -1269,12 +1284,12 @@
 							<div class="np-level-side">
 								<div>剩余 22 席</div>
 								<span>手续费分红池 20%</span>
-								<a href="javascript:void(0)">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('中级节点')">查看权益 ></a>
 							</div>
-							<div class="np-radio checked"></div>
+							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv2' }"></div>
 						</div>
 
-						<div class="np-card np-level-item">
+						<div class="np-card np-level-item" :class="{ active: selectedNodeLevel === 'lv3' }" @click="selectNodeLevel('lv3')">
 							<div class="np-level-icon"><img src="./assets/images/vip-3.svg" alt="vip3" /></div>
 							<div class="np-level-main">
 								<h3>高级节点</h3>
@@ -1284,12 +1299,12 @@
 							<div class="np-level-side">
 								<div>剩余 9 席</div>
 								<span>手续费分红池 20%</span>
-								<a href="javascript:void(0)">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('高级节点')">查看权益 ></a>
 							</div>
-							<div class="np-radio"></div>
+							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv3' }"></div>
 						</div>
 
-						<div class="np-card np-level-item np-top-level">
+						<div class="np-card np-level-item np-top-level" :class="{ active: selectedNodeLevel === 'lv4' }" @click="selectNodeLevel('lv4')">
 							<div class="np-top-tag">最高等级</div>
 							<div class="np-level-icon"><img src="./assets/images/vip-4.svg" alt="vip4" /></div>
 							<div class="np-level-main">
@@ -1300,9 +1315,9 @@
 							<div class="np-level-side">
 								<div>剩余 3 席</div>
 								<span>手续费分红池 20%</span>
-								<a href="javascript:void(0)">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('核心节点')">查看权益 ></a>
 							</div>
-							<div class="np-radio"></div>
+							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv4' }"></div>
 						</div>
 					</div>
 
@@ -1331,11 +1346,11 @@
 					</div>
 
 					<div class="np-card np-order">
-						<div class="np-order-row"><span>认购等级</span><strong>中级节点</strong></div>
-						<div class="np-order-row"><span>认购金额</span><strong>3,000 U</strong></div>
+						<div class="np-order-row"><span>认购等级</span><strong>{{ selectedNodeInfo.name }}</strong></div>
+						<div class="np-order-row"><span>认购金额</span><strong>{{ selectedNodeInfo.price }}</strong></div>
 						<div class="np-order-row"><span>支付账户余额</span><strong>12,580 U ></strong></div>
-						<label class="np-check"><input type="checkbox" checked /> <img src="./assets/images/vip-1.svg" alt="agreement" /> 我已阅读并同意《节点合伙人认购协议》</label>
-						<div class="np-submit">确认认购</div>
+						<label class="np-check"><input type="checkbox" v-model="nodeAgreement" /> <img src="./assets/images/vip-1.svg" alt="agreement" /> 我已阅读并同意《节点合伙人认购协议》</label>
+						<div class="np-submit" :class="{ disabled: !nodeAgreement || nodeSubmitting, loading: nodeSubmitting }" @click="onNodeSubmit">{{ nodeSubmitting ? '提交中...' : '确认认购' }}</div>
 						<div class="np-footer-tip">认购记录与节点身份将通过链上确认</div>
 					</div>
 				</div>
