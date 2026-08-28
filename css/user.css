@@ -1205,10 +1205,27 @@
   font-weight: 700;
 }
 
-.cc-invite-right a {
+.cc-invite-metric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(41, 98, 239, 0.16);
+  background: rgba(41, 98, 239, 0.06);
+  color: #6a7f9f;
+  font-size: 12px;
+}
+
+.cc-invite-metric strong {
   color: #2962ef;
-  text-decoration: none;
-  font-size: 15px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.cc-invite-metric em {
+  font-style: normal;
+  color: #4f6fa1;
 }
 
 .cc-income-grid {
@@ -1355,6 +1372,65 @@
   align-items: center;
 }
 
+.cc-list-item {
+  min-height: 50px;
+}
+
+.cc-list-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cc-list-value {
+  color: #2b63ef;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.cc-list-unit {
+  font-style: normal;
+  color: #8093b0;
+  font-size: 12px;
+}
+
+.cc-list-trend {
+  min-width: 52px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+.cc-list-trend i {
+  font-style: normal;
+  font-size: 10px;
+}
+
+.cc-list-trend.up {
+  color: #1f9a5b;
+  background: rgba(43, 194, 116, 0.14);
+  border: 1px solid rgba(43, 194, 116, 0.25);
+}
+
+.cc-list-trend.down {
+  color: #d14e5b;
+  background: rgba(233, 97, 111, 0.14);
+  border: 1px solid rgba(233, 97, 111, 0.25);
+}
+
+.cc-list-trend.flat {
+  color: #5f7392;
+  background: rgba(95, 115, 146, 0.14);
+  border: 1px solid rgba(95, 115, 146, 0.2);
+}
+
 .cc-list > div:last-child {
   border-bottom: none;
 }
@@ -1490,8 +1566,14 @@
     margin-right: 6px;
   }
 
-  .cc-invite-right a {
-    font-size: 13px;
+  .cc-invite-metric {
+    font-size: 11px;
+    padding: 2px 8px;
+    gap: 3px;
+  }
+
+  .cc-invite-metric strong {
+    font-size: 16px;
   }
 
   .cc-income-grid {
@@ -1521,6 +1603,25 @@
     width: 16px;
     height: 16px;
     font-size: 10px;
+  }
+
+  .cc-list-value {
+    font-size: 15px;
+  }
+
+  .cc-list-unit {
+    font-size: 10px;
+  }
+
+  .cc-list-trend {
+    min-width: 44px;
+    height: 16px;
+    font-size: 9px;
+    padding: 0 4px;
+  }
+
+  .cc-list-trend i {
+    font-size: 8px;
   }
 }
 
