@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=1.221" />
+		<link rel="stylesheet" href="./css/user.css?v=1.2" />
 		
 	</head>
 	<body>
@@ -116,6 +116,9 @@
 							</div>
 							<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
 								收益中心
+							</div>
+							<div v-on:click="switchTab(7)" v-bind:class="[headerIndex == 7 && 'check', 'tab']">
+								社区中心
 							</div>
 						</div>
 					</div>
@@ -1012,6 +1015,9 @@
 					<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
 						收益中心
 					</div>
+					<div v-on:click="switchTab(7)" v-bind:class="[headerIndex == 7 && 'check', 'tab']">
+						社区中心
+					</div>
 				</div>
 			</el-drawer>
 
@@ -1113,6 +1119,93 @@
 					<div class="income-record income-card">
 						<span>查看全部收益记录</span>
 						<i>></i>
+					</div>
+				</div>
+			</template>
+
+			<!-- 社区中心（排版参照图，浅色协调风格） -->
+			<template v-if="headerIndex == 7">
+				<div class="community-center-lite layout2">
+					<div class="cc-card cc-level">
+						<div class="cc-badge">V3</div>
+						<div class="cc-level-main">
+							<div class="cc-level-title">当前社区等级</div>
+							<div class="cc-level-row">
+								<strong>V3</strong>
+								<span>社区收益 30%</span>
+							</div>
+							<div class="cc-level-stats">
+								<div><p>有效直推</p><h4>8</h4></div>
+								<div><p>网体业绩</p><h4>$68,500</h4></div>
+								<div><p>社区成员</p><h4>126</h4></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="cc-card cc-progress-wrap">
+						<h3>距离V4还差</h3>
+						<div class="cc-progress-item">
+							<label>有效直推</label>
+							<div class="cc-progress-bar"><i style="width:80%"></i></div>
+							<span>8 / 10</span>
+						</div>
+						<div class="cc-progress-item">
+							<label>网体业绩</label>
+							<div class="cc-progress-bar"><i style="width:68.5%"></i></div>
+							<span>$68,500 / $100,000</span>
+						</div>
+						<div class="cc-tip">完成条件后自动升级至V4</div>
+					</div>
+
+					<div class="cc-card cc-invite">
+						<div class="cc-invite-left">
+							<h3>邀请好友</h3>
+							<p>有效邀请码</p>
+							<div class="cc-code">AP886520</div>
+						</div>
+						<div class="cc-invite-right">
+							<button type="button">邀请好友</button>
+							<a href="javascript:void(0)">分享邀请链接</a>
+						</div>
+					</div>
+
+					<div class="cc-card cc-income">
+						<h3>社区收益</h3>
+						<div class="cc-income-grid">
+							<div><p>直推收益</p><h4>2,860</h4><span>USDT等值</span></div>
+							<div><p>间推收益</p><h4>1,280</h4><span>USDT等值</span></div>
+							<div><p>社区级差</p><h4>3,650</h4><span>USDT等值</span></div>
+							<div><p>平级收益</p><h4>680</h4><span>USDT等值</span></div>
+						</div>
+					</div>
+
+					<div class="cc-card cc-table-wrap">
+						<h3>社区等级权益</h3>
+						<table class="cc-table">
+							<thead>
+								<tr>
+									<th>等级</th>
+									<th>直推地址</th>
+									<th>网体业绩</th>
+									<th>社区收益</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>V1</td><td>3</td><td>5,000U</td><td>10%</td></tr>
+								<tr><td>V2</td><td>5</td><td>20,000U</td><td>20%</td></tr>
+								<tr class="active"><td>V3</td><td>8</td><td>50,000U</td><td>30%</td></tr>
+								<tr><td>V4</td><td>10</td><td>100,000U</td><td>40%</td></tr>
+								<tr><td>V5</td><td>15</td><td>200,000U</td><td>50%</td></tr>
+								<tr><td>V6</td><td>20</td><td>500,000U</td><td>60%</td></tr>
+								<tr><td>V7</td><td>30</td><td>1,000,000U</td><td>80%</td></tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="cc-card cc-list">
+						<div><span>我的直推</span><i>></i></div>
+						<div><span>社区成员</span><i>></i></div>
+						<div><span>收益明细</span><i>></i></div>
 					</div>
 				</div>
 			</template>
