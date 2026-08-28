@@ -1245,7 +1245,7 @@
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
-  transform: translateY(1px);
+  transform: translateY(-1px);
 }
 
 .cc-invite-metric em {
@@ -1253,7 +1253,7 @@
   color: #6787b7;
   font-size: 15px;
   font-weight: 600;
-  transform: translateY(1px);
+  transform: translateY(0px);
 }
 
 .cc-income-grid {
@@ -1699,13 +1699,13 @@
   }
 
   .cc-list-unit {
-    font-size: 11px;
+    font-size: 16px;
   }
 
   .cc-list-trend {
     min-width: 52px;
     height: 18px;
-    font-size: 11px;
+    font-size: 16px;
     padding: 0 4px;
   }
 
