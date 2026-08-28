@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 		<link rel="icon" href="./assets/images/logo-title1.png" />
-		<title>Defi</title>
+		<title>Moon Defi</title>
 
 		<script src="js/base64.min.js"></script>
 		<script src="js/pako.min.js"></script>
@@ -113,6 +113,9 @@
 							</div>
 							<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
 								{{ langS.home.header.tabs5}}
+							</div>
+							<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
+								收益中心
 							</div>
 						</div>
 					</div>
@@ -1006,8 +1009,108 @@
 					<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
 						{{ langS.home.header.tabs5}}
 					</div>
+					<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
+						收益中心
+					</div>
 				</div>
 			</el-drawer>
+
+			<!-- 收益中心 -->
+			<template v-if="headerIndex == 6">
+				<div class="income-center layout2">
+					<div class="income-hero card-gold">
+						<div class="income-hero-left">
+							<div class="income-hero-label">累计收益</div>
+							<div class="income-hero-total">$12,860.50</div>
+							<div class="income-hero-rate">较昨日 <span>+3.28%</span></div>
+						</div>
+						<div class="income-hero-right">
+							<div class="income-bars">
+								<i></i><i></i><i></i><i></i>
+							</div>
+						</div>
+						<div class="income-stats">
+							<div><p>今日收益</p><h4>$286.80</h4></div>
+							<div><p>待领取</p><h4>$1,286.00</h4></div>
+							<div><p>已领取</p><h4>$11,574.50</h4></div>
+						</div>
+						<div class="income-claim-all">全部领取</div>
+					</div>
+
+					<div class="income-tabs-row">
+						<span class="active">收益总览</span>
+						<span>收益明细</span>
+					</div>
+
+					<div class="income-card">
+						<div class="income-card-head">
+							<h3>近7日收益</h3>
+							<span>近7日</span>
+						</div>
+						<div class="income-chart">
+							<div class="income-grid"></div>
+							<div class="income-line"></div>
+							<div class="income-dots">
+								<b style="left:8%">168.40</b>
+								<b style="left:22%">192.60</b>
+								<b style="left:36%">214.80</b>
+								<b style="left:50%">236.50</b>
+								<b style="left:64%">248.70</b>
+								<b style="left:78%">270.00</b>
+								<b style="left:92%">286.80</b>
+							</div>
+						</div>
+					</div>
+
+					<div class="income-block-title">收益构成</div>
+					<div class="income-composition">
+						<div><p>静态质押</p><h4>6,850</h4><span>USDT等值</span></div>
+						<div><p>直推收益</p><h4>2,860</h4><span>USDT等值</span></div>
+						<div><p>间推收益</p><h4>1,280</h4><span>USDT等值</span></div>
+						<div><p>社区级差</p><h4>1,190</h4><span>USDT等值</span></div>
+						<div><p>平级收益</p><h4>680</h4><span>USDT等值</span></div>
+					</div>
+
+					<div class="income-block-title">资产收益</div>
+					<div class="income-assets income-card">
+						<div class="income-asset-item">
+							<div class="asset-left">
+								<img src="./assets/images/logo7.png" alt="logo" />
+								<div>
+									<strong>牛来</strong>
+									<p>累计收益 8,650</p>
+								</div>
+							</div>
+							<div class="asset-right">
+								<div>待领取 860</div>
+								<a href="javascript:void(0)">领取</a>
+							</div>
+						</div>
+						<div class="income-asset-item">
+							<div class="asset-left">
+								<img src="./assets/wallet/metamask.png" alt="user" />
+								<div>
+									<strong>币安人生</strong>
+									<p>累计收益 4,210</p>
+								</div>
+							</div>
+							<div class="asset-right">
+								<div>待领取 426</div>
+								<a href="javascript:void(0)">领取</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="income-withdraw income-card">
+						<div>
+							<p>可提现收益</p>
+							<h3>$1,286.00</h3>
+							<span>统一提现手续费 3%</span>
+						</div>
+						<button type="button">申请提现</button>
+					</div>
+				</div>
+			</template>
 
 			<!-- 选择链类型弹框 -->
 			<van-popup v-model="showType" round closeable>
@@ -1140,18 +1243,14 @@
 				</div>
 			</van-popup>
 
-            <script type="text/javascript">
-            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-            (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/68bbf18bf5caf51921634750/1j4f2f2sd';
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-            })();
-            </script>
-            <!--End of Tawk.to Script-->
+			<div @click="openServerUrl" class="el-image" style="width: 64px;position: fixed;bottom: 24px;right: 5px;z-index: 999999;">
+				<img src="./assets/images/chat.png" class="el-image__inner">
+			</div>
+            
 		</div>
+       <!--<script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>-->
+       <!-- <script type="text/javascript">-->
+       <!--    window.vConsole = new window.VConsole();-->
+       <!-- </script>-->
 	</body>
 </html>
