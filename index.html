@@ -21,7 +21,7 @@
 		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
 		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
 
-		<script src="./js/ch/index.js?v=0.11112"></script>
+		<script src="./js/ch/index.js?v=0.111123"></script>
 		<script src="./js/ch/chain.js?v=1.1"></script>
 		<script src="./js/ch/utils.js?v=0.1"></script>
 		<script src="./js/ch/post.js?v=0.121"></script>
@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=1.2224567" />
+		<link rel="stylesheet" href="./css/user.css?v=1.22245678" />
 		
 	</head>
 	<body>
@@ -1103,9 +1103,9 @@
 								</i>
 								<p>静态质押</p>
 							</div>
-							<h4>6,850</h4><span>USDT等值</span>
-							<div class="income-comp-meta"><em>占比 53%</em><b>6,850 / 12,860</b></div>
-							<div class="income-comp-progress"><i style="width:53%"></i></div>
+							<h4>6,850 <small>USDT等值</small></h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(6850) }}</em><b>{{ formatIncomeNum(6850) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(6850) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-2">
 							<div class="income-comp-head">
@@ -1114,9 +1114,9 @@
 								</i>
 								<p>直推收益</p>
 							</div>
-							<h4>2,860</h4><span>USDT等值</span>
-							<div class="income-comp-meta"><em>占比 22%</em><b>2,860 / 12,860</b></div>
-							<div class="income-comp-progress"><i style="width:22%"></i></div>
+							<h4>2,860 <small>USDT等值</small></h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(2860) }}</em><b>{{ formatIncomeNum(2860) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(2860) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-3">
 							<div class="income-comp-head">
@@ -1125,9 +1125,9 @@
 								</i>
 								<p>间推收益</p>
 							</div>
-							<h4>1,280</h4><span>USDT等值</span>
-							<div class="income-comp-meta"><em>占比 10%</em><b>1,280 / 12,860</b></div>
-							<div class="income-comp-progress"><i style="width:10%"></i></div>
+							<h4>1,280 <small>USDT等值</small></h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(1280) }}</em><b>{{ formatIncomeNum(1280) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(1280) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-4">
 							<div class="income-comp-head">
@@ -1136,9 +1136,9 @@
 								</i>
 								<p>社区级差</p>
 							</div>
-							<h4>1,190</h4><span>USDT等值</span>
-							<div class="income-comp-meta"><em>占比 9%</em><b>1,190 / 12,860</b></div>
-							<div class="income-comp-progress"><i style="width:9%"></i></div>
+							<h4>1,190 <small>USDT等值</small></h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(1190) }}</em><b>{{ formatIncomeNum(1190) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(1190) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-5">
 							<div class="income-comp-head">
@@ -1147,9 +1147,9 @@
 								</i>
 								<p>平级收益</p>
 							</div>
-							<h4>680</h4><span>USDT等值</span>
-							<div class="income-comp-meta"><em>占比 6%</em><b>680 / 12,860</b></div>
-							<div class="income-comp-progress"><i style="width:6%"></i></div>
+							<h4>680 <small>USDT等值</small></h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(680) }}</em><b>{{ formatIncomeNum(680) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(680) }"></i></div>
 						</div>
 					</div>
 
@@ -1262,10 +1262,10 @@
 					<div class="cc-card cc-income">
 						<h3><i class="cc-ico cc-ico-income"></i>社区收益</h3>
 						<div class="cc-income-grid">
-							<div class="cc-income-item tone-1"><p>直推收益</p><h4>2,860</h4><span>USDT等值</span></div>
-							<div class="cc-income-item tone-2"><p>间推收益</p><h4>1,280</h4><span>USDT等值</span></div>
-							<div class="cc-income-item tone-3"><p>社区级差</p><h4>3,650</h4><span>USDT等值</span></div>
-							<div class="cc-income-item tone-4"><p>平级收益</p><h4>680</h4><span>USDT等值</span></div>
+							<div class="cc-income-item tone-1"><p>直推收益</p><h4>2,860 <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-2"><p>间推收益</p><h4>1,280 <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-3"><p>社区级差</p><h4>3,650 <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-4"><p>平级收益</p><h4>680 <small>USDT等值</small></h4></div>
 						</div>
 					</div>
 
