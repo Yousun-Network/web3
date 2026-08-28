@@ -276,6 +276,12 @@ window.onload = async function() {
 						// 更新用户中心
 						updateUserDate(this);
 					}
+				} else if (index == 6) {
+					if (isNull(this.address)) {
+						this.onConnect1();
+						layer.close(i);
+						return;
+					}
 				}
 				this.headerIndex = index;
 				window.scrollTo(0, 0)
