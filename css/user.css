@@ -733,6 +733,19 @@
   box-shadow: 0 6px 14px rgba(22, 34, 56, 0.08);
   padding: 12px;
   margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cc-card:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #4e86ff 0%, #37c6ff 45%, #78dd8e 100%);
+  opacity: 0.9;
 }
 
 .cc-level {
@@ -763,6 +776,9 @@
 .cc-level-title {
   color: #6f7f99;
   font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .cc-level-row {
@@ -826,6 +842,62 @@
   margin: 0 0 10px;
   color: #2b3d59;
   font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cc-ico {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  font-style: normal;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(41, 98, 239, 0.25);
+}
+
+.cc-ico-level { background: linear-gradient(145deg, #7a8cff 0%, #4f63f5 100%); }
+.cc-ico-level:before { content: "V"; }
+.cc-ico-progress { background: linear-gradient(145deg, #4f84ff 0%, #1d67f2 100%); }
+.cc-ico-progress:before { content: "\2191"; font-size: 12px; }
+.cc-ico-invite { background: linear-gradient(145deg, #35b8ff 0%, #2970f2 100%); }
+.cc-ico-invite:before { content: "+"; font-size: 13px; }
+.cc-ico-code { background: linear-gradient(145deg, #5c93ff 0%, #355ed7 100%); margin-right: 8px; }
+.cc-ico-code:before { content: "#"; font-size: 12px; }
+.cc-ico-income { background: linear-gradient(145deg, #5fa0ff 0%, #2f74f3 100%); }
+.cc-ico-income:before { content: "$"; font-size: 11px; }
+.cc-ico-rights { background: linear-gradient(145deg, #7e95ff 0%, #3f68f3 100%); }
+.cc-ico-rights:before { content: "*"; font-size: 12px; }
+.cc-ico-user { background: linear-gradient(145deg, #58b5ff 0%, #2f78f3 100%); margin-right: 6px; }
+.cc-ico-user:before { content: "U"; }
+.cc-ico-team { background: linear-gradient(145deg, #55c9cb 0%, #2b8ea2 100%); margin-right: 6px; }
+.cc-ico-team:before { content: "T"; }
+.cc-ico-detail { background: linear-gradient(145deg, #7ea4ff 0%, #4a66e2 100%); margin-right: 6px; }
+.cc-ico-detail:before { content: "R"; }
+
+.cc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.cc-dot-blue {
+  background: #4f84ff;
+  box-shadow: 0 0 0 3px rgba(79, 132, 255, 0.16);
+}
+
+.cc-dot-cyan {
+  background: #33c1ff;
+  box-shadow: 0 0 0 3px rgba(51, 193, 255, 0.16);
 }
 
 .cc-progress-item {
@@ -839,6 +911,7 @@
 .cc-progress-item label {
   color: #647892;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .cc-progress-item span {
@@ -884,6 +957,8 @@
   color: #2a3b58;
   letter-spacing: 1px;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
 }
 
 .cc-invite-right {
@@ -923,6 +998,40 @@
   padding: 10px;
   background: linear-gradient(160deg, #ffffff 0%, #f8faff 100%);
 }
+
+.cc-income-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.cc-income-item:before {
+  content: "";
+  position: absolute;
+  right: -16px;
+  top: -16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  opacity: 0.25;
+}
+
+.cc-income-item:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+}
+
+.cc-income-item.tone-1:before { background: #4f84ff; }
+.cc-income-item.tone-2:before { background: #31bbff; }
+.cc-income-item.tone-3:before { background: #5d9bff; }
+.cc-income-item.tone-4:before { background: #67b2f4; }
+.cc-income-item.tone-1:after { background: linear-gradient(90deg, #4f84ff 0%, #78a9ff 100%); }
+.cc-income-item.tone-2:after { background: linear-gradient(90deg, #31bbff 0%, #69d2ff 100%); }
+.cc-income-item.tone-3:after { background: linear-gradient(90deg, #5d9bff 0%, #8ab9ff 100%); }
+.cc-income-item.tone-4:after { background: linear-gradient(90deg, #67b2f4 0%, #98cbff 100%); }
 
 .cc-income-grid p {
   margin: 0;
@@ -964,6 +1073,21 @@
   font-weight: 600;
 }
 
+.cc-table th:before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.cc-table th:nth-child(1):before { background: #5f90ff; }
+.cc-table th:nth-child(2):before { background: #2db8ff; }
+.cc-table th:nth-child(3):before { background: #58cbff; }
+.cc-table th:nth-child(4):before { background: #6f93ff; }
+
 .cc-table tbody tr.active {
   background: rgba(41, 98, 239, 0.06);
 }
@@ -987,6 +1111,11 @@
   color: #3f5473;
 }
 
+.cc-list > div span {
+  display: inline-flex;
+  align-items: center;
+}
+
 .cc-list > div:last-child {
   border-bottom: none;
 }
@@ -994,6 +1123,18 @@
 .cc-list i {
   font-style: normal;
   color: #7d90ae;
+}
+
+.cc-arrow {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #eef4ff 0%, #e2edff 100%);
+  color: #4b74d6 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
 }
 
 @media screen and (max-width: 768px) {
@@ -1051,6 +1192,23 @@
     font-size: 12px;
   }
 
+  .cc-ico {
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
+  }
+
+  .cc-ico-progress:before,
+  .cc-ico-invite:before {
+    font-size: 10px;
+  }
+
+  .cc-dot {
+    width: 7px;
+    height: 7px;
+    margin-right: 4px;
+  }
+
   .cc-invite-right button {
     min-width: 102px;
     height: 36px;
@@ -1059,6 +1217,10 @@
 
   .cc-code {
     font-size: 18px;
+  }
+
+  .cc-ico-code {
+    margin-right: 6px;
   }
 
   .cc-invite-right a {
@@ -1085,6 +1247,12 @@
   .cc-table td {
     padding: 7px 2px;
     font-size: 12px;
+  }
+
+  .cc-arrow {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
   }
 }
 
@@ -1129,7 +1297,7 @@
 
 .np-hero-tags {
   display: flex;
-  gap: 8px;
+  gap: 2px;
   flex-wrap: wrap;
 }
 
