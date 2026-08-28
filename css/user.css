@@ -780,7 +780,7 @@
 .cc-badge {
   width: 82px;
   min-width: 82px;
-  height: 102px;
+  height: 98px;
   border-radius: 18px;
   background:
     radial-gradient(42px 28px at 22% 18%, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0) 100%),
@@ -802,11 +802,12 @@
 }
 
 .cc-badge img {
-  width: 74%;
-  height: 74%;
+  width: 84%;
+  height: 84%;
   object-fit: contain;
   position: relative;
   z-index: 2;
+  transform: translateY(4px);
   filter: drop-shadow(0 3px 6px rgba(17, 35, 88, 0.25));
 }
 
@@ -1232,15 +1233,16 @@
   .cc-badge {
     width: 64px;
     min-width: 64px;
-    height: 84px;
+    height: 80px;
     font-size: 28px;
     border-radius: 14px;
     letter-spacing: 0.4px;
   }
 
   .cc-badge img {
-    width: 72%;
-    height: 72%;
+    width: 82%;
+    height: 82%;
+    transform: translateY(3px);
   }
 
   .cc-badge:after {
