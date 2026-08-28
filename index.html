@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=1.22244" />
+		<link rel="stylesheet" href="./css/user.css?v=1.22245" />
 		
 	</head>
 	<body>
@@ -1182,7 +1182,7 @@
 						<div class="cc-invite-left">
 							<h3><i class="cc-ico cc-ico-invite"></i>邀请好友</h3>
 							<p>有效邀请码</p>
-							<div class="cc-code"><i class="cc-ico cc-ico-code"></i>AP886520</div>
+							<div class="cc-code"><i class="cc-ico cc-ico-code"></i>{{ tgData.referralCode || '--' }}</div>
 						</div>
 						<div class="cc-invite-right">
 							<button type="button" @click="onCommunityInvite">邀请好友</button>
