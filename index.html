@@ -21,7 +21,7 @@
 		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
 		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
 
-		<script src="./js/ch/index.js?v=0.1111"></script>
+		<script src="./js/ch/index.js?v=0.111"></script>
 		<script src="./js/ch/chain.js?v=1.1"></script>
 		<script src="./js/ch/utils.js?v=0.1"></script>
 		<script src="./js/ch/post.js?v=0.121"></script>
@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=1.22" />
+		<link rel="stylesheet" href="./css/user.css?v=1.2" />
 		
 	</head>
 	<body>
@@ -119,6 +119,9 @@
 							</div>
 							<div v-on:click="switchTab(7)" v-bind:class="[headerIndex == 7 && 'check', 'tab']">
 								社区中心
+							</div>
+							<div v-on:click="switchTab(8)" v-bind:class="[headerIndex == 8 && 'check', 'tab']">
+								节点中心
 							</div>
 						</div>
 					</div>
@@ -1018,6 +1021,9 @@
 					<div v-on:click="switchTab(7)" v-bind:class="[headerIndex == 7 && 'check', 'tab']">
 						社区中心
 					</div>
+					<div v-on:click="switchTab(8)" v-bind:class="[headerIndex == 8 && 'check', 'tab']">
+						节点中心
+					</div>
 				</div>
 			</el-drawer>
 
@@ -1206,6 +1212,122 @@
 						<div><span>我的直推</span><i>></i></div>
 						<div><span>社区成员</span><i>></i></div>
 						<div><span>收益明细</span><i>></i></div>
+					</div>
+				</div>
+			</template>
+
+			<!-- 节点中心（排版参照图，浅色协调风格） -->
+			<template v-if="headerIndex == 8">
+				<div class="node-center-lite layout2">
+					<div class="np-hero np-card">
+						<div class="np-hero-left">
+							<h2>成为 WEZA 节点合伙人</h2>
+							<p>共享平台生态增长，参与喷回手续费分红</p>
+							<div class="np-hero-tags">
+								<span>节点席位 200</span>
+								<span>四大等级</span>
+								<span>链上确权</span>
+							</div>
+						</div>
+						<div class="np-hero-badge">
+							<div>WEZA</div>
+						</div>
+					</div>
+
+					<div class="np-card np-global-progress">
+						<div class="np-progress-head">
+							<span>全球节点认购进度</span>
+							<strong>68 / 200</strong>
+						</div>
+						<div class="np-progress-bar"><i style="width:34%"></i></div>
+					</div>
+
+					<div class="np-section-title">选择节点等级</div>
+					<div class="np-level-list">
+						<div class="np-card np-level-item">
+							<div class="np-level-icon silver"></div>
+							<div class="np-level-main">
+								<h3>初级节点</h3>
+								<div class="np-price">1,000 U</div>
+								<p>限量 100 席</p>
+							</div>
+							<div class="np-level-side">
+								<div>剩余 62 席</div>
+								<span>手续费分红池 30%</span>
+								<a href="javascript:void(0)">查看权益 ></a>
+							</div>
+							<div class="np-radio"></div>
+						</div>
+
+						<div class="np-card np-level-item active">
+							<div class="np-level-icon blue"></div>
+							<div class="np-level-main">
+								<h3>中级节点</h3>
+								<div class="np-price">3,000 U</div>
+								<p>限量 60 席</p>
+							</div>
+							<div class="np-level-side">
+								<div>剩余 22 席</div>
+								<span>手续费分红池 20%</span>
+								<a href="javascript:void(0)">查看权益 ></a>
+							</div>
+							<div class="np-radio checked"></div>
+						</div>
+
+						<div class="np-card np-level-item">
+							<div class="np-level-icon silver"></div>
+							<div class="np-level-main">
+								<h3>高级节点</h3>
+								<div class="np-price">5,000 U</div>
+								<p>限量 30 席</p>
+							</div>
+							<div class="np-level-side">
+								<div>剩余 9 席</div>
+								<span>手续费分红池 20%</span>
+								<a href="javascript:void(0)">查看权益 ></a>
+							</div>
+							<div class="np-radio"></div>
+						</div>
+
+						<div class="np-card np-level-item np-top-level">
+							<div class="np-top-tag">最高等级</div>
+							<div class="np-level-icon blue"></div>
+							<div class="np-level-main">
+								<h3>核心节点</h3>
+								<div class="np-price">10,000 U</div>
+								<p>限量 10 席</p>
+							</div>
+							<div class="np-level-side">
+								<div>剩余 3 席</div>
+								<span>手续费分红池 20%</span>
+								<a href="javascript:void(0)">查看权益 ></a>
+							</div>
+							<div class="np-radio"></div>
+						</div>
+					</div>
+
+					<div class="np-card np-mechanism">
+						<h3>分红机制</h3>
+						<div class="np-mech-row">
+							<div class="np-donut"></div>
+							<div class="np-segments">
+								<span>初级节点 30%</span>
+								<span>中级节点 20%</span>
+								<span>高级节点 20%</span>
+								<span>核心节点 20%</span>
+								<span>平台 10%</span>
+							</div>
+						</div>
+						<p>节点合伙人按对应等级，共享平台提前赎回手续费分红</p>
+					</div>
+
+					<div class="np-card np-order">
+						<div class="np-order-row"><span>认购等级</span><strong>中级节点</strong></div>
+						<div class="np-order-row"><span>认购金额</span><strong>3,000 U</strong></div>
+						<div class="np-order-row"><span>支付账户余额</span><strong>12,580 U ></strong></div>
+						<label class="np-check"><input type="checkbox" checked /> 我已阅读并同意《节点合伙人认购协议》</label>
+						<div class="np-submit">确认认购</div>
+						<div class="np-footer-tip">认购记录与节点身份将通过链上确认</div>
 					</div>
 				</div>
 			</template>
