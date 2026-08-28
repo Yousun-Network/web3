@@ -169,14 +169,19 @@
   max-width: 760px;
   margin: 10px auto 88px;
   color: #f4f5f6;
+  padding: 10px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(243, 247, 252, 0.9) 0%, rgba(248, 251, 255, 0.78) 100%);
+  border: 1px solid rgba(24, 47, 88, 0.08);
+  box-shadow: 0 12px 28px rgba(36, 56, 92, 0.08);
 }
 
 .income-card,
 .income-hero {
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: linear-gradient(160deg, rgba(26, 30, 38, 0.88) 0%, rgba(21, 24, 31, 0.9) 100%);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(112, 137, 176, 0.24);
+  background: linear-gradient(165deg, rgba(42, 48, 60, 0.94) 0%, rgba(33, 38, 48, 0.94) 54%, rgba(30, 35, 45, 0.95) 100%);
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.2);
 }
 
 .income-hero {
@@ -192,12 +197,12 @@
   top: -80px;
   width: 360px;
   height: 360px;
-  background: radial-gradient(circle, rgba(255, 197, 57, 0.16) 0%, rgba(255, 197, 57, 0.02) 58%, rgba(255, 197, 57, 0) 75%);
+  background: radial-gradient(circle, rgba(255, 196, 52, 0.18) 0%, rgba(61, 131, 255, 0.08) 46%, rgba(255, 197, 57, 0.02) 62%, rgba(255, 197, 57, 0) 76%);
   pointer-events: none;
 }
 
 .income-hero-label {
-  color: #d4d9df;
+  color: #ccd6e8;
   font-size: 13px;
 }
 
@@ -212,7 +217,7 @@
 .income-hero-rate {
   margin-top: 6px;
   font-size: 18px;
-  color: #d7dce3;
+  color: #d9e2f1;
 }
 
 .income-hero-rate span {
@@ -236,7 +241,7 @@
 .income-bars i {
   width: 10px;
   border-radius: 5px 5px 0 0;
-  background: linear-gradient(180deg, #ffd35a 0%, #c98c0d 100%);
+  background: linear-gradient(180deg, #ffd76a 0%, #e2a315 100%);
 }
 
 .income-bars i:nth-child(1) { height: 18px; }
@@ -247,7 +252,7 @@
 .income-stats {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  border-top: 1px solid rgba(160, 182, 220, 0.2);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
@@ -264,7 +269,7 @@
 
 .income-stats p {
   margin: 0;
-  color: #9ca5b2;
+  color: #b3bfd2;
   font-size: 12px;
 }
 
@@ -282,8 +287,9 @@
   text-align: center;
   font-weight: 700;
   font-size: 20px;
-  color: #272315;
-  background: linear-gradient(90deg, #f4b118 0%, #ffd44e 100%);
+  color: #2d2412;
+  background: linear-gradient(90deg, #efb128 0%, #ffd86b 52%, #f7c13d 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .income-tabs-row {
@@ -294,14 +300,14 @@
   display: inline-block;
   margin-right: 24px;
   font-size: 44px;
-  color: #9097a0;
+  color: #7f8aa0;
   cursor: default;
   font-weight: 700;
 }
 
 .income-tabs-row .active {
-  color: #ffcb3d;
-  border-bottom: 3px solid #ffcb3d;
+  color: #f1b62a;
+  border-bottom: 3px solid #f1b62a;
   padding-bottom: 5px;
 }
 
@@ -322,10 +328,10 @@
 }
 
 .income-card-head span {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(152, 174, 209, 0.3);
   padding: 4px 10px;
   border-radius: 999px;
-  color: #adb4be;
+  color: #bcc7d9;
   font-size: 12px;
 }
 
@@ -335,13 +341,13 @@
   height: 146px;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(255, 200, 50, 0.08) 0%, rgba(255, 200, 50, 0) 70%);
+  background: linear-gradient(180deg, rgba(73, 129, 230, 0.12) 0%, rgba(246, 190, 46, 0.08) 55%, rgba(255, 200, 50, 0) 100%);
 }
 
 .income-grid {
   position: absolute;
   inset: 0;
-  background-image: repeating-linear-gradient(to top, transparent 0, transparent 30px, rgba(255,255,255,0.08) 30px, rgba(255,255,255,0.08) 31px);
+  background-image: repeating-linear-gradient(to top, transparent 0, transparent 30px, rgba(173,190,221,0.18) 30px, rgba(173,190,221,0.18) 31px);
 }
 
 .income-line-wrap {
@@ -359,7 +365,7 @@
   right: 0;
   bottom: 26px;
   height: 3px;
-  background: linear-gradient(90deg, #f3b21f 0%, #ffde60 100%);
+  background: linear-gradient(90deg, #f0b12a 0%, #ffd969 100%);
   transform: rotate(-6deg);
   transform-origin: left center;
   box-shadow: 0 0 12px rgba(255, 210, 75, 0.5);
@@ -370,14 +376,14 @@
   bottom: 48px;
   transform: translateX(-50%);
   font-size: 12px;
-  color: #ffcb3d;
+  color: #f7bf38;
   font-weight: 600;
 }
 
 .income-block-title {
   margin: 8px 2px 8px;
   font-size: 28px;
-  color: #f0f1f4;
+  color: #e8edf7;
   font-weight: 700;
 }
 
@@ -390,15 +396,15 @@
 
 .income-composition > div {
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: linear-gradient(160deg, rgba(20, 24, 31, 0.88), rgba(13, 16, 21, 0.88));
+  border: 1px solid rgba(132, 157, 199, 0.24);
+  background: linear-gradient(160deg, rgba(49, 55, 68, 0.94), rgba(37, 42, 52, 0.94));
   padding: 10px;
   min-height: 80px;
 }
 
 .income-composition p {
   margin: 0;
-  color: #c8ced8;
+  color: #d2d9e7;
   font-size: 14px;
 }
 
@@ -410,7 +416,7 @@
 
 .income-composition span {
   font-size: 12px;
-  color: #8f98a5;
+  color: #aeb9cc;
 }
 
 .income-assets {
@@ -447,20 +453,20 @@
 
 .asset-left p {
   margin: 4px 0 0;
-  color: #a9b0ba;
+  color: #b4bfd1;
   font-size: 12px;
 }
 
 .asset-right {
   text-align: right;
   font-size: 12px;
-  color: #a9b0ba;
+  color: #b4bfd1;
 }
 
 .asset-right a {
   display: inline-block;
   margin-top: 4px;
-  color: #ffcb3d;
+  color: #f2bd3a;
   font-size: 22px;
   text-decoration: none;
   font-weight: 700;
@@ -474,7 +480,7 @@
 
 .income-withdraw p {
   margin: 0;
-  color: #a9b0ba;
+  color: #bcc7d9;
   font-size: 14px;
 }
 
@@ -484,14 +490,14 @@
 }
 
 .income-withdraw span {
-  color: #8f98a5;
+  color: #aeb9cc;
   font-size: 12px;
 }
 
 .income-withdraw button {
-  border: 1px solid #f3ba2f;
-  background: transparent;
-  color: #f3ba2f;
+  border: 1px solid #eab741;
+  background: rgba(236, 182, 54, 0.08);
+  color: #efbe48;
   border-radius: 10px;
   min-width: 102px;
   height: 38px;
@@ -503,19 +509,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #b7bdc7;
+  color: #c1cad9;
   font-size: 16px;
 }
 
 .income-record i {
   font-style: normal;
-  color: #8f98a5;
+  color: #9fabc1;
 }
 
 @media screen and (max-width: 768px) {
   .income-center {
     width: 92%;
     margin: 10px auto 80px;
+    padding: 8px;
+    border-radius: 14px;
   }
 
   .income-hero {
