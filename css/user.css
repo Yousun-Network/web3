@@ -171,17 +171,17 @@
   color: #f4f5f6;
   padding: 10px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(243, 247, 252, 0.9) 0%, rgba(248, 251, 255, 0.78) 100%);
-  border: 1px solid rgba(24, 47, 88, 0.08);
-  box-shadow: 0 12px 28px rgba(36, 56, 92, 0.08);
+  background: linear-gradient(180deg, rgba(246, 249, 253, 0.95) 0%, rgba(244, 248, 253, 0.86) 100%);
+  border: 1px solid rgba(96, 122, 162, 0.12);
+  box-shadow: 0 8px 18px rgba(39, 58, 91, 0.07);
 }
 
 .income-card,
 .income-hero {
   border-radius: 14px;
-  border: 1px solid rgba(112, 137, 176, 0.24);
-  background: linear-gradient(165deg, rgba(42, 48, 60, 0.94) 0%, rgba(33, 38, 48, 0.94) 54%, rgba(30, 35, 45, 0.95) 100%);
-  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.2);
+  border: 1px solid rgba(129, 149, 179, 0.3);
+  background: linear-gradient(165deg, rgba(52, 60, 75, 0.96) 0%, rgba(43, 50, 64, 0.96) 54%, rgba(39, 46, 58, 0.97) 100%);
+  box-shadow: 0 6px 16px rgba(20, 30, 45, 0.18);
 }
 
 .income-hero {
@@ -259,6 +259,7 @@
 }
 
 .income-stats > div {
+  min-width: 0;
   padding-right: 8px;
 }
 
@@ -275,7 +276,9 @@
 
 .income-stats h4 {
   margin: 2px 0 0;
-  font-size: 18px;
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: nowrap;
   font-weight: 700;
 }
 
@@ -299,7 +302,7 @@
 .income-tabs-row span {
   display: inline-block;
   margin-right: 24px;
-  font-size: 44px;
+  font-size: 40px;
   color: #7f8aa0;
   cursor: default;
   font-weight: 700;
@@ -341,7 +344,7 @@
   height: 146px;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(73, 129, 230, 0.12) 0%, rgba(246, 190, 46, 0.08) 55%, rgba(255, 200, 50, 0) 100%);
+  background: linear-gradient(180deg, rgba(84, 127, 198, 0.14) 0%, rgba(234, 188, 70, 0.08) 55%, rgba(255, 200, 50, 0) 100%);
 }
 
 .income-grid {
@@ -397,7 +400,7 @@
 .income-composition > div {
   border-radius: 10px;
   border: 1px solid rgba(132, 157, 199, 0.24);
-  background: linear-gradient(160deg, rgba(49, 55, 68, 0.94), rgba(37, 42, 52, 0.94));
+  background: linear-gradient(160deg, rgba(57, 65, 80, 0.95), rgba(45, 52, 66, 0.95));
   padding: 10px;
   min-height: 80px;
 }
@@ -567,7 +570,7 @@
   .income-stats {
     margin-top: 12px;
     padding-top: 10px;
-    gap: 6px;
+    gap: 0;
   }
 
   .income-stats p {
@@ -575,15 +578,16 @@
   }
 
   .income-stats h4 {
-    font-size: 24px;
+    font-size: 15px;
     margin-top: 4px;
+    white-space: nowrap;
   }
 
   .income-claim-all {
     height: 44px;
     line-height: 44px;
     border-radius: 10px;
-    font-size: 24px;
+    font-size: 18px;
     margin-top: 10px;
   }
 
