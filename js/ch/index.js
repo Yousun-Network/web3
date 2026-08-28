@@ -171,6 +171,20 @@ window.onload = async function() {
 		},
 		
 		methods: {
+			formatIncomeNum(num) {
+				let n = Number(num || 0);
+				return n.toLocaleString('en-US');
+			},
+			incomePercent(value) {
+				let total = this.incomeCompositionTotal;
+				if (!total || total <= 0) {
+					return '0%';
+				}
+				let p = (Number(value || 0) / total) * 100;
+				if (p < 0) p = 0;
+				if (p > 100) p = 100;
+				return p.toFixed(1).replace('.0', '') + '%';
+			},
 			setIncomeTab(tab) {
 				this.incomeTab = tab;
 			},
@@ -753,6 +767,10 @@ window.onload = async function() {
 			},
 		},
 		computed: {
+			incomeCompositionTotal() {
+				let arr = [6850, 2860, 1280, 1190, 680];
+				return arr.reduce((sum, val) => sum + val, 0);
+			},
 			selectedNodeInfo() {
 				if (this.nodeLevelMap[this.selectedNodeLevel]) {
 					return this.nodeLevelMap[this.selectedNodeLevel];
