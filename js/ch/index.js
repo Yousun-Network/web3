@@ -171,6 +171,86 @@ window.onload = async function() {
 		},
 		
 		methods: {
+			toDateOnly(ts) {
+				let d = new Date(ts);
+				d.setHours(0, 0, 0, 0);
+				return d.getTime();
+			},
+			parseRowDate(row) {
+				if (!row) return null;
+				let keys = ['createTime', 'createDate', 'updateTime', 'time', 'date', 'yieldDay'];
+				for (let i = 0; i < keys.length; i++) {
+					let raw = row[keys[i]];
+					if (isNull(raw)) continue;
+					if (typeof raw === 'number') {
+						let dNum = new Date(raw);
+						if (!isNaN(dNum.getTime())) return dNum;
+						continue;
+					}
+					let str = String(raw).trim();
+					if (str.indexOf('-') < 0 && str.indexOf('/') < 0) continue;
+					let d = new Date(str.replace(/-/g, '/'));
+					if (!isNaN(d.getTime())) return d;
+				}
+				return null;
+			},
+			countByDay(list, offsetDay) {
+				if (!Array.isArray(list) || list.length == 0) return 0;
+				let base = new Date();
+				base.setHours(0, 0, 0, 0);
+				base.setDate(base.getDate() + offsetDay);
+				let target = base.getTime();
+				let count = 0;
+				for (let i = 0; i < list.length; i++) {
+					let d = this.parseRowDate(list[i]);
+					if (!d) continue;
+					if (this.toDateOnly(d.getTime()) == target) {
+						count++;
+					}
+				}
+				return count;
+			},
+			sumByDay(list, offsetDay) {
+				if (!Array.isArray(list) || list.length == 0) return 0;
+				let base = new Date();
+				base.setHours(0, 0, 0, 0);
+				base.setDate(base.getDate() + offsetDay);
+				let target = base.getTime();
+				let sum = 0;
+				for (let i = 0; i < list.length; i++) {
+					let row = list[i];
+					let d = this.parseRowDate(row);
+					if (!d) continue;
+					if (this.toDateOnly(d.getTime()) == target) {
+						let n = Number(row && row.num ? row.num : 0);
+						if (!isNaN(n)) {
+							sum += n;
+						}
+					}
+				}
+				return sum;
+			},
+			toTrend(current, prev) {
+				let c = Number(current || 0);
+				let p = Number(prev || 0);
+				if (isNaN(c)) c = 0;
+				if (isNaN(p)) p = 0;
+				if (p <= 0 && c <= 0) {
+					return { cls: 'flat', arrow: '·', text: '0%' };
+				}
+				if (p <= 0 && c > 0) {
+					return { cls: 'up', arrow: '↑', text: '100%' };
+				}
+				let delta = ((c - p) / p) * 100;
+				let absTxt = Math.abs(delta).toFixed(1).replace('.0', '') + '%';
+				if (delta > 0) {
+					return { cls: 'up', arrow: '↑', text: absTxt };
+				}
+				if (delta < 0) {
+					return { cls: 'down', arrow: '↓', text: absTxt };
+				}
+				return { cls: 'flat', arrow: '·', text: '0%' };
+			},
 			formatIncomeNum(num) {
 				let n = Number(num || 0);
 				return n.toLocaleString('en-US');
@@ -220,7 +300,21 @@ window.onload = async function() {
 				layer.msg('已切换到 ' + level + ' 等级权益');
 			},
 			onCommunityAction(actionName) {
-				layer.msg(actionName + ' 页面开发中');
+				if (isNull(this.address)) {
+					this.onConnect1();
+					return;
+				}
+				if (actionName == 'direct' || actionName == 'member') {
+					this.switchTab(4);
+					this.getInviterInfo();
+					return;
+				}
+				if (actionName == 'income') {
+					this.switchTab(5);
+					this.yieldDayName = 'second';
+					this.getInviteRewardsList();
+					return;
+				}
 			},
 			selectNodeLevel(level) {
 				this.selectedNodeLevel = level;
@@ -392,6 +486,9 @@ window.onload = async function() {
 					}
 					if (isNull(this.tgData.referralCode)) {
 						this.getInviterInfo();
+					}
+					if (isNull(this.inviteRewards.list) || this.inviteRewards.list.length == 0) {
+						this.getInviteRewardsList();
 					}
 				} else if (index == 8) {
 					if (isNull(this.address)) {
@@ -770,6 +867,41 @@ window.onload = async function() {
 			incomeCompositionTotal() {
 				let arr = [6850, 2860, 1280, 1190, 680];
 				return arr.reduce((sum, val) => sum + val, 0);
+			},
+			communityDirectCount() {
+				return Number(this.tgData.referralNum || 0);
+			},
+			communityMemberCount() {
+				let pageMembers = Array.isArray(this.tgData.list) ? this.tgData.list.length : 0;
+				return Math.max(Number(this.tgData.referralNum || 0), pageMembers);
+			},
+			communityIncomeTotal() {
+				let list = Array.isArray(this.inviteRewards.list) ? this.inviteRewards.list : [];
+				return list.reduce((sum, row) => {
+					let v = Number(row && row.num ? row.num : 0);
+					if (isNaN(v)) {
+						v = 0;
+					}
+					return sum + v;
+				}, 0);
+			},
+			communityDirectTrend() {
+				let list = Array.isArray(this.tgData.list) ? this.tgData.list : [];
+				let current = this.countByDay(list, 0);
+				let prev = this.countByDay(list, -1);
+				return this.toTrend(current, prev);
+			},
+			communityMemberTrend() {
+				let list = Array.isArray(this.tgData.list) ? this.tgData.list : [];
+				let current = this.countByDay(list, 0);
+				let prev = this.countByDay(list, -1);
+				return this.toTrend(current, prev);
+			},
+			communityIncomeTrend() {
+				let list = Array.isArray(this.inviteRewards.list) ? this.inviteRewards.list : [];
+				let current = this.sumByDay(list, 0);
+				let prev = this.sumByDay(list, -1);
+				return this.toTrend(current, prev);
 			},
 			selectedNodeInfo() {
 				if (this.nodeLevelMap[this.selectedNodeLevel]) {
