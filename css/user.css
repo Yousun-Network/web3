@@ -1657,19 +1657,19 @@
   }
 
   .cc-income-grid h4 small {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .cc-table th,
   .cc-table td {
     padding: 7px 2px;
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .cc-arrow {
     width: 20px;
     height: 20px;
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .cc-list > div {
