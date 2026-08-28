@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=0.1" />
+		<link rel="stylesheet" href="./css/user.css?v=1.2" />
 		
 	</head>
 	<body>
@@ -1018,7 +1018,7 @@
 			<!-- 收益中心 -->
 			<template v-if="headerIndex == 6">
 				<div class="income-center layout2">
-					<div class="income-hero card-gold">
+					<div class="income-hero">
 						<div class="income-hero-left">
 							<div class="income-hero-label">累计收益</div>
 							<div class="income-hero-total">$12,860.50</div>
@@ -1042,14 +1042,14 @@
 						<span>收益明细</span>
 					</div>
 
-					<div class="income-card">
+					<div class="income-card income-chart-card">
 						<div class="income-card-head">
 							<h3>近7日收益</h3>
 							<span>近7日</span>
 						</div>
 						<div class="income-chart">
 							<div class="income-grid"></div>
-							<div class="income-line"></div>
+							<div class="income-line-wrap"><div class="income-line"></div></div>
 							<div class="income-dots">
 								<b style="left:8%">168.40</b>
 								<b style="left:22%">192.60</b>
@@ -1078,11 +1078,11 @@
 								<img src="./assets/images/logo7.png" alt="logo" />
 								<div>
 									<strong>牛来</strong>
-									<p>累计收益 8,650</p>
+									<p>累计收益 8,650 牛来</p>
 								</div>
 							</div>
 							<div class="asset-right">
-								<div>待领取 860</div>
+								<div>待领取 860 牛来</div>
 								<a href="javascript:void(0)">领取</a>
 							</div>
 						</div>
@@ -1091,11 +1091,11 @@
 								<img src="./assets/wallet/metamask.png" alt="user" />
 								<div>
 									<strong>币安人生</strong>
-									<p>累计收益 4,210</p>
+									<p>累计收益 4,210 币安人生</p>
 								</div>
 							</div>
 							<div class="asset-right">
-								<div>待领取 426</div>
+								<div>待领取 426 币安人生</div>
 								<a href="javascript:void(0)">领取</a>
 							</div>
 						</div>
@@ -1108,6 +1108,11 @@
 							<span>统一提现手续费 3%</span>
 						</div>
 						<button type="button">申请提现</button>
+					</div>
+
+					<div class="income-record income-card">
+						<span>查看全部收益记录</span>
+						<i>></i>
 					</div>
 				</div>
 			</template>
