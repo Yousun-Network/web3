@@ -885,9 +885,10 @@
 }
 
 .cc-level-stats {
-  margin-top: 8px;
+  grid-column: 1 / -1;
+  margin-top: 2px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -907,10 +908,10 @@
 
 .cc-level-stats h4 {
   margin: 3px 0 0;
-  font-size: 30px;
-  line-height: 1.06;
+  font-size: 18px;
+  line-height: 1.15;
   color: #1f355f;
-  letter-spacing: 0.2px;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 
@@ -1272,7 +1273,9 @@
   }
 
   .cc-level-stats {
+    grid-column: 1 / -1;
     gap: 6px;
+    margin-top: 0;
   }
 
   .cc-level-stats > div {
@@ -1281,7 +1284,7 @@
   }
 
   .cc-level-stats h4 {
-    font-size: 22px;
+    font-size: 14px;
   }
 
   .cc-progress-wrap h3,
