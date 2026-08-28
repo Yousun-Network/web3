@@ -525,6 +525,15 @@
   margin: 6px 0 2px;
   color: #25344e;
   font-size: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.income-composition h4 small {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8193ae;
 }
 
 .income-composition span {
@@ -796,6 +805,14 @@
 
   .income-comp-meta {
     margin-top: 7px;
+    font-size: 10px;
+  }
+
+  .income-composition h4 {
+    gap: 4px;
+  }
+
+  .income-composition h4 small {
     font-size: 10px;
   }
 
@@ -1251,6 +1268,15 @@
   margin: 6px 0 2px;
   font-size: 20px;
   color: #263853;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.cc-income-grid h4 small {
+  font-size: 12px;
+  color: #8292ac;
+  font-weight: 500;
 }
 
 .cc-income-grid span {
@@ -1478,10 +1504,11 @@
 
   .cc-income-grid h4 {
     font-size: 16px;
+    gap: 4px;
   }
 
-  .cc-income-grid span {
-    font-size: 11px;
+  .cc-income-grid h4 small {
+    font-size: 10px;
   }
 
   .cc-table th,
