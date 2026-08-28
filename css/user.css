@@ -1441,43 +1441,65 @@
   }
 
   .np-level-item {
-    grid-template-columns: 46px 1fr;
-    gap: 8px;
+    grid-template-columns: 42px 1fr 120px 18px;
+    gap: 6px;
+    align-items: center;
   }
 
   .np-level-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
   }
 
   .np-level-main h3 {
-    font-size: 15px;
+    font-size: 13px;
   }
 
   .np-price {
-    font-size: 24px;
+    font-size: 19px;
+    margin-top: 2px;
   }
 
   .np-level-main p {
-    font-size: 12px;
+    margin-top: 2px;
+    font-size: 11px;
   }
 
   .np-level-side {
-    grid-column: 1 / span 2;
-    border-left: none;
-    border-top: 1px solid rgba(41, 98, 239, 0.1);
-    padding-left: 0;
-    padding-top: 8px;
-    min-width: 0;
+    grid-column: auto;
+    border-top: none;
+    border-left: 1px solid rgba(41, 98, 239, 0.12);
+    padding-top: 0;
+    padding-left: 8px;
+    min-width: 120px;
+    text-align: left;
+  }
+
+  .np-level-side div {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .np-level-side span {
+    margin-top: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+    border-radius: 6px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .np-level-side a {
+    margin-top: 5px;
+    font-size: 11px;
   }
 
   .np-radio {
-    position: absolute;
-    right: 8px;
-    top: 10px;
+    position: static;
     width: 18px;
     height: 18px;
+    justify-self: end;
   }
 
   .np-segments {
