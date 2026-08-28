@@ -4,81 +4,101 @@
 const defaultChainId = "0x1";
 var walletType;
 let myEthereum;
-var myTronWeb;
-var myTronLink;
+
+function parseAbi(_abi) {
+	if (typeof _abi === "string") {
+		try {
+			return JSON.parse(_abi);
+		} catch (e) {
+			return _abi;
+		}
+	}
+	return _abi;
+}
 
 
-    async function getAddressByMyEthereum(){
-    	if (typeof window.ethereum !== 'undefined') {
-    		try {
-    			const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-    			console.log("accounts:", accounts);
-    			if (accounts.length === 0) {
-    				throw new Error("No accounts found");
-    			}
-    			let adr = accounts[0];
-    			console.log("Selected address:", adr);
-    			return adr;
-    		} catch (error) {
-    			console.error("Error requesting accounts:", error);
-    			return null;
-    		}
-    	} else {
-    		console.error("Ethereum object not found");
-    		return null;
-    	}
-    }
+async function getAddressByMyEthereum(forceRequest) {
+	if (isNull(forceRequest)) {
+		forceRequest = false;
+	}
 
-    function changeEth(chainType) {
-    	console.log("chan change1");
-    	if (isweb3j(chainType)) {
-    		if (typeof window.ethereum !== "undefined" && typeof window.ethereum.providers === "object") {
-    			if (walletType === "trustwallet") {
-    				myEthereum = window.ethereum.providers.find((provider) => provider.isTrustWallet);
-    			} else if (walletType === "coinbase") {
-    				myEthereum = window.ethereum.providers.find((provider) => provider.isCoinbaseWallet);
-    			}
-    		} else if (typeof window.ethereum !== "undefined") {
-    			myEthereum = window.ethereum;
-    		} else {
-    			console.error("Ethereum object not found");
-    		}
-    	}
-    }
+	if (isNull(myEthereum)) {
+		changeEth("eth");
+	}
+
+	if (typeof myEthereum === "undefined" || isNull(myEthereum)) {
+		console.error("Ethereum provider not found");
+		return null;
+	}
+
+	try {
+		let accounts = await myEthereum.request({ method: "eth_accounts" });
+		if ((isNull(accounts) || accounts.length === 0) && forceRequest) {
+			accounts = await myEthereum.request({ method: "eth_requestAccounts" });
+		}
+		if (isNull(accounts) || accounts.length === 0) {
+			return null;
+		}
+		return accounts[0];
+	} catch (error) {
+		console.error("Error requesting accounts:", error);
+		return null;
+	}
+}
+
+function changeEth(chainType) {
+	if (!isweb3j(chainType)) {
+		return null;
+	}
+
+	if (typeof window.ethereum !== "undefined" && typeof window.ethereum.providers === "object") {
+		if (walletType === "trustwallet") {
+			myEthereum = window.ethereum.providers.find((provider) => provider.isTrustWallet);
+		} else if (walletType === "coinbase") {
+			myEthereum = window.ethereum.providers.find((provider) => provider.isCoinbaseWallet);
+		} else {
+			myEthereum = window.ethereum.providers.find((provider) => provider.isMetaMask);
+		}
+
+		if (isNull(myEthereum) && window.ethereum.providers.length > 0) {
+			myEthereum = window.ethereum.providers[0];
+		}
+	} else if (typeof window.ethereum !== "undefined") {
+		myEthereum = window.ethereum;
+	} else {
+		myEthereum = null;
+		console.error("Ethereum object not found");
+	}
+
+	return myEthereum;
+}
 
 
 
 async function connect(chainTemp, walletInfo) {
-    
-    console.log("connect start");
+	console.log("connect start");
 	let adr;
 	let chainType = chainTemp.chainType;
-	console.log("connect 1:"+chainType);
-	if (isweb3j(chainType)) {
-		console.log("web3j");
-		// 3 连接钱包
-		if (iswap() == "app" && isNull(window.ethereum)) {
-			// 跳转链接
-			let gourl = walletInfo.link.replace("defi.tb-v.pro/",location.href.substring(8))
-			window.open(gourl, '_blank')
-			return;
-		} else {
-			//1 选择正确的 注入对象
-			changeEth(chainType);
-			adr = await metaMaskConnect(chainTemp);
-		}
-	} else if (chainType == "trx") {
-		console.log("tronlink40");
-		// 2 连接钱包
-		if (iswap() == "app" && isNull(window.tronWeb) && isNull(window.okexchain)) {
-			// 跳转链接
-			window.open(walletInfo.link, '_blank')
-			return;
-		} else {
-			changeEth(chainType);
-			adr = await tronLinkConnect(chainTemp);
-		}
+	console.log("connect chainType:" + chainType);
+
+	if (!isweb3j(chainType)) {
+		layer.msg("Only ETH/BSC is supported");
+		return;
 	}
+
+	if (iswap() == "app" && isNull(window.ethereum)) {
+		if (notNull(walletInfo) && notNull(walletInfo.link)) {
+			let gourl = walletInfo.link.replace("defi.tb-v.pro/", location.href.substring(8));
+			window.open(gourl, "_blank");
+		} else {
+			layer.msg("Ethereum wallet not found");
+		}
+		return;
+	} else {
+		changeEth(chainType);
+		adr = await metaMaskConnect(chainTemp);
+	}
+
 	//login
 	if (notNull(adr)) {
 		let inviteCode = getInviterCode();
@@ -102,16 +122,13 @@ async function getBalance() {
 	let chainType = that.chainType;
 	changeEth(chainType);
 	if (isweb3j(chainType)) {
-		//console.log("metamask");
-		let adr = await getAddressByMyEthereum(); // 使用 await 等待异步操作完成
+		let adr = await getAddressByMyEthereum(false);
+		if (isNull(adr)) {
+			return 0;
+		}
 		let web3 = new Web3(myEthereum);
 		balance = await web3.eth.getBalance(adr);
 		balance = web3.utils.fromWei(balance);
-		console.log(balance);
-	} else if (chainType == "trx") {
-		console.log("tronlink79");
-		balance = await myTronWeb.trx.getBalance(myTronWeb.defaultAddress.base58);
-		balance = balance / (10 ** 6);
 	}
 	return balance;
 }
@@ -123,16 +140,12 @@ async function getContractBalance(_contract, _abi, _decimals, _chainType) {
 	try {
 		changeEth(_chainType);
 		if (isweb3j(_chainType)) {
-			//console.log("metamask");
-			adr = await getAddressByMyEthereum(); // 使用 await 等待异步操作完成
-			let web3 = new Web3(myEthereum);
-			
-			let _myabi;
-			try {
-				_myabi = JSON.parse(_abi);
-			} catch (e) {
-				_myabi = _abi;
+			adr = await getAddressByMyEthereum(false);
+			if (isNull(adr)) {
+				return 0;
 			}
+			let web3 = new Web3(myEthereum);
+			let _myabi = parseAbi(_abi);
 			
 			let myContract = new web3.eth.Contract(_myabi, _contract);
 			balance = await myContract.methods
@@ -143,29 +156,7 @@ async function getContractBalance(_contract, _abi, _decimals, _chainType) {
 			balance = new BigNumber(balance);
 			balance = balance.dividedBy(Math.pow(10, _decimals));
 			balance = balance.toFixed();
-
-		} else if (_chainType == "trx") {
-			console.log("tronlink119");
-			let contract = await myTronWeb.contract().at(_contract);
-			adr = myTronWeb.defaultAddress.base58;
-
-			let re = await contract.balanceOf(adr).call();
-			
-			if (notNull(re._hex)) {
-				balance = re._hex / Math.pow(10, _decimals);
-			} else if (notNull(re.hex)) {
-				balance = re.hex / Math.pow(10, _decimals);
-			} else if (notNull(re.remaining) && notNull(re.remaining.hex)) {
-				balance = re.remaining.hex / Math.pow(10, _decimals);
-			} else if (notNull(re.remaining) && notNull(re.remaining._hex)) {
-				balance = re.remaining._hex / Math.pow(10, _decimals);
-			}
-			
-			balance = new BigNumber(balance);
-			balance = balance.dividedBy(Math.pow(10, _decimals));
-			balance = balance.toFixed();
 		}
-		//console.log(balance);
 	} catch (e) {
 		console.log("查询代币余额失败:" + JSON.stringify(e));
 	}
@@ -179,17 +170,16 @@ async function getContractNFTBalance(_contract, _abi, _chainType) {
 	try {
 		changeEth(_chainType);
 		if (isweb3j(_chainType)) {
-			//console.log("metamask");
-			adr = getAddressByMyEthereum();
+			adr = await getAddressByMyEthereum(false);
+			if (isNull(adr)) {
+				return 0;
+			}
 			let web3 = new Web3(myEthereum);
-			let myContract = new web3.eth.Contract(JSON.parse(_abi), _contract);
+			let myContract = new web3.eth.Contract(parseAbi(_abi), _contract);
 
 			// 持有数量
 			balance = await myContract.methods.balanceOf(adr).call();
-		} else if ( _chainType == "trx") {
-			console.log("tronlink157");
 		}
-		//console.log(balance);
 	} catch (e) {
 		//console.log("查询nft数量失败:" + JSON.stringify(e))
 	}
@@ -204,14 +194,14 @@ async function isApprovedForAllnft(_spender, _contract, _abi, _chainType) {
 	try {
 		changeEth(_chainType);
 		if (isweb3j(_chainType)) {
-			//console.log("metamask");
-			_owner = getAddressByMyEthereum();
+			_owner = await getAddressByMyEthereum(false);
+			if (isNull(_owner)) {
+				return false;
+			}
 			let web3 = new Web3(myEthereum);
-			let myContract = new web3.eth.Contract(JSON.parse(_abi), _contract)
+			let myContract = new web3.eth.Contract(parseAbi(_abi), _contract)
 
 			flag = await myContract.methods.isApprovedForAll(_owner, _spender).call();
-		} else if ( _chainType == "trx") {
-			console.log("tronlink185");
 		}
 	} catch (e) {
 		console.log("查询授权情况失败:" + JSON.stringify(e))
@@ -228,15 +218,15 @@ async function allowance(_spender, _contract, _abi, _decimals, _chainType) {
 		changeEth(_chainType);
 		if (isweb3j(_chainType)) {
 			console.log("Using web3j for chain type:", _chainType);
-			_owner = await getAddressByMyEthereum(); // 使用 await 等待异步操作完成
+			_owner = await getAddressByMyEthereum(false);
 			console.log("Owner address:", _owner);
 			if (!_owner) {
 				throw new Error("Failed to get owner address");
 			}
 			let web3 = new Web3(myEthereum);
 			console.log("myEthereum object:", myEthereum);
-			let myContract = new web3.eth.Contract(JSON.parse(_abi), _contract);
-			balance = await myContract.methods.allowance(_owner, _spender).call(); // 使用 await 等待异步操作完成
+			let myContract = new web3.eth.Contract(parseAbi(_abi), _contract);
+			balance = await myContract.methods.allowance(_owner, _spender).call();
 			console.log("Raw balance:", balance);
 
 			balance = balance / Math.pow(10, _decimals);
@@ -257,7 +247,7 @@ async function allowance(_spender, _contract, _abi, _decimals, _chainType) {
 //檢查有沒有MetaMask
 async function metaMaskConnect(chainTemp) {
 	let chainType = chainTemp.chainType;
-	if (typeof myEthereum == 'undefined') {
+	if (typeof myEthereum == 'undefined' || isNull(myEthereum)) {
 		console.log("没有安装MetaMask钱包");
 		let _content;
 		let _url;
@@ -285,15 +275,12 @@ async function metaMaskConnect(chainTemp) {
 		});
 		return;
 	} else {
-		//2 判断主链是否正确
-
-		// 目标链id
+		// 2 判断主链是否正确
 		let chainId = chainTemp.chainId || defaultChainId;
-		// 主链判断
 		let _chainId = await myEthereum.request({
 			method: 'eth_chainId'
 		});
-		console.log("主链判断chainId:" + chainId + ",tag_chainId:" + _chainId)
+		console.log("主链判断chainId:" + chainId + ",tag_chainId:" + _chainId);
 		let i = 0;
 		if (!notNull(_chainId) || _chainId != chainId) {
 			i = layer.load(0, {
@@ -335,8 +322,8 @@ async function metaMaskConnect(chainTemp) {
 		layer.close(i);
 		// 再次主链判断
 		_chainId = await myEthereum.request({ method: 'eth_chainId' });
-		console.log("再次主链判断chainId:"+chainId+",tag_chainId:" +_chainId)
-		if(isNull(_chainId)|| _chainId!= chainId){
+		console.log("再次主链判断chainId:" + chainId + ",tag_chainId:" + _chainId);
+		if (isNull(_chainId) || _chainId != chainId) {
 			layer.msg('Select the correct network!');
 			return;
 		}
@@ -350,23 +337,10 @@ async function metaMaskConnect(chainTemp) {
 			adr = _adr[0];
 			
 			that.address = adr;
-			that.chainType = chainTemp.chainType;
-			
-			//login
-			let inviteCode = getInviterCode();
-			let code = getAgentCode();
-			let chainType = that.chainType;
-			let loginData = {
-				"address": getAddressByMyEthereum(),
-				"chainType": chainType,
-				"inviterCode": inviteCode,
-				"code":code
-			};
-
-			login(loginData,true,asyLogin,that);
+			that.chainType = chainType;
 			
 			// 4 监听钱包变化
-			metaMaskListenAccountChange(chainType);
+			metaMaskListenAccountChange();
 		} catch (error) {
 			if (error.code === 4001) {
 				// EIP-1193 userRejectedRequest error
@@ -402,6 +376,9 @@ async function metaMaskAddNetWork(chainTemp) {
 
 /** 监听钱包变化 **/
 function metaMaskListenAccountChange() {
+	if (isNull(myEthereum) || isNull(myEthereum.on)) {
+		return;
+	}
 	myEthereum.removeListener('accountsChanged', metaMaskListenAccountChangeMethod);
 	myEthereum.on('accountsChanged', metaMaskListenAccountChangeMethod);
 }
@@ -409,7 +386,7 @@ function metaMaskListenAccountChange() {
 
 async function metaMaskListenAccountChangeMethod(accounts) {
 	try {
-		let addr = await getAddressByMyEthereum();
+		let addr = await getAddressByMyEthereum(false);
 		console.log("监听到钱包变化：" + addr);
 		that.address = addr;
 
@@ -443,12 +420,7 @@ async function metaMaskListenAccountChangeMethod(accounts) {
 	}
 }
 
-
-
-
-/** TronLink 相关方法 end **/
-
-const web3jchain = ["eth","rinkeby","goerli","bsc","bsctest","oktc","oktctest","okbc","okbctest"];
+const web3jchain = ["eth", "bsc"];
 function isweb3j(_chainType){
 	if(web3jchain.indexOf(_chainType) > -1){
 		return true;

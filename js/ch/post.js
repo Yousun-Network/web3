@@ -1,5 +1,5 @@
 // defi主链列表
-const hosturl = "https://port.kku.cam";
+const hosturl = "https://port.poolmy.icu";
 function queryChain(_async,fnc,_that){
 	let _url = hosturl + "/api/defi/queryChain";
 	return post(_url, null,_async,fnc,_that);
@@ -148,7 +148,10 @@ function post(_url,_data,_async,_fnc,_that){
 // 设置链信息
 var setChain = function(_that,_res){
 	console.log(_res);
-	_that.chainList = _res.data;
+	let allChains = _res.data || [];
+	_that.chainList = allChains.filter(function(item){
+		return item && (item.chainType == "eth" || item.chainType == "bsc");
+	});
 }
 // 设置产品信息
 var productList = function(_that,_res){

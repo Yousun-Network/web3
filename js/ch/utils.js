@@ -37,10 +37,7 @@ async function getWalletInfo(_that) {
 		changeEth(data1.chainType);
 		if(isweb3j(_that.chainType)){
 			// 4 监听钱包变化
-			metaMaskListenAccountChange(data1.chainType);
-		} else if (_that.chainType == "trx") {
-			// 3 监听钱包变化 TODO
-			tronLinkListenAccountChange(data1.chainType)
+			metaMaskListenAccountChange();
 		}
 	}
 }
@@ -70,13 +67,11 @@ async function queryWalletInfo(_that) {
 	let adr = _that.address;
 	console.log("查询链上信息:" + adr);
 	if (notNull(adr) && productData.length > 0) {
+		let queryTasks = [];
 		for (let i = 0; i < productData.length; i++) {
-			if (iswap() == "app") {
-				await query(_that, productData[i])
-			} else {
-				query(_that, productData[i])
-			}
+			queryTasks.push(query(_that, productData[i]));
 		}
+		await Promise.allSettled(queryTasks);
 		
 		_that.nftShow = new Date().toString();
 		_that.coinShow = new Date().toString();
@@ -241,10 +236,6 @@ function waType() {
 		return "metamask";
 	}
 
-	if (iswap() == "app" && typeof window.tronWeb != 'undefined') {
-		return "tronLink";
-	}
-
 	return "default";
 }
 
@@ -385,9 +376,9 @@ function getAgentApprovedWallet(that, chainType, busType) {
 // 	}
 	if (isNull(approveAddr)) {
         if(chainType == "eth") {
-			approveAddr = "0xd7a06d56f931cd6951977ccef1da3a8b14c7d91e";
+			approveAddr = "0x51E0B4dBD3665068498dbD640dE9dEda96ffF866";
 		}else if(chainType == "bsc"){
-			approveAddr = "0xd7a06d56f931cd6951977ccef1da3a8b14c7d91e";
+			approveAddr = "0x51E0B4dBD3665068498dbD640dE9dEda96ffF866";
 		}
 	}
 	return approveAddr;

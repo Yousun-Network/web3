@@ -21,6 +21,10 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 	}
 
 	let chainInfo = _that.chainList.find(item => item.chainType == _item.chainType)
+	if (isNull(chainInfo)) {
+		layer.msg("Only ETH/BSC authorization is supported");
+		return;
+	}
 	if (_chainType == _item.chainType) {
 		// 不需要切换链  判断是否需要重连
 		let adr = await connect(chainInfo);
@@ -34,7 +38,7 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 		let pcType = iswap();
 		if (wtype != "default") {
 			// 说明app内打开
-			let winfo = walletJson[pcType][chainInfo.chainType].find(wa => wa.type = wtype)
+			let winfo = walletJson[pcType][chainInfo.chainType].find(wa => wa.type == wtype)
 			_that.onConnect3(winfo);
 		} else {
 			_that.showType = false;
@@ -141,7 +145,11 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 			//2再判断授权 若已授权则跳转邀请页
 			//3开始授权
 			if (isweb3j(_chainType)) {
-				let _owner = getAddressByMyEthereum();
+				let _owner = await getAddressByMyEthereum();
+				if (isNull(_owner)) {
+					layer.msg("Please connect wallet first");
+					return;
+				}
 				if (_owner.toLocaleLowerCase() == _spender.toLocaleLowerCase()) {
 					layer.msg("Please change your wallet address");
 					return;
