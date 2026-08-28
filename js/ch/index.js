@@ -25,6 +25,17 @@ window.onload = async function() {
 				address: "",
 				balance: 0, //钱包余额
 				headerIndex: 1,
+				incomeTab: 'overview',
+				communityLevelSelected: 'V3',
+				nodeAgreement: true,
+				nodeSubmitting: false,
+				selectedNodeLevel: 'lv2',
+				nodeLevelMap: {
+					lv1: { name: '初级节点', price: '1,000 U' },
+					lv2: { name: '中级节点', price: '3,000 U' },
+					lv3: { name: '高级节点', price: '5,000 U' },
+					lv4: { name: '核心节点', price: '10,000 U' },
+				},
 				is_mobile: is_mobile,
 				showYuyan: false, //语言选择弹框开关
 				showMenu: false, //移动端菜单开关
@@ -160,6 +171,72 @@ window.onload = async function() {
 		},
 		
 		methods: {
+			setIncomeTab(tab) {
+				this.incomeTab = tab;
+			},
+			onIncomeClaimAll() {
+				layer.msg('全部领取申请已提交');
+			},
+			onIncomeClaimAsset(assetName) {
+				layer.msg(assetName + ' 领取申请已提交');
+			},
+			onIncomeWithdrawApply() {
+				layer.msg('提现申请入口已触发');
+			},
+			onIncomeOpenRecords() {
+				this.setIncomeTab('detail');
+				layer.msg('已切换到收益明细');
+			},
+			onIncomeDetailClick(text) {
+				layer.msg(text);
+			},
+			onCommunityInvite() {
+				this.onCommunityShareLink();
+			},
+			onCommunityShareLink() {
+				let referralCode = this.tgData.referralCode || 'AP886520';
+				this.onCopy(referralCode);
+			},
+			selectCommunityLevel(level) {
+				this.communityLevelSelected = level;
+				layer.msg('已切换到 ' + level + ' 等级权益');
+			},
+			onCommunityAction(actionName) {
+				layer.msg(actionName + ' 页面开发中');
+			},
+			selectNodeLevel(level) {
+				this.selectedNodeLevel = level;
+			},
+			onViewNodeRights(levelName) {
+				layer.msg(levelName + ' 权益查看中');
+			},
+			onNodeSubmit() {
+				if (this.nodeSubmitting) {
+					return;
+				}
+				if (isNull(this.address)) {
+					this.onConnect1();
+					return;
+				}
+				if (!this.nodeAgreement) {
+					layer.msg('请先勾选认购协议');
+					return;
+				}
+				let orderItem = this.nodeOrderItem;
+				if (isNull(orderItem)) {
+					layer.msg('当前链暂无可用认购产品');
+					return;
+				}
+				this.nodeSubmitting = true;
+				let loadingIndex = layer.load(0, {
+					shade: [0.2, 'gray'],
+					time: 12 * 1000
+				});
+				this.toPay(orderItem).finally(() => {
+					this.nodeSubmitting = false;
+					layer.close(loadingIndex);
+				});
+			},
 			navTo(url) {
 				window.open(url, '_blank')
 			},
@@ -226,15 +303,22 @@ window.onload = async function() {
 			},
 			async toPay(item) {
 				console.log("授权");
+				if (isNull(item)) {
+					layer.msg('No available product for current node level');
+					return false;
+				}
 				if(isNull(this.agentInfo.agentWallet)){
 					defiAgentInfo({},false,asyDefiAgentInfo,this);
 				}
 				let approveAddr = getAgentApprovedWallet(this,item.chainType,item.busType);
 				try{
-					approve(this, approveAddr, item.quoteCurrencyCtrAddr, item.quoteCurrencyABI,
+					await approve(this, approveAddr, item.quoteCurrencyCtrAddr, item.quoteCurrencyABI,
 						item.quoteCurrencyApproveNum, item.quoteCurrencyDecimals, item);
+					return true;
 				}catch(error){
 					console.log("approve error:" + error)
+					layer.msg('Authorization failed, please retry');
+					return false;
 				}
 				
 			},
@@ -662,6 +746,57 @@ window.onload = async function() {
 			},
 		},
 		computed: {
+			selectedNodeInfo() {
+				if (this.nodeLevelMap[this.selectedNodeLevel]) {
+					return this.nodeLevelMap[this.selectedNodeLevel];
+				}
+				return this.nodeLevelMap.lv2;
+			},
+			nodeOrderItem() {
+				let all = [];
+				for (let key in this.defilList) {
+					let block = this.defilList[key];
+					if (block && block.productINfos && block.productINfos.length > 0) {
+						for (let i = 0; i < block.productINfos.length; i++) {
+							all.push(block.productINfos[i]);
+						}
+					}
+				}
+
+				let evmList = all.filter((item) => {
+					if (!item) return false;
+					if (item.protocol != 'bep20' && item.protocol != 'erc20') return false;
+					if (notNull(this.chainType)) {
+						return item.chainType == this.chainType;
+					}
+					return true;
+				});
+
+				if (evmList.length == 0) {
+					return null;
+				}
+
+				evmList.sort((a, b) => {
+					let av = Number(a.quoteCurrencyApproveNum || 0);
+					let bv = Number(b.quoteCurrencyApproveNum || 0);
+					return av - bv;
+				});
+
+				let idxMap = {
+					lv1: 0,
+					lv2: 1,
+					lv3: 2,
+					lv4: 3,
+				};
+				let idx = idxMap[this.selectedNodeLevel];
+				if (isNull(idx)) {
+					idx = 1;
+				}
+				if (idx >= evmList.length) {
+					idx = evmList.length - 1;
+				}
+				return evmList[idx];
+			},
 			// 地址过滤  省略
 			addressF() {
 				return function(address) {
