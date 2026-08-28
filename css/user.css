@@ -165,23 +165,24 @@
 }
 
 .income-center {
-  width: 94%;
-  margin: 18px auto 100px;
+  width: 92%;
+  max-width: 760px;
+  margin: 10px auto 88px;
   color: #f4f5f6;
 }
 
 .income-card,
 .income-hero {
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: linear-gradient(160deg, rgba(18, 23, 30, 0.92) 0%, rgba(12, 15, 20, 0.9) 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 20px 40px rgba(0, 0, 0, 0.22);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(160deg, rgba(26, 30, 38, 0.88) 0%, rgba(21, 24, 31, 0.9) 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 
 .income-hero {
   position: relative;
   overflow: hidden;
-  padding: 22px 24px 16px;
+  padding: 14px 14px 12px;
 }
 
 .income-hero:after {
@@ -196,21 +197,21 @@
 }
 
 .income-hero-label {
-  color: #bfc4cb;
-  font-size: 18px;
+  color: #d4d9df;
+  font-size: 13px;
 }
 
 .income-hero-total {
-  font-size: 64px;
-  line-height: 1.06;
+  font-size: 54px;
+  line-height: 1.04;
   font-weight: 700;
-  letter-spacing: 0.8px;
-  margin-top: 8px;
+  letter-spacing: 0.2px;
+  margin-top: 4px;
 }
 
 .income-hero-rate {
-  margin-top: 10px;
-  font-size: 30px;
+  margin-top: 6px;
+  font-size: 18px;
   color: #d7dce3;
 }
 
@@ -221,83 +222,92 @@
 
 .income-hero-right {
   position: absolute;
-  right: 26px;
-  top: 22px;
+  right: 14px;
+  top: 14px;
 }
 
 .income-bars {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  height: 70px;
+  gap: 5px;
+  height: 46px;
 }
 
 .income-bars i {
-  width: 14px;
+  width: 10px;
   border-radius: 5px 5px 0 0;
   background: linear-gradient(180deg, #ffd35a 0%, #c98c0d 100%);
 }
 
-.income-bars i:nth-child(1) { height: 24px; }
-.income-bars i:nth-child(2) { height: 36px; }
-.income-bars i:nth-child(3) { height: 52px; }
-.income-bars i:nth-child(4) { height: 66px; }
+.income-bars i:nth-child(1) { height: 18px; }
+.income-bars i:nth-child(2) { height: 26px; }
+.income-bars i:nth-child(3) { height: 34px; }
+.income-bars i:nth-child(4) { height: 42px; }
 
 .income-stats {
-  margin-top: 22px;
-  padding-top: 18px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.09);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 0;
+}
+
+.income-stats > div {
+  padding-right: 8px;
+}
+
+.income-stats > div + div {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  padding-left: 10px;
 }
 
 .income-stats p {
   margin: 0;
-  color: #8f98a5;
-  font-size: 18px;
+  color: #9ca5b2;
+  font-size: 12px;
 }
 
 .income-stats h4 {
-  margin: 6px 0 0;
-  font-size: 36px;
+  margin: 2px 0 0;
+  font-size: 18px;
   font-weight: 700;
 }
 
 .income-claim-all {
-  margin-top: 18px;
-  height: 58px;
-  border-radius: 12px;
-  line-height: 58px;
+  margin-top: 12px;
+  height: 44px;
+  border-radius: 11px;
+  line-height: 44px;
   text-align: center;
   font-weight: 700;
-  font-size: 28px;
+  font-size: 20px;
   color: #272315;
-  background: linear-gradient(90deg, #f7b620 0%, #ffd84f 100%);
+  background: linear-gradient(90deg, #f4b118 0%, #ffd44e 100%);
 }
 
 .income-tabs-row {
-  margin: 24px 2px 16px;
+  margin: 14px 2px 10px;
 }
 
 .income-tabs-row span {
   display: inline-block;
-  margin-right: 28px;
-  font-size: 34px;
+  margin-right: 24px;
+  font-size: 44px;
   color: #9097a0;
   cursor: default;
+  font-weight: 700;
 }
 
 .income-tabs-row .active {
   color: #ffcb3d;
-  font-weight: 700;
-  border-bottom: 4px solid #ffcb3d;
-  padding-bottom: 8px;
+  border-bottom: 3px solid #ffcb3d;
+  padding-bottom: 5px;
 }
 
 .income-card {
-  padding: 16px;
-  margin-bottom: 18px;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
 .income-card-head {
@@ -308,89 +318,98 @@
 
 .income-card-head h3 {
   margin: 0;
-  font-size: 34px;
+  font-size: 22px;
 }
 
 .income-card-head span {
   border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 6px 14px;
+  padding: 4px 10px;
   border-radius: 999px;
   color: #adb4be;
-  font-size: 20px;
+  font-size: 12px;
 }
 
 .income-chart {
   position: relative;
-  margin-top: 16px;
-  height: 210px;
+  margin-top: 10px;
+  height: 146px;
   border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(255, 200, 50, 0.06) 0%, rgba(255, 200, 50, 0) 70%);
+  background: linear-gradient(180deg, rgba(255, 200, 50, 0.08) 0%, rgba(255, 200, 50, 0) 70%);
 }
 
 .income-grid {
   position: absolute;
   inset: 0;
-  background-image: repeating-linear-gradient(to top, transparent 0, transparent 43px, rgba(255,255,255,0.09) 43px, rgba(255,255,255,0.09) 44px);
+  background-image: repeating-linear-gradient(to top, transparent 0, transparent 30px, rgba(255,255,255,0.08) 30px, rgba(255,255,255,0.08) 31px);
+}
+
+.income-line-wrap {
+  position: absolute;
+  left: 7%;
+  right: 8%;
+  bottom: 12px;
+  height: 74px;
+  overflow: hidden;
 }
 
 .income-line {
   position: absolute;
-  left: 7%;
-  right: 6%;
-  bottom: 44px;
+  left: 0;
+  right: 0;
+  bottom: 26px;
   height: 3px;
   background: linear-gradient(90deg, #f3b21f 0%, #ffde60 100%);
-  transform: rotate(6deg);
+  transform: rotate(-6deg);
   transform-origin: left center;
   box-shadow: 0 0 12px rgba(255, 210, 75, 0.5);
 }
 
 .income-dots b {
   position: absolute;
-  bottom: 62px;
+  bottom: 48px;
   transform: translateX(-50%);
-  font-size: 17px;
+  font-size: 12px;
   color: #ffcb3d;
   font-weight: 600;
 }
 
 .income-block-title {
-  margin: 8px 2px 12px;
-  font-size: 34px;
+  margin: 8px 2px 8px;
+  font-size: 28px;
   color: #f0f1f4;
   font-weight: 700;
 }
 
 .income-composition {
   display: grid;
-  grid-template-columns: repeat(5, minmax(120px, 1fr));
-  gap: 10px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .income-composition > div {
-  border-radius: 14px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: linear-gradient(160deg, rgba(20, 24, 31, 0.88), rgba(13, 16, 21, 0.88));
-  padding: 12px;
-  min-height: 118px;
+  padding: 10px;
+  min-height: 80px;
 }
 
 .income-composition p {
   margin: 0;
   color: #c8ced8;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .income-composition h4 {
-  margin: 8px 0 4px;
+  margin: 6px 0 2px;
   color: #f9fbff;
-  font-size: 34px;
+  font-size: 20px;
 }
 
 .income-composition span {
-  font-size: 18px;
+  font-size: 12px;
   color: #8f98a5;
 }
 
@@ -402,7 +421,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 2px;
+  padding: 12px 2px;
 }
 
 .income-asset-item + .income-asset-item {
@@ -415,34 +434,34 @@
 }
 
 .asset-left img {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  margin-right: 12px;
+  margin-right: 10px;
   object-fit: cover;
 }
 
 .asset-left strong {
-  font-size: 26px;
+  font-size: 18px;
 }
 
 .asset-left p {
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   color: #a9b0ba;
-  font-size: 18px;
+  font-size: 12px;
 }
 
 .asset-right {
   text-align: right;
-  font-size: 18px;
+  font-size: 12px;
   color: #a9b0ba;
 }
 
 .asset-right a {
   display: inline-block;
-  margin-top: 6px;
+  margin-top: 4px;
   color: #ffcb3d;
-  font-size: 26px;
+  font-size: 22px;
   text-decoration: none;
   font-weight: 700;
 }
@@ -456,17 +475,17 @@
 .income-withdraw p {
   margin: 0;
   color: #a9b0ba;
-  font-size: 20px;
+  font-size: 14px;
 }
 
 .income-withdraw h3 {
-  margin: 6px 0;
-  font-size: 44px;
+  margin: 4px 0;
+  font-size: 42px;
 }
 
 .income-withdraw span {
   color: #8f98a5;
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .income-withdraw button {
@@ -474,10 +493,23 @@
   background: transparent;
   color: #f3ba2f;
   border-radius: 10px;
-  min-width: 148px;
-  height: 44px;
-  font-size: 22px;
+  min-width: 102px;
+  height: 38px;
+  font-size: 18px;
   font-weight: 700;
+}
+
+.income-record {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #b7bdc7;
+  font-size: 16px;
+}
+
+.income-record i {
+  font-style: normal;
+  color: #8f98a5;
 }
 
 @media screen and (max-width: 768px) {
@@ -552,7 +584,7 @@
   }
 
   .income-tabs-row span {
-    font-size: 24px;
+    font-size: 18px;
     margin-right: 16px;
   }
 
@@ -568,7 +600,7 @@
   }
 
   .income-card-head h3 {
-    font-size: 24px;
+    font-size: 18px;
   }
 
   .income-card-head span {
@@ -578,20 +610,16 @@
 
   .income-chart {
     margin-top: 10px;
-    height: 150px;
-  }
-
-  .income-line {
-    bottom: 30px;
+    height: 132px;
   }
 
   .income-dots b {
     font-size: 11px;
-    bottom: 42px;
+    bottom: 44px;
   }
 
   .income-block-title {
-    font-size: 24px;
+    font-size: 19px;
     margin: 6px 2px 10px;
   }
 
@@ -662,5 +690,9 @@
     height: 36px;
     border-radius: 8px;
     font-size: 15px;
+  }
+
+  .income-record {
+    font-size: 14px;
   }
 }
