@@ -194,7 +194,11 @@ window.onload = async function() {
 				this.onCommunityShareLink();
 			},
 			onCommunityShareLink() {
-				let referralCode = this.tgData.referralCode || 'AP886520';
+				let referralCode = this.tgData.referralCode;
+				if (isNull(referralCode)) {
+					layer.msg('邀请码暂未生成，请稍后重试');
+					return;
+				}
 				this.onCopy(referralCode);
 			},
 			selectCommunityLevel(level) {
@@ -371,6 +375,9 @@ window.onload = async function() {
 						this.onConnect1();
 						layer.close(i);
 						return;
+					}
+					if (isNull(this.tgData.referralCode)) {
+						this.getInviterInfo();
 					}
 				} else if (index == 8) {
 					if (isNull(this.address)) {
