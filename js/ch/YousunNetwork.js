@@ -39,7 +39,13 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 		if (wtype != "default") {
 			// 说明app内打开
 			let winfo = walletJson[pcType][chainInfo.chainType].find(wa => wa.type == wtype)
-			_that.onConnect3(winfo);
+			if (notNull(winfo)) {
+				_that.onConnect3(winfo);
+			} else {
+				_that.showType = false;
+				_that.walletList = walletJson[pcType][chainInfo.chainType];
+				_that.showWallet = true;
+			}
 		} else {
 			_that.showType = false;
 			_that.walletList = walletJson[pcType][chainInfo.chainType];

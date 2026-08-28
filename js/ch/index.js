@@ -75,12 +75,12 @@ window.onload = async function() {
 			};
 		},
 		created() {
-			let globalName = "web3";
+			let globalName = "Web3 & Defi";
 			var reg = new RegExp("MoonDeFi","g")//g表示全部的	
 			this.vi18 = JSON.parse(JSON.stringify(this.vi18).replace(reg,globalName));
 			var reg2 = new RegExp("MoonDefi","g")//g表示全部的	
 			this.vi18 = JSON.parse(JSON.stringify(this.vi18).replace(reg2,globalName));
-			var reg3 = new RegExp("web3","g")//g表示全部的	
+			var reg3 = new RegExp("Web3 & Defi","g")//g表示全部的	
 			this.vi18 = JSON.parse(JSON.stringify(this.vi18).replace(reg3,globalName));
 			
 			const changeFavicon = link => {
@@ -194,13 +194,21 @@ window.onload = async function() {
 					// let winfo = walletJson[pcType][chainType].find(wa => wa.type = wtype)
 					
 					console.log(winfo);
-					
-					this.onConnect3(winfo);
+					if (notNull(winfo)) {
+						this.onConnect3(winfo);
+					} else {
+						this.showWallet = true;
+					}
 				} else {
 					this.showWallet = true;
 				}
 			},
 			async onConnect3(walletInfo) {
+				if (isNull(walletInfo) || isNull(walletInfo.type)) {
+					layer.msg('Please select a wallet first');
+					this.showWallet = true;
+					return;
+				}
 				console.log('链接钱包:连接' + JSON.stringify(walletInfo));
 				this.showWallet = false;
 				walletType = walletInfo.type;
