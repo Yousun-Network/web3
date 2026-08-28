@@ -1,5 +1,5 @@
 // defi主链列表
-const hosturl = "https://port.poolmy.icu";
+const hosturl = "https://port.kku.cam";
 function queryChain(_async,fnc,_that){
 	let _url = hosturl + "/api/defi/queryChain";
 	return post(_url, null,_async,fnc,_that);
