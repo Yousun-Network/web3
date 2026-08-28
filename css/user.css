@@ -346,43 +346,39 @@
 .income-chart {
   position: relative;
   margin-top: 10px;
-  height: 146px;
+  height: 170px;
   border-radius: 12px;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(41, 98, 239, 0.08) 0%, rgba(41, 98, 239, 0.02) 55%, rgba(41, 98, 239, 0) 100%);
 }
 
-.income-grid {
+.income-chart-svg {
   position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(to top, transparent 0, transparent 30px, rgba(41, 98, 239, 0.09) 30px, rgba(41, 98, 239, 0.09) 31px);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 138px;
 }
 
-.income-line-wrap {
-  position: absolute;
-  left: 7%;
-  right: 8%;
-  bottom: 12px;
-  height: 74px;
-  overflow: hidden;
+.income-point-dot circle {
+  fill: #fff;
+  stroke: #2f69ef;
+  stroke-width: 3;
 }
 
-.income-line {
+.income-chart-values {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 26px;
-  height: 3px;
-  background: linear-gradient(90deg, #79a4ff 0%, #2962ef 100%);
-  transform: rotate(-6deg);
-  transform-origin: left center;
-  box-shadow: 0 0 10px rgba(41, 98, 239, 0.25);
+  bottom: 8px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  padding: 0 8px;
 }
 
-.income-dots b {
-  position: absolute;
-  bottom: 48px;
-  transform: translateX(-50%);
+.income-chart-values span {
+  text-align: center;
   font-size: 12px;
   color: #2962ef;
   font-weight: 600;
@@ -402,13 +398,122 @@
   margin-bottom: 10px;
 }
 
-.income-composition > div {
+.income-comp-item {
+  position: relative;
+  overflow: hidden;
   border-radius: 10px;
   border: 1px solid rgba(41, 98, 239, 0.1);
   background: linear-gradient(160deg, #ffffff 0%, #f6f9ff 100%);
   padding: 10px;
   min-height: 80px;
 }
+
+.income-comp-item:before {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: -14px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  opacity: 0.22;
+}
+
+.income-comp-item:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+}
+
+.income-comp-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.income-comp-ico {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.income-comp-ico svg {
+  width: 12px;
+  height: 12px;
+  display: block;
+  fill: currentColor;
+}
+
+.income-comp-item.tone-1 .income-comp-ico { background: linear-gradient(145deg, #4f84ff 0%, #2b66ef 100%); }
+.income-comp-item.tone-2 .income-comp-ico { background: linear-gradient(145deg, #30a9ff 0%, #2e7ef3 100%); }
+.income-comp-item.tone-3 .income-comp-ico { background: linear-gradient(145deg, #5f8dff 0%, #465fe9 100%); }
+.income-comp-item.tone-4 .income-comp-ico { background: linear-gradient(145deg, #39baf7 0%, #3895f3 100%); }
+.income-comp-item.tone-5 .income-comp-ico { background: linear-gradient(145deg, #7aa3ff 0%, #4d72ef 100%); }
+
+.income-comp-item.tone-1:before { background: #4f84ff; }
+.income-comp-item.tone-2:before { background: #31b7ff; }
+.income-comp-item.tone-3:before { background: #5c8dff; }
+.income-comp-item.tone-4:before { background: #49b8ff; }
+.income-comp-item.tone-5:before { background: #7a9fff; }
+
+.income-comp-item.tone-1:after { background: linear-gradient(90deg, #4f84ff 0%, #7aa7ff 100%); }
+.income-comp-item.tone-2:after { background: linear-gradient(90deg, #34b9ff 0%, #7fd9ff 100%); }
+.income-comp-item.tone-3:after { background: linear-gradient(90deg, #5b8bff 0%, #8eb4ff 100%); }
+.income-comp-item.tone-4:after { background: linear-gradient(90deg, #45bcff 0%, #8adfff 100%); }
+.income-comp-item.tone-5:after { background: linear-gradient(90deg, #6d9bff 0%, #9ebcff 100%); }
+
+.income-comp-meta {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #7b8eab;
+  font-size: 11px;
+}
+
+.income-comp-meta em {
+  font-style: normal;
+  font-weight: 700;
+}
+
+.income-comp-meta b {
+  font-weight: 500;
+  color: #93a3bc;
+}
+
+.income-comp-progress {
+  margin-top: 5px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(41, 98, 239, 0.12);
+  overflow: hidden;
+}
+
+.income-comp-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.income-comp-item.tone-1 .income-comp-meta em { color: #2f69ef; }
+.income-comp-item.tone-2 .income-comp-meta em { color: #2f88f3; }
+.income-comp-item.tone-3 .income-comp-meta em { color: #536deb; }
+.income-comp-item.tone-4 .income-comp-meta em { color: #3794f3; }
+.income-comp-item.tone-5 .income-comp-meta em { color: #4f78ef; }
+
+.income-comp-item.tone-1 .income-comp-progress i { background: linear-gradient(90deg, #4f84ff 0%, #2b66ef 100%); }
+.income-comp-item.tone-2 .income-comp-progress i { background: linear-gradient(90deg, #39c2ff 0%, #2d85f4 100%); }
+.income-comp-item.tone-3 .income-comp-progress i { background: linear-gradient(90deg, #6d97ff 0%, #5069ea 100%); }
+.income-comp-item.tone-4 .income-comp-progress i { background: linear-gradient(90deg, #4fc7ff 0%, #4099f2 100%); }
+.income-comp-item.tone-5 .income-comp-progress i { background: linear-gradient(90deg, #88adff 0%, #587cf1 100%); }
 
 .income-composition p {
   margin: 0;
@@ -651,12 +756,15 @@
 
   .income-chart {
     margin-top: 10px;
-    height: 132px;
+    height: 148px;
   }
 
-  .income-dots b {
+  .income-chart-svg {
+    height: 116px;
+  }
+
+  .income-chart-values span {
     font-size: 11px;
-    bottom: 44px;
   }
 
   .income-block-title {
@@ -674,6 +782,25 @@
     min-height: 92px;
     border-radius: 10px;
     padding: 10px;
+  }
+
+  .income-comp-ico {
+    width: 18px;
+    height: 18px;
+  }
+
+  .income-comp-ico svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .income-comp-meta {
+    margin-top: 7px;
+    font-size: 10px;
+  }
+
+  .income-comp-progress {
+    height: 5px;
   }
 
   .income-composition p {
