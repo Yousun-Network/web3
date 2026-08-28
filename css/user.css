@@ -713,3 +713,377 @@
     font-size: 14px;
   }
 }
+
+.community-center-lite {
+  width: 92%;
+  max-width: 760px;
+  margin: 10px auto 90px;
+  padding: 8px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(249, 252, 255, 0.96) 0%, rgba(245, 250, 255, 0.9) 100%);
+  border: 1px solid rgba(41, 98, 239, 0.08);
+  box-shadow: 0 8px 16px rgba(41, 98, 239, 0.06);
+  color: #26354f;
+}
+
+.cc-card {
+  border: 1px solid rgba(41, 98, 239, 0.1);
+  border-radius: 12px;
+  background: linear-gradient(160deg, #ffffff 0%, #f7faff 100%);
+  box-shadow: 0 6px 14px rgba(22, 34, 56, 0.08);
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.cc-level {
+  display: flex;
+  gap: 12px;
+}
+
+.cc-badge {
+  width: 82px;
+  min-width: 82px;
+  height: 102px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #6f8ad8 0%, #3d5fbd 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.cc-level-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.cc-level-title {
+  color: #6f7f99;
+  font-size: 14px;
+}
+
+.cc-level-row {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cc-level-row strong {
+  font-size: 46px;
+  color: #2962ef;
+  line-height: 1;
+}
+
+.cc-level-row span {
+  height: 30px;
+  line-height: 30px;
+  border-radius: 999px;
+  padding: 0 12px;
+  font-size: 20px;
+  color: #2962ef;
+  border: 1px solid rgba(41, 98, 239, 0.25);
+  background: rgba(41, 98, 239, 0.04);
+}
+
+.cc-level-stats {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid rgba(41, 98, 239, 0.12);
+  padding-top: 10px;
+}
+
+.cc-level-stats > div {
+  min-width: 0;
+}
+
+.cc-level-stats > div + div {
+  border-left: 1px solid rgba(41, 98, 239, 0.1);
+  padding-left: 10px;
+}
+
+.cc-level-stats p {
+  margin: 0;
+  font-size: 12px;
+  color: #72839f;
+}
+
+.cc-level-stats h4 {
+  margin: 4px 0 0;
+  font-size: 17px;
+  color: #2a3b58;
+  white-space: nowrap;
+}
+
+.cc-progress-wrap h3,
+.cc-income h3,
+.cc-table-wrap h3,
+.cc-invite h3 {
+  margin: 0 0 10px;
+  color: #2b3d59;
+  font-size: 18px;
+}
+
+.cc-progress-item {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cc-progress-item label {
+  color: #647892;
+  font-size: 14px;
+}
+
+.cc-progress-item span {
+  font-size: 14px;
+  color: #41516d;
+  white-space: nowrap;
+}
+
+.cc-progress-bar {
+  height: 12px;
+  border-radius: 999px;
+  background: #e6eefc;
+  overflow: hidden;
+}
+
+.cc-progress-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #77a1ff 0%, #2962ef 100%);
+}
+
+.cc-tip {
+  margin-top: 4px;
+  color: #7b8ba6;
+  font-size: 13px;
+}
+
+.cc-invite {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cc-invite-left p {
+  margin: 0;
+  color: #7585a0;
+}
+
+.cc-code {
+  margin-top: 8px;
+  font-size: 24px;
+  color: #2a3b58;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.cc-invite-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.cc-invite-right button {
+  border: 1px solid #2962ef;
+  background: linear-gradient(90deg, #4f84ff 0%, #2962ef 100%);
+  color: #fff;
+  border-radius: 10px;
+  min-width: 130px;
+  height: 42px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cc-invite-right a {
+  color: #2962ef;
+  text-decoration: none;
+  font-size: 15px;
+}
+
+.cc-income-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.cc-income-grid > div {
+  border: 1px solid rgba(41, 98, 239, 0.11);
+  border-radius: 10px;
+  padding: 10px;
+  background: linear-gradient(160deg, #ffffff 0%, #f8faff 100%);
+}
+
+.cc-income-grid p {
+  margin: 0;
+  color: #60748f;
+  font-size: 13px;
+}
+
+.cc-income-grid h4 {
+  margin: 6px 0 2px;
+  font-size: 20px;
+  color: #263853;
+}
+
+.cc-income-grid span {
+  color: #8292ac;
+  font-size: 12px;
+}
+
+.cc-table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(41, 98, 239, 0.1);
+}
+
+.cc-table th,
+.cc-table td {
+  text-align: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(41, 98, 239, 0.08);
+  font-size: 14px;
+  color: #455875;
+}
+
+.cc-table th {
+  background: #f4f8ff;
+  color: #607594;
+  font-weight: 600;
+}
+
+.cc-table tbody tr.active {
+  background: rgba(41, 98, 239, 0.06);
+}
+
+.cc-table tbody tr.active td {
+  color: #2962ef;
+  font-weight: 700;
+}
+
+.cc-list {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cc-list > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(41, 98, 239, 0.08);
+  color: #3f5473;
+}
+
+.cc-list > div:last-child {
+  border-bottom: none;
+}
+
+.cc-list i {
+  font-style: normal;
+  color: #7d90ae;
+}
+
+@media screen and (max-width: 768px) {
+  .community-center-lite {
+    width: 92%;
+    padding: 8px;
+  }
+
+  .cc-card {
+    padding: 10px;
+  }
+
+  .cc-level {
+    gap: 8px;
+  }
+
+  .cc-badge {
+    width: 64px;
+    min-width: 64px;
+    height: 84px;
+    font-size: 28px;
+    border-radius: 14px;
+  }
+
+  .cc-level-row strong {
+    font-size: 34px;
+  }
+
+  .cc-level-row span {
+    height: 24px;
+    line-height: 24px;
+    font-size: 13px;
+    padding: 0 9px;
+  }
+
+  .cc-level-stats h4 {
+    font-size: 15px;
+  }
+
+  .cc-progress-wrap h3,
+  .cc-income h3,
+  .cc-table-wrap h3,
+  .cc-invite h3 {
+    font-size: 17px;
+  }
+
+  .cc-progress-item {
+    grid-template-columns: 68px 1fr auto;
+    gap: 6px;
+  }
+
+  .cc-progress-item label,
+  .cc-progress-item span,
+  .cc-tip {
+    font-size: 12px;
+  }
+
+  .cc-invite-right button {
+    min-width: 102px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .cc-code {
+    font-size: 18px;
+  }
+
+  .cc-invite-right a {
+    font-size: 13px;
+  }
+
+  .cc-income-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cc-income-grid p {
+    font-size: 12px;
+  }
+
+  .cc-income-grid h4 {
+    font-size: 16px;
+  }
+
+  .cc-income-grid span {
+    font-size: 11px;
+  }
+
+  .cc-table th,
+  .cc-table td {
+    padding: 7px 2px;
+    font-size: 12px;
+  }
+}
