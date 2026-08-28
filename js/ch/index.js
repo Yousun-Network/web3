@@ -288,6 +288,12 @@ window.onload = async function() {
 						layer.close(i);
 						return;
 					}
+				} else if (index == 8) {
+					if (isNull(this.address)) {
+						this.onConnect1();
+						layer.close(i);
+						return;
+					}
 				}
 				this.headerIndex = index;
 				window.scrollTo(0, 0)
