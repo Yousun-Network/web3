@@ -1138,8 +1138,22 @@
   background: rgba(41, 98, 239, 0.04);
   color: #416089;
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   font-size: 12px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.np-hero-tags span:before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4f84ff;
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .np-hero-badge {
@@ -1154,11 +1168,11 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 }
 
-.np-hero-badge div {
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 1px;
+.np-hero-badge img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .np-progress-head {
@@ -1211,6 +1225,17 @@
   width: 58px;
   height: 58px;
   border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.np-level-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .np-level-icon.silver {
@@ -1305,6 +1330,33 @@
   font-size: 18px;
 }
 
+.np-mech-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.np-mech-title img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.np-mech-title i {
+  margin-left: auto;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(41, 98, 239, 0.28);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  font-size: 12px;
+  color: #6c82a4;
+  background: rgba(41, 98, 239, 0.03);
+}
+
 .np-mech-row {
   display: grid;
   grid-template-columns: 70px 1fr;
@@ -1332,25 +1384,54 @@
   background: #fff;
 }
 
-.np-segments {
+.np-mech-right {
+  min-width: 0;
+}
+
+.np-segment-labels {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  border: 1px solid rgba(41, 98, 239, 0.13);
+  gap: 0;
+  margin-bottom: 4px;
+}
+
+.np-segment-labels span {
+  text-align: center;
+  font-size: 11px;
+  color: #5d7394;
+}
+
+.np-segment-values {
+  display: grid;
+  grid-template-columns: 30fr 20fr 20fr 20fr 10fr;
+  border: 1px solid rgba(41, 98, 239, 0.16);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.np-segments span {
+.np-segment-values span {
   text-align: center;
   font-size: 12px;
-  color: #3f5577;
-  padding: 6px 2px;
-  border-right: 1px solid rgba(41, 98, 239, 0.13);
-  background: rgba(41, 98, 239, 0.03);
+  color: #2f4f88;
+  padding: 6px 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-.np-segments span:last-child {
-  border-right: none;
+.np-segment-values span:nth-child(1) { background: #8cb1ff; }
+.np-segment-values span:nth-child(2) { background: #9cbcff; }
+.np-segment-values span:nth-child(3) { background: #adc7ff; }
+.np-segment-values span:nth-child(4) { background: #bdd3ff; }
+.np-segment-values span:nth-child(5) { background: #d3e2ff; border-right: none; }
+
+.np-level-main h3:before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+  background: #6f95f8;
+  vertical-align: middle;
 }
 
 .np-mechanism p {
@@ -1378,14 +1459,23 @@
 
 .np-check {
   margin-top: 10px;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: #6f82a0;
   font-size: 13px;
 }
 
 .np-check input {
   vertical-align: middle;
-  margin-right: 6px;
+  margin-right: 2px;
+}
+
+.np-check img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  opacity: 0.85;
 }
 
 .np-submit {
@@ -1432,8 +1522,9 @@
     border-radius: 12px;
   }
 
-  .np-hero-badge div {
-    font-size: 16px;
+  .np-hero-badge img {
+    width: 74%;
+    height: 74%;
   }
 
   .np-progress-head strong {
@@ -1502,17 +1593,43 @@
     justify-self: end;
   }
 
-  .np-segments {
-    grid-template-columns: 1fr;
+  .np-segment-labels {
+    grid-template-columns: repeat(5, 1fr);
+    margin-bottom: 3px;
   }
 
-  .np-segments span {
-    border-right: none;
-    border-bottom: 1px solid rgba(41, 98, 239, 0.13);
+  .np-segment-labels span {
+    font-size: 10px;
   }
 
-  .np-segments span:last-child {
-    border-bottom: none;
+  .np-segment-values {
+    grid-template-columns: 30fr 20fr 20fr 20fr 10fr;
+  }
+
+  .np-segment-values span {
+    font-size: 11px;
+    padding: 5px 0;
+  }
+
+  .np-check {
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .np-check img {
+    width: 12px;
+    height: 12px;
+  }
+
+  .np-mech-title img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .np-mech-title i {
+    width: 16px;
+    height: 16px;
+    font-size: 11px;
   }
 
   .np-order-row strong {
