@@ -1061,27 +1061,96 @@
 							<span>近7日</span>
 						</div>
 						<div class="income-chart">
-							<div class="income-grid"></div>
-							<div class="income-line-wrap"><div class="income-line"></div></div>
-							<div class="income-dots">
-								<b style="left:8%">168.40</b>
-								<b style="left:22%">192.60</b>
-								<b style="left:36%">214.80</b>
-								<b style="left:50%">236.50</b>
-								<b style="left:64%">248.70</b>
-								<b style="left:78%">270.00</b>
-								<b style="left:92%">286.80</b>
+							<svg class="income-chart-svg" viewBox="0 0 680 240" preserveAspectRatio="none" aria-label="7-day income trend">
+								<defs>
+									<linearGradient id="incomeFill" x1="0" y1="0" x2="0" y2="1">
+										<stop offset="0%" stop-color="#4f84ff" stop-opacity="0.28"></stop>
+										<stop offset="100%" stop-color="#4f84ff" stop-opacity="0"></stop>
+									</linearGradient>
+									<linearGradient id="incomeLine" x1="0" y1="0" x2="1" y2="0">
+										<stop offset="0%" stop-color="#8ab0ff"></stop>
+										<stop offset="100%" stop-color="#2962ef"></stop>
+									</linearGradient>
+								</defs>
+								<line x1="0" y1="36" x2="680" y2="36" stroke="rgba(41,98,239,.12)" stroke-width="1"></line>
+								<line x1="0" y1="92" x2="680" y2="92" stroke="rgba(41,98,239,.1)" stroke-width="1"></line>
+								<line x1="0" y1="148" x2="680" y2="148" stroke="rgba(41,98,239,.08)" stroke-width="1"></line>
+								<line x1="0" y1="204" x2="680" y2="204" stroke="rgba(41,98,239,.08)" stroke-width="1"></line>
+								<path d="M40 196 L140 172 L240 150 L340 130 L440 114 L540 92 L640 74 L640 204 L40 204 Z" fill="url(#incomeFill)"></path>
+								<polyline points="40,196 140,172 240,150 340,130 440,114 540,92 640,74" fill="none" stroke="url(#incomeLine)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+								<g class="income-point-dot">
+									<circle cx="40" cy="196" r="5"></circle>
+									<circle cx="140" cy="172" r="5"></circle>
+									<circle cx="240" cy="150" r="5"></circle>
+									<circle cx="340" cy="130" r="5"></circle>
+									<circle cx="440" cy="114" r="5"></circle>
+									<circle cx="540" cy="92" r="5"></circle>
+									<circle cx="640" cy="74" r="5"></circle>
+								</g>
+							</svg>
+							<div class="income-chart-values">
+								<span>168.40</span><span>192.60</span><span>214.80</span><span>236.50</span><span>248.70</span><span>270.00</span><span>286.80</span>
 							</div>
 						</div>
 					</div>
 
 					<div class="income-block-title">收益构成</div>
 					<div class="income-composition">
-						<div><p>静态质押</p><h4>6,850</h4><span>USDT等值</span></div>
-						<div><p>直推收益</p><h4>2,860</h4><span>USDT等值</span></div>
-						<div><p>间推收益</p><h4>1,280</h4><span>USDT等值</span></div>
-						<div><p>社区级差</p><h4>1,190</h4><span>USDT等值</span></div>
-						<div><p>平级收益</p><h4>680</h4><span>USDT等值</span></div>
+						<div class="income-comp-item tone-1">
+							<div class="income-comp-head">
+								<i class="income-comp-ico">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17h16v3H4zm2-6h3v6H6zm5-4h3v10h-3zm5-3h3v13h-3z"/></svg>
+								</i>
+								<p>静态质押</p>
+							</div>
+							<h4>6,850</h4><span>USDT等值</span>
+							<div class="income-comp-meta"><em>占比 53%</em><b>6,850 / 12,860</b></div>
+							<div class="income-comp-progress"><i style="width:53%"></i></div>
+						</div>
+						<div class="income-comp-item tone-2">
+							<div class="income-comp-head">
+								<i class="income-comp-ico">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l3.3 6.7L22 10l-5 4.8 1.2 6.8L12 18l-6.2 3.6L7 14.8 2 10l6.7-.3z"/></svg>
+								</i>
+								<p>直推收益</p>
+							</div>
+							<h4>2,860</h4><span>USDT等值</span>
+							<div class="income-comp-meta"><em>占比 22%</em><b>2,860 / 12,860</b></div>
+							<div class="income-comp-progress"><i style="width:22%"></i></div>
+						</div>
+						<div class="income-comp-item tone-3">
+							<div class="income-comp-head">
+								<i class="income-comp-ico">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a5 5 0 015 5c0 3.3-5 9-5 9s-5-5.7-5-9a5 5 0 015-5zm0 18l4 2H8z"/></svg>
+								</i>
+								<p>间推收益</p>
+							</div>
+							<h4>1,280</h4><span>USDT等值</span>
+							<div class="income-comp-meta"><em>占比 10%</em><b>1,280 / 12,860</b></div>
+							<div class="income-comp-progress"><i style="width:10%"></i></div>
+						</div>
+						<div class="income-comp-item tone-4">
+							<div class="income-comp-head">
+								<i class="income-comp-ico">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v4H4zm2 6h12v6H6z"/></svg>
+								</i>
+								<p>社区级差</p>
+							</div>
+							<h4>1,190</h4><span>USDT等值</span>
+							<div class="income-comp-meta"><em>占比 9%</em><b>1,190 / 12,860</b></div>
+							<div class="income-comp-progress"><i style="width:9%"></i></div>
+						</div>
+						<div class="income-comp-item tone-5">
+							<div class="income-comp-head">
+								<i class="income-comp-ico">
+									<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v10l-7 4-7-4V7zm0 3.2L8 8.4v4.8l4 2.2 4-2.2V8.4z"/></svg>
+								</i>
+								<p>平级收益</p>
+							</div>
+							<h4>680</h4><span>USDT等值</span>
+							<div class="income-comp-meta"><em>占比 6%</em><b>680 / 12,860</b></div>
+							<div class="income-comp-progress"><i style="width:6%"></i></div>
+						</div>
 					</div>
 
 					<div class="income-block-title">资产收益</div>
