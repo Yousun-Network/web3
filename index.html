@@ -1255,7 +1255,7 @@
 						</div>
 						<div class="cc-invite-right">
 							<button type="button" @click="onCommunityInvite">邀请好友</button>
-							<a href="javascript:void(0)" @click.prevent="onCommunityShareLink">分享邀请链接</a>
+							<div class="cc-invite-metric"><span>累计邀请</span><strong>{{ tgData.referralNum || 0 }}</strong><em>人</em></div>
 						</div>
 					</div>
 
