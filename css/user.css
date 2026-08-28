@@ -898,6 +898,7 @@
   border-radius: 10px;
   background: linear-gradient(160deg, #ffffff 0%, #f3f8ff 100%);
   padding: 6px 8px;
+  text-align: center;
 }
 
 .cc-level-stats p {
