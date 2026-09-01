@@ -21,9 +21,9 @@
 		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
 		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
 
-		<script src="./js/ch/index.js?v=0.223"></script>
+		<script src="./js/ch/index.js?v=0.22312"></script>
 		<script src="./js/ch/chain.js?v=1.1"></script>
-		<script src="./js/ch/utils.js?v=0.1"></script>
+		<script src="./js/ch/utils.js?v=0.112"></script>
 		<script src="./js/ch/post.js?v=0.121"></script>
         <script src="./js/ch/walletJson.js?v=0.1"></script>
 		<script src="./js/ch/YousunNetwork.js?v=0.11"></script>
@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
-		<link rel="stylesheet" href="./css/user.css?v=1.22345678" />
+		<link rel="stylesheet" href="./css/user.css?v=1.2234567" />
 		
 	</head>
 	<body>
@@ -1330,9 +1330,9 @@
 					<div class="np-card np-global-progress">
 						<div class="np-progress-head">
 							<span>全球节点认购进度</span>
-							<strong>68 / 200</strong>
+							<strong>{{ joinedTotal }} / {{ totalSeats }} ({{ globalProgressPercent }}%)</strong>
 						</div>
-						<div class="np-progress-bar"><i style="width:34%"></i></div>
+						<div class="np-progress-bar"><i :style="{width: globalProgressPercent + '%'}"></i></div>
 					</div>
 
 					<div class="np-section-title">选择节点等级</div>
@@ -1341,12 +1341,13 @@
 							<div class="np-level-icon"><img src="./assets/images/vip-1.svg" alt="vip1" /></div>
 							<div class="np-level-main">
 								<h3>初级节点</h3>
-								<div class="np-price">1,000 U</div>
-								<p>限量 100 席</p>
+								<div class="np-price">{{ nodeLevelMap.lv1.price }}</div>
+								<p>限量 {{ nodeLevelMap.lv1.totalSeats || '—' }} 席</p>
 							</div>
 							<div class="np-level-side">
-								<div>剩余 62 席</div>
-								<span>手续费分红池 30%</span>
+								<div>已加入 {{ (nodeLevelMap.lv1.manualJoined && nodeLevelMap.lv1.manualJoined>0) ? nodeLevelMap.lv1.manualJoined : (nodeLevelMap.lv1.joinedCount || 0) }} 席</div>
+								<div>剩余 {{ nodeLevelMap.lv1.remainingCount || 0 }} 席</div>
+								<span>手续费分红池 {{ nodeLevelMap.lv1.feeSharePercent || 30 }}%</span>
 								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('初级节点')">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv1' }"></div>
@@ -1356,12 +1357,13 @@
 							<div class="np-level-icon"><img src="./assets/images/vip-2.svg" alt="vip2" /></div>
 							<div class="np-level-main">
 								<h3>中级节点</h3>
-								<div class="np-price">3,000 U</div>
-								<p>限量 60 席</p>
+								<div class="np-price">{{ nodeLevelMap.lv2.price }}</div>
+								<p>限量 {{ nodeLevelMap.lv2.totalSeats || '—' }} 席</p>
 							</div>
 							<div class="np-level-side">
-								<div>剩余 22 席</div>
-								<span>手续费分红池 20%</span>
+								<div>已加入 {{ (nodeLevelMap.lv2.manualJoined && nodeLevelMap.lv2.manualJoined>0) ? nodeLevelMap.lv2.manualJoined : (nodeLevelMap.lv2.joinedCount || 0) }} 席</div>
+								<div>剩余 {{ nodeLevelMap.lv2.remainingCount || 0 }} 席</div>
+								<span>手续费分红池 {{ nodeLevelMap.lv2.feeSharePercent || 20 }}%</span>
 								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('中级节点')">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv2' }"></div>
@@ -1371,12 +1373,13 @@
 							<div class="np-level-icon"><img src="./assets/images/vip-3.svg" alt="vip3" /></div>
 							<div class="np-level-main">
 								<h3>高级节点</h3>
-								<div class="np-price">5,000 U</div>
-								<p>限量 30 席</p>
+								<div class="np-price">{{ nodeLevelMap.lv3.price }}</div>
+								<p>限量 {{ nodeLevelMap.lv3.totalSeats || '—' }} 席</p>
 							</div>
 							<div class="np-level-side">
-								<div>剩余 9 席</div>
-								<span>手续费分红池 20%</span>
+								<div>已加入 {{ (nodeLevelMap.lv3.manualJoined && nodeLevelMap.lv3.manualJoined>0) ? nodeLevelMap.lv3.manualJoined : (nodeLevelMap.lv3.joinedCount || 0) }} 席</div>
+								<div>剩余 {{ nodeLevelMap.lv3.remainingCount || 0 }} 席</div>
+								<span>手续费分红池 {{ nodeLevelMap.lv3.feeSharePercent || 20 }}%</span>
 								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('高级节点')">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv3' }"></div>
@@ -1387,12 +1390,13 @@
 							<div class="np-level-icon"><img src="./assets/images/vip-4.svg" alt="vip4" /></div>
 							<div class="np-level-main">
 								<h3>核心节点</h3>
-								<div class="np-price">10,000 U</div>
-								<p>限量 10 席</p>
+								<div class="np-price">{{ nodeLevelMap.lv4.price }}</div>
+								<p>限量 {{ nodeLevelMap.lv4.totalSeats || '—' }} 席</p>
 							</div>
 							<div class="np-level-side">
-								<div>剩余 3 席</div>
-								<span>手续费分红池 20%</span>
+								<div>已加入 {{ (nodeLevelMap.lv4.manualJoined && nodeLevelMap.lv4.manualJoined>0) ? nodeLevelMap.lv4.manualJoined : (nodeLevelMap.lv4.joinedCount || 0) }} 席</div>
+								<div>剩余 {{ nodeLevelMap.lv4.remainingCount || 0 }} 席</div>
+								<span>手续费分红池 {{ nodeLevelMap.lv4.feeSharePercent || 20 }}%</span>
 								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('核心节点')">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv4' }"></div>
@@ -1426,10 +1430,30 @@
 					<div class="np-card np-order">
 						<div class="np-order-row"><span>认购等级</span><strong>{{ selectedNodeInfo.name }}</strong></div>
 						<div class="np-order-row"><span>认购金额</span><strong>{{ selectedNodeInfo.price }}</strong></div>
-						<div class="np-order-row"><span>支付账户余额</span><strong>12,580 U ></strong></div>
+							<div class="np-order-row"><span>支付账户余额</span><strong>{{ paymentBalance || 0 }} USDT </strong></div>
 						<label class="np-check"><input type="checkbox" v-model="nodeAgreement" /> <img src="./assets/images/vip-1.svg" alt="agreement" /> 我已阅读并同意《节点合伙人认购协议》</label>
-						<div class="np-submit" :class="{ disabled: !nodeAgreement || nodeSubmitting, loading: nodeSubmitting }" @click="onNodeSubmit">{{ nodeSubmitting ? '提交中...' : '确认认购' }}</div>
-						<div class="np-footer-tip">认购记录与节点身份将通过链上确认</div>
+												<div class="np-submit" :class="{ disabled: !nodeAgreement || nodeSubmitting || (joinedLevels && joinedLevels[selectedNodeLevel]), loading: nodeSubmitting }" @click="onNodeSubmit">{{ nodeSubmitting ? '提交中...' : (joinedLevels && joinedLevels[selectedNodeLevel] ? '已认购' : '确认认购') }}</div>
+												<div class="np-footer-tip">认购记录与节点身份将通过链上确认</div>
+
+												<div class="np-records" v-if="joinedRecords && joinedRecords.length">
+													<div class="np-records-head">
+														<h4>认购记录</h4>
+														<span>{{ joinedRecords.length }} 条</span>
+													</div>
+													<div class="np-record-list">
+														<div class="np-record-item" v-for="(r,idx) in joinedRecords" :key="idx">
+															<div class="np-record-top">
+																<div class="np-record-node">{{ r.name }}</div>
+																<div class="np-record-amount">{{ r.amount }}</div>
+															</div>
+															<div class="np-record-meta">
+																<span class="np-record-time">{{ r.time }}</span>
+																<span class="np-record-chain">{{ (r.chainType || 'onchain').toUpperCase() }}</span>
+															</div>
+															<div class="np-record-hash">Tx: {{ shortHash(r.txHash) }}</div>
+														</div>
+													</div>
+												</div>
 					</div>
 				</div>
 			</template>
