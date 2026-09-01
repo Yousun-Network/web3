@@ -27,6 +27,7 @@ window.onload = async function() {
 				headerIndex: 1,
 				incomeTab: 'overview',
 				communityLevelSelected: 'V3',
+				menuTemporarilyClosed: true,
 				nodeAgreement: true,
 				nodeSubmitting: false,
 				selectedNodeLevel: 'lv2',
@@ -709,6 +710,15 @@ window.onload = async function() {
 			},
 			// 切换header tab 菜单
 			switchTab(index) {
+				if (this.menuTemporarilyClosed && (index === 6 || index === 7)) {
+					this.$message({
+						message: '敬请期待',
+						type: 'info',
+						duration: 1500,
+						showClose: true
+					});
+					return;
+				}
 				let i = layer.load(0, {
 					shade: [0.2, 'gray'],
 					time: 5 * 1000
