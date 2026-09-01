@@ -21,7 +21,7 @@
 		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
 		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
 
-		<script src="./js/ch/index.js?v=0.223124"></script>
+		<script src="./js/ch/index.js?v=0.22321"></script>
 		<script src="./js/ch/chain.js?v=1.1"></script>
 		<script src="./js/ch/utils.js?v=0.112"></script>
 		<script src="./js/ch/post.js?v=0.121"></script>
@@ -42,7 +42,7 @@
 		<link rel="stylesheet" href="./css/vant.css" />
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
-		<link rel="stylesheet" href="./css/tg.css?v=0.3" />
+		<link rel="stylesheet" href="./css/tg.css?v=0.7" />
 		<link rel="stylesheet" href="./css/user.css?v=1.2234567" />
 		
 	</head>
@@ -110,9 +110,6 @@
 							</div>
 							<div v-on:click="switchTab(4)" v-bind:class="[headerIndex == 4 && 'check', 'tab']">
 								{{ langS.home.header.tabs4 }}
-							</div>
-							<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
-								{{ langS.home.header.tabs5}}
 							</div>
 							<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
 								收益中心
@@ -536,7 +533,8 @@
 							<div style="height: 64px"></div>
 
 							<div class="invite_record_box_title">
-								{{langS.tg.box_title}}<br />
+								我的直推<br />
+								<span class="invite-record-tip">此列表仅显示直接邀请用户；社区成员包含直推及其下级团队。</span>
 							</div>
 
 							<div style="height: 16px"></div>
@@ -544,41 +542,24 @@
 							<div class="invite_record_box">
 								<el-table :empty-text="langS.other[6]" :data="tgData.list" style="width: 100%">
 									<!--用户-->
-									<el-table-column show-overflow-tooltip align="left" prop="type"
+									<el-table-column show-overflow-tooltip align="left" prop="type" min-width="102"
 										:label="langS.tg.record_box[0]">
 										<template slot-scope="{ row }">
-											{{ addressF2(row.address) }}
+											<div class="tg-user-address"><span>{{ row.address ? row.address.substring(0, 4) + '...' + row.address.substring(row.address.length - 4) : '-' }}</span><button type="button" @click.stop="(function(value, target) { if (!value) return; var ownerDocument = target.ownerDocument; var input = ownerDocument.createElement('textarea'); input.value = value; ownerDocument.body.appendChild(input); input.select(); ownerDocument.execCommand('copy'); ownerDocument.body.removeChild(input); target.textContent = '已复制'; ownerDocument.defaultView.setTimeout(function() { target.textContent = '复制'; }, 1200); })(row.address, $event.currentTarget)">复制</button></div>
 										</template>
 									</el-table-column>
-									<!--资产-->
-									<!--<el-table-column show-overflow-tooltip align="left" prop="shouyi"-->
-									<!--	:label="langS.tg.record_box[1]">-->
-									<!--	<template slot-scope="{ row }">-->
-									<!--		<img :src="row.coinImg" class="icon-img" alt="" />-->
-									<!--		<img :src="queryInfoByChainType(row.chainType).chainImg"-->
-									<!--			class="icon-img-img" alt="" />-->
-											<!--<span>{{ row.chainType }}</span>	-->
-									<!--		<span>{{ row.coinType }}</span>-->
-									<!--	</template>-->
-									<!--</el-table-column>-->
-                                    <el-table-column show-overflow-tooltip align="left" prop="shouyi" :label="langS.tg.record_box[1]">
-                                      <template slot-scope="{ row }">
-                                        <div style="display: flex; align-items: center;">
-                                          <img :src="row.coinImg" class="icon-img" alt="" />
-                                          <img :src="queryInfoByChainType(row.chainType).chainImg" class="icon-img-img2" alt="" />
-                                          <div style="display: flex; flex-direction: column; margin-left: 10px;">
-                                            <span style="margin-bottom: -6px;">{{ row.chainType }}</span>
-                                            <span>{{ row.coinType }}</span>
-                                          </div>
-                                        </div>
-                                      </template>
-                                    </el-table-column>
+									<el-table-column align="center" label="关系" min-width="48">
+										<template><span class="invite-relation-tag">直推</span></template>
+									</el-table-column>
+										<el-table-column align="center" prop="inviteTime" label="邀请时间" min-width="96">
+											<template slot-scope="{ row }"><span class="invite-time-value">{{ row.inviteTime ? row.inviteTime.replace('T', ' ').substring(0, 10) : '-' }}<br>{{ row.inviteTime ? row.inviteTime.replace('T', ' ').substring(11, 19) : '' }}</span></template>
+										</el-table-column>
 									<!--奖励-->
-									<el-table-column show-overflow-tooltip prop="shouyi" align="center"
+									<el-table-column show-overflow-tooltip prop="shouyi" align="center" min-width="56"
 										:label="langS.tg.record_box[2]">
 										<template slot-scope="{ row }">
 											<!-- <img :src="row.coinImg" class="icon-img" alt="" /> -->
-											<span>{{ row.referralYield * 0.15 }}</span>
+											<span>{{ myToFixed(row.referralYield || 0) }}</span>
 										</template>
 									</el-table-column>
 								</el-table>
@@ -802,6 +783,9 @@
 												</div>
 											</template>
 										</el-table-column>
+										<el-table-column align="center" prop="generation" label="分润代数" width="90">
+											<template slot-scope="scope">第 {{ scope.row.generation || 1 }} 代</template>
+										</el-table-column>
 
 										<el-table-column align="center" prop="shouyi" :label="langS.user.balance[4]">
 											<template slot-scope="scope">
@@ -1012,9 +996,6 @@
 					<div v-on:click="switchTab(4)" v-bind:class="[headerIndex == 4 && 'check', 'tab']">
 						{{ langS.home.header.tabs4 }}
 					</div>
-					<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
-						{{ langS.home.header.tabs5}}
-					</div>
 					<div v-on:click="switchTab(8)" v-bind:class="[headerIndex == 8 && 'check', 'tab']">
 						节点中心
 					</div>
@@ -1033,8 +1014,8 @@
 					<div class="income-hero">
 						<div class="income-hero-left">
 							<div class="income-hero-label">累计收益</div>
-							<div class="income-hero-total">$12,860.50</div>
-							<div class="income-hero-rate">较昨日 <span>+3.28%</span></div>
+							<div class="income-hero-total">{{ incomeFormat(incomeValue('totalIncome')) }}</div>
+							<div class="income-hero-rate">较昨日 <span>{{ toTrend(incomeTrendValue(0), incomeTrendValue(-1)).arrow }}{{ toTrend(incomeTrendValue(0), incomeTrendValue(-1)).text }}</span></div>
 						</div>
 						<div class="income-hero-right">
 							<div class="income-bars">
@@ -1042,9 +1023,9 @@
 							</div>
 						</div>
 						<div class="income-stats">
-							<div><p>今日收益</p><h4>$286.80</h4></div>
-							<div><p>待领取</p><h4>$1,286.00</h4></div>
-							<div><p>已领取</p><h4>$11,574.50</h4></div>
+							<div><p>今日收益</p><h4>{{ incomeFormat(incomeTrendValue(0)) }}</h4></div>
+							<div><p>待领取</p><h4>{{ incomeFormat(incomeValue('pendingIncome')) }}</h4></div>
+							<div><p>已领取</p><h4>{{ incomeFormat(Math.max(0, incomeValue('totalIncome') - incomeValue('pendingIncome'))) }}</h4></div>
 						</div>
 						<div class="income-claim-all" @click="onIncomeClaimAll">全部领取</div>
 					</div>
@@ -1061,7 +1042,7 @@
 							<span>近7日</span>
 						</div>
 						<div class="income-chart">
-							<svg class="income-chart-svg" viewBox="0 0 680 240" preserveAspectRatio="none" aria-label="7-day income trend">
+							<svg v-if="incomeTrendHasData()" class="income-chart-svg" viewBox="0 0 680 220" preserveAspectRatio="none" aria-label="7-day income trend">
 								<defs>
 									<linearGradient id="incomeFill" x1="0" y1="0" x2="0" y2="1">
 										<stop offset="0%" stop-color="#4f84ff" stop-opacity="0.28"></stop>
@@ -1075,21 +1056,20 @@
 								<line x1="0" y1="36" x2="680" y2="36" stroke="rgba(41,98,239,.12)" stroke-width="1"></line>
 								<line x1="0" y1="92" x2="680" y2="92" stroke="rgba(41,98,239,.1)" stroke-width="1"></line>
 								<line x1="0" y1="148" x2="680" y2="148" stroke="rgba(41,98,239,.08)" stroke-width="1"></line>
-								<line x1="0" y1="204" x2="680" y2="204" stroke="rgba(41,98,239,.08)" stroke-width="1"></line>
-								<path d="M40 196 L140 172 L240 150 L340 130 L440 114 L540 92 L640 74 L640 204 L40 204 Z" fill="url(#incomeFill)"></path>
-								<polyline points="40,196 140,172 240,150 340,130 440,114 540,92 640,74" fill="none" stroke="url(#incomeLine)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
+								<line x1="0" y1="180" x2="680" y2="180" stroke="rgba(41,98,239,.08)" stroke-width="1"></line>
+								<path :d="incomeTrendFill()" fill="url(#incomeFill)"></path>
+								<polyline :points="incomeTrendPoints()" fill="none" stroke="url(#incomeLine)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></polyline>
 								<g class="income-point-dot">
-									<circle cx="40" cy="196" r="5"></circle>
-									<circle cx="140" cy="172" r="5"></circle>
-									<circle cx="240" cy="150" r="5"></circle>
-									<circle cx="340" cy="130" r="5"></circle>
-									<circle cx="440" cy="114" r="5"></circle>
-									<circle cx="540" cy="92" r="5"></circle>
-									<circle cx="640" cy="74" r="5"></circle>
+									<circle v-for="(point,index) in incomeTrendPoints().split(' ')" :key="index" :cx="point.split(',')[0]" :cy="point.split(',')[1]" r="5"></circle>
 								</g>
 							</svg>
+							<div v-else class="income-chart-empty">
+								<i class="el-icon-data-line"></i>
+								<strong>暂无收益趋势</strong>
+								<span>参与 DeFi 挖矿或获得邀请分润后，这里将展示近 7 日收益变化</span>
+							</div>
 							<div class="income-chart-values">
-								<span>168.40</span><span>192.60</span><span>214.80</span><span>236.50</span><span>248.70</span><span>270.00</span><span>286.80</span>
+								<span v-for="offset in [-6,-5,-4,-3,-2,-1,0]" :key="offset">{{ incomeTrendDay(offset) }}</span>
 							</div>
 						</div>
 					</div>
@@ -1103,9 +1083,9 @@
 								</i>
 								<p>静态质押</p>
 							</div>
-							<h4>6,850 <small>USDT等值</small></h4>
-							<div class="income-comp-meta"><em>占比 {{ incomePercent(6850) }}</em><b>{{ formatIncomeNum(6850) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
-							<div class="income-comp-progress"><i :style="{ width: incomePercent(6850) }"></i></div>
+							<h4>{{ incomeFormat(incomeValue('stakingIncome')) }}</h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(incomeValue('stakingIncome')) }}</em><b>{{ incomeFormat(incomeValue('stakingIncome')) }} / {{ incomeFormat(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(incomeValue('stakingIncome')) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-2">
 							<div class="income-comp-head">
@@ -1114,9 +1094,9 @@
 								</i>
 								<p>直推收益</p>
 							</div>
-							<h4>2,860 <small>USDT等值</small></h4>
-							<div class="income-comp-meta"><em>占比 {{ incomePercent(2860) }}</em><b>{{ formatIncomeNum(2860) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
-							<div class="income-comp-progress"><i :style="{ width: incomePercent(2860) }"></i></div>
+							<h4>{{ incomeFormat(incomeValue('directIncome')) }}</h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(incomeValue('directIncome')) }}</em><b>{{ incomeFormat(incomeValue('directIncome')) }} / {{ incomeFormat(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(incomeValue('directIncome')) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-3">
 							<div class="income-comp-head">
@@ -1125,9 +1105,9 @@
 								</i>
 								<p>间推收益</p>
 							</div>
-							<h4>1,280 <small>USDT等值</small></h4>
-							<div class="income-comp-meta"><em>占比 {{ incomePercent(1280) }}</em><b>{{ formatIncomeNum(1280) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
-							<div class="income-comp-progress"><i :style="{ width: incomePercent(1280) }"></i></div>
+							<h4>{{ incomeFormat(incomeValue('indirectIncome')) }}</h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(incomeValue('indirectIncome')) }}</em><b>{{ incomeFormat(incomeValue('indirectIncome')) }} / {{ incomeFormat(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(incomeValue('indirectIncome')) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-4">
 							<div class="income-comp-head">
@@ -1136,9 +1116,9 @@
 								</i>
 								<p>社区级差</p>
 							</div>
-							<h4>1,190 <small>USDT等值</small></h4>
-							<div class="income-comp-meta"><em>占比 {{ incomePercent(1190) }}</em><b>{{ formatIncomeNum(1190) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
-							<div class="income-comp-progress"><i :style="{ width: incomePercent(1190) }"></i></div>
+							<h4>{{ incomeFormat(incomeValue('levelDifferenceIncome')) }}</h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(incomeValue('levelDifferenceIncome')) }}</em><b>{{ incomeFormat(incomeValue('levelDifferenceIncome')) }} / {{ incomeFormat(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(incomeValue('levelDifferenceIncome')) }"></i></div>
 						</div>
 						<div class="income-comp-item tone-5">
 							<div class="income-comp-head">
@@ -1147,38 +1127,29 @@
 								</i>
 								<p>平级收益</p>
 							</div>
-							<h4>680 <small>USDT等值</small></h4>
-							<div class="income-comp-meta"><em>占比 {{ incomePercent(680) }}</em><b>{{ formatIncomeNum(680) }} / {{ formatIncomeNum(incomeCompositionTotal) }}</b></div>
-							<div class="income-comp-progress"><i :style="{ width: incomePercent(680) }"></i></div>
+							<h4>{{ incomeFormat(incomeValue('peerIncome')) }}</h4>
+							<div class="income-comp-meta"><em>占比 {{ incomePercent(incomeValue('peerIncome')) }}</em><b>{{ incomeFormat(incomeValue('peerIncome')) }} / {{ incomeFormat(incomeCompositionTotal) }}</b></div>
+							<div class="income-comp-progress"><i :style="{ width: incomePercent(incomeValue('peerIncome')) }"></i></div>
 						</div>
 					</div>
 
-					<div class="income-block-title">资产收益</div>
+					<div class="income-block-title" id="income-assets">资产收益</div>
+					<p class="income-assets-tip">DeFi 挖矿收益与邀请分润均按币种归集，可分别领取。</p>
 					<div class="income-assets income-card">
-						<div class="income-asset-item">
+						<div class="income-asset-item" v-for="row in yield" :key="row.id || (row.chainType + '-' + row.coinContractAddr)">
 							<div class="asset-left">
-								<img src="./assets/images/logo7.png" alt="logo" />
+								<img :src="row.coinImg" alt="coin" />
 								<div>
-									<strong>牛来</strong>
-									<p>累计收益 8,650 牛来</p>
+									<strong>{{ row.coinType || '-' }}</strong>
+									<p>挖矿累计 {{ incomeFormat(row.stakingYield) }} · 邀请累计 {{ incomeFormat(row.referralYield) }}</p>
+									<p>参与状态：{{ incomeAssetStatus(row) }}</p>
 								</div>
 							</div>
 							<div class="asset-right">
-								<div>待领取 860 牛来</div>
-								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset('牛来')">领取</a>
-							</div>
-						</div>
-						<div class="income-asset-item">
-							<div class="asset-left">
-								<img src="./assets/wallet/metamask.png" alt="user" />
-								<div>
-									<strong>币安人生</strong>
-									<p>累计收益 4,210 币安人生</p>
-								</div>
-							</div>
-							<div class="asset-right">
-								<div>待领取 426 币安人生</div>
-								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset('币安人生')">领取</a>
+								<div>质押待领取 {{ incomeFormat(incomeAssetPending(row, 1)) }} {{ row.coinType }}</div>
+								<div>推荐待领取 {{ incomeFormat(incomeAssetPending(row, 2)) }} {{ row.coinType }}</div>
+								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset(row, 1)">领取质押</a>
+								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset(row, 2)">领取推荐</a>
 							</div>
 						</div>
 					</div>
@@ -1186,10 +1157,10 @@
 					<div class="income-withdraw income-card">
 						<div>
 							<p>可提现收益</p>
-							<h3>$1,286.00</h3>
-							<span>统一提现手续费 3%</span>
+							<h3>{{ incomeFormat(incomeValue('pendingIncome')) }}</h3>
+							<span>选择币种后可领取挖矿或邀请收益</span>
 						</div>
-						<button type="button" @click="onIncomeWithdrawApply">申请提现</button>
+						<button type="button" @click="onIncomeWithdrawApply">选择币种提现</button>
 					</div>
 
 					<div class="income-record income-card" @click="onIncomeOpenRecords">
@@ -1202,16 +1173,28 @@
 						<div class="income-card income-detail-card">
 							<div class="income-card-head">
 								<h3>收益明细</h3>
-								<span>最近记录</span>
+								<span>最近收益记录</span>
 							</div>
-							<div class="income-detail-row" @click="onIncomeDetailClick('直推收益 +260 USDT')"><span>直推收益</span><b>+260 USDT</b></div>
-							<div class="income-detail-row" @click="onIncomeDetailClick('间推收益 +120 USDT')"><span>间推收益</span><b>+120 USDT</b></div>
-							<div class="income-detail-row" @click="onIncomeDetailClick('社区级差 +350 USDT')"><span>社区级差</span><b>+350 USDT</b></div>
-							<div class="income-detail-row" @click="onIncomeDetailClick('平级收益 +80 USDT')"><span>平级收益</span><b>+80 USDT</b></div>
+							<div class="income-detail-row" v-for="row in yieldDay.list" :key="'yield-' + row.id"><span>挖矿收益 · {{ row.coinType || '-' }}<small>{{ row.yieldDay }}</small></span><b>+{{ myToFixed(row.num) }}</b></div>
+							<div class="income-detail-row" v-for="row in inviteRewards.list" :key="'invite-' + row.id"><span>{{ row.generation ? '第 ' + row.generation + ' 代分润' : '邀请收益' }} · {{ row.coinType || '-' }}<small>{{ row.yieldDay }}</small></span><b>+{{ myToFixed(row.num) }}</b></div>
+							<div class="income-detail-row" v-for="row in withdrawRecord" :key="'withdraw-' + row.id"><span>提现记录 · {{ row.transferCoinName || row.coinType || '-' }}<small>{{ row.transferTime || row.createTime || '-' }}</small></span><b>-{{ myToFixed(row.transferNum || row.quantity) }}</b></div>
+							<div class="income-detail-row" v-if="!yieldDay.list.length && !inviteRewards.list.length && !withdrawRecord.length"><span>暂无收益记录</span><b>—</b></div>
 						</div>
 					</template>
 				</div>
 			</template>
+
+			<!-- 收益中心币种提现选择 -->
+			<van-popup v-model="showIncomeWithdrawPicker" round position="bottom">
+				<div class="income-picker">
+					<div class="income-picker-head"><strong>选择币种提现</strong><i class="el-icon-close" @click="showIncomeWithdrawPicker = false"></i></div>
+					<p>请选择要领取的收益类型</p>
+					<div class="income-picker-item" v-for="row in incomeWithdrawAssets()" :key="'picker-' + (row.id || row.coinContractAddr)">
+						<div><strong>{{ row.coinType }}</strong><span>挖矿待领 {{ myToFixed(incomeAssetPending(row, 1)) }} · 邀请待领 {{ myToFixed(incomeAssetPending(row, 2)) }}</span></div>
+						<div class="income-picker-actions"><button :disabled="incomeAssetPending(row, 1) <= 0" @click="onIncomePickerClaim(row, 1)">领取挖矿</button><button :disabled="incomeAssetPending(row, 2) <= 0" @click="onIncomePickerClaim(row, 2)">领取邀请</button></div>
+					</div>
+				</div>
+			</van-popup>
 
 			<!-- 社区中心（排版参照图，浅色协调风格） -->
 			<template v-if="headerIndex == 7">
@@ -1221,31 +1204,32 @@
 						<div class="cc-level-main">
 							<div class="cc-level-title"><i class="cc-ico cc-ico-level"></i>当前社区等级</div>
 							<div class="cc-level-row">
-								<strong>V3</strong>
-								<span>社区收益 30%</span>
+								<strong>{{ communityOverview.currentLevel }}</strong>
+								<span>社区收益 {{ communityOverview.communityRate }}%</span>
 							</div>
 						</div>
 						<div class="cc-level-stats">
-							<div><p>有效直推</p><h4>8</h4></div>
-							<div><p>网体业绩</p><h4>$68,500</h4></div>
-							<div><p>社区成员</p><h4>126</h4></div>
+							<div><p>有效直推</p><h4>{{ communityOverview.directCount || 0 }}</h4></div>
+							<div><p>网体业绩</p><h4>${{ formatIncomeNum(communityOverview.networkPerformance || 0) }}</h4></div>
+							<div><p>社区成员</p><h4>{{ communityOverview.memberCount || 0 }}</h4></div>
 						</div>
 					</div>
 
-					<div class="cc-card cc-progress-wrap">
-						<h3><i class="cc-ico cc-ico-progress"></i>距离V4还差</h3>
+					<div class="cc-card cc-progress-wrap" v-if="communityNextLevel()">
+						<h3><i class="cc-ico cc-ico-progress"></i>距离{{ communityNextLevel().levelCode }}还差</h3>
 						<div class="cc-progress-item">
 							<label><i class="cc-dot cc-dot-blue"></i>有效直推</label>
-							<div class="cc-progress-bar"><i style="width:80%"></i></div>
-							<span>8 / 10</span>
+							<div class="cc-progress-bar"><i :style="{ width: communityProgress(communityOverview.directCount, communityNextLevel().directReferralCount) + '%' }"></i></div>
+							<span>{{ communityOverview.directCount || 0 }} / {{ communityNextLevel().directReferralCount }}</span>
 						</div>
 						<div class="cc-progress-item">
 							<label><i class="cc-dot cc-dot-cyan"></i>网体业绩</label>
-							<div class="cc-progress-bar"><i style="width:68.5%"></i></div>
-							<span>$68,500 / $100,000</span>
+							<div class="cc-progress-bar"><i :style="{ width: communityProgress(communityOverview.networkPerformance, communityNextLevel().networkPerformance) + '%' }"></i></div>
+							<span>${{ formatIncomeNum(communityOverview.networkPerformance || 0) }} / ${{ formatIncomeNum(communityNextLevel().networkPerformance) }}</span>
 						</div>
-						<div class="cc-tip">完成条件后自动升级至V4</div>
+						<div class="cc-tip">完成条件后自动升级至{{ communityNextLevel().levelCode }}</div>
 					</div>
+					<div class="cc-card cc-progress-wrap" v-else><div class="cc-tip">已达到当前最高社区等级</div></div>
 
 					<div class="cc-card cc-invite">
 						<div class="cc-invite-left">
@@ -1262,10 +1246,10 @@
 					<div class="cc-card cc-income">
 						<h3><i class="cc-ico cc-ico-income"></i>社区收益</h3>
 						<div class="cc-income-grid">
-							<div class="cc-income-item tone-1"><p>直推收益</p><h4>2,860 <small>USDT等值</small></h4></div>
-							<div class="cc-income-item tone-2"><p>间推收益</p><h4>1,280 <small>USDT等值</small></h4></div>
-							<div class="cc-income-item tone-3"><p>社区级差</p><h4>3,650 <small>USDT等值</small></h4></div>
-							<div class="cc-income-item tone-4"><p>平级收益</p><h4>680 <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-1"><p>直推收益</p><h4>{{ formatIncomeNum(communityOverview.directIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-2"><p>间推收益</p><h4>{{ formatIncomeNum(communityOverview.indirectIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-3"><p>社区级差</p><h4>{{ formatIncomeNum(communityOverview.levelDifferenceIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-4"><p>平级收益</p><h4>{{ formatIncomeNum(communityOverview.peerIncome || 0) }} <small>USDT等值</small></h4></div>
 						</div>
 					</div>
 
@@ -1281,13 +1265,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr :class="{ active: communityLevelSelected === 'V1' }" @click="selectCommunityLevel('V1')"><td>V1</td><td>3</td><td>5,000U</td><td>10%</td></tr>
-								<tr :class="{ active: communityLevelSelected === 'V2' }" @click="selectCommunityLevel('V2')"><td>V2</td><td>5</td><td>20,000U</td><td>20%</td></tr>
-								<tr :class="{ active: communityLevelSelected === 'V3' }" @click="selectCommunityLevel('V3')"><td>V3</td><td>8</td><td>50,000U</td><td>30%</td></tr>
-								<tr :class="{ active: communityLevelSelected === 'V4' }" @click="selectCommunityLevel('V4')"><td>V4</td><td>10</td><td>100,000U</td><td>40%</td></tr>
-								<tr :class="{ active: communityLevelSelected === 'V5' }" @click="selectCommunityLevel('V5')"><td>V5</td><td>15</td><td>200,000U</td><td>50%</td></tr>
-								<tr :class="{ active: communityLevelSelected === 'V6' }" @click="selectCommunityLevel('V6')"><td>V6</td><td>20</td><td>500,000U</td><td>60%</td></tr>
-								<tr :class="{ active: communityLevelSelected === 'V7' }" @click="selectCommunityLevel('V7')"><td>V7</td><td>30</td><td>1,000,000U</td><td>80%</td></tr>
+								<tr v-for="level in communityOverview.levels" :key="level.id" :class="{ active: communityLevelSelected === level.levelCode }" @click="selectCommunityLevel(level.levelCode)"><td>{{ level.levelCode }}</td><td>{{ level.directReferralCount }}</td><td>{{ formatIncomeNum(level.networkPerformance) }}U</td><td>{{ level.communityRate }}%</td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -1295,15 +1273,15 @@
 					<div class="cc-card cc-list">
 						<div class="cc-list-item" @click="onCommunityAction('direct')">
 							<span><i class="cc-ico cc-ico-user"></i>我的直推</span>
-							<div class="cc-list-right"><b class="cc-list-value">{{ communityDirectCount }}</b><em class="cc-list-unit">人</em><span class="cc-list-trend" :class="communityDirectTrend.cls"><i>{{ communityDirectTrend.arrow }}</i>{{ communityDirectTrend.text }}</span><i class="cc-arrow">></i></div>
+							<div class="cc-list-right"><b class="cc-list-value">{{ communityOverview.directCount || 0 }}</b><em class="cc-list-unit">人</em><span class="cc-list-trend" :class="communityDirectTrend.cls"><i>{{ communityDirectTrend.arrow }}</i>{{ communityDirectTrend.text }}</span><i class="cc-arrow">></i></div>
 						</div>
 						<div class="cc-list-item" @click="onCommunityAction('member')">
 							<span><i class="cc-ico cc-ico-team"></i>社区成员</span>
-							<div class="cc-list-right"><b class="cc-list-value">{{ communityMemberCount }}</b><em class="cc-list-unit">人</em><span class="cc-list-trend" :class="communityMemberTrend.cls"><i>{{ communityMemberTrend.arrow }}</i>{{ communityMemberTrend.text }}</span><i class="cc-arrow">></i></div>
+							<div class="cc-list-right"><b class="cc-list-value">{{ communityOverview.memberCount || 0 }}</b><em class="cc-list-unit">人</em><span class="cc-list-trend" :class="communityMemberTrend.cls"><i>{{ communityMemberTrend.arrow }}</i>{{ communityMemberTrend.text }}</span><i class="cc-arrow">></i></div>
 						</div>
 						<div class="cc-list-item" @click="onCommunityAction('income')">
 							<span><i class="cc-ico cc-ico-detail"></i>收益明细</span>
-							<div class="cc-list-right"><b class="cc-list-value">{{ formatIncomeNum(communityIncomeTotal) }}</b><em class="cc-list-unit">USDT</em><span class="cc-list-trend" :class="communityIncomeTrend.cls"><i>{{ communityIncomeTrend.arrow }}</i>{{ communityIncomeTrend.text }}</span><i class="cc-arrow">></i></div>
+							<div class="cc-list-right"><b class="cc-list-value">{{ formatIncomeNum((communityOverview.directIncome || 0) + (communityOverview.indirectIncome || 0) + (communityOverview.levelDifferenceIncome || 0) + (communityOverview.peerIncome || 0) + (communityOverview.promotionIncome || 0)) }}</b><em class="cc-list-unit">USDT</em><span class="cc-list-trend" :class="communityIncomeTrend.cls"><i>{{ communityIncomeTrend.arrow }}</i>{{ communityIncomeTrend.text }}</span><i class="cc-arrow">></i></div>
 						</div>
 					</div>
 				</div>
@@ -1340,7 +1318,7 @@
 						<div class="np-card np-level-item" :class="{ active: selectedNodeLevel === 'lv1' }" @click="selectNodeLevel('lv1')">
 							<div class="np-level-icon"><img src="./assets/images/vip-1.svg" alt="vip1" /></div>
 							<div class="np-level-main">
-								<h3>初级节点</h3>
+								<h3>{{ nodeLevelMap.lv1.name }}</h3>
 								<div class="np-price">{{ nodeLevelMap.lv1.price }}</div>
 								<p>限量 {{ nodeLevelMap.lv1.totalSeats || '—' }} 席</p>
 							</div>
@@ -1348,7 +1326,7 @@
 								<div>已加入 {{ (nodeLevelMap.lv1.manualJoined && nodeLevelMap.lv1.manualJoined>0) ? nodeLevelMap.lv1.manualJoined : (nodeLevelMap.lv1.joinedCount || 0) }} 席</div>
 								<div>剩余 {{ nodeLevelMap.lv1.remainingCount || 0 }} 席</div>
 								<span>手续费分红池 {{ nodeLevelMap.lv1.feeSharePercent || 30 }}%</span>
-								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('初级节点')">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights(nodeLevelMap.lv1.name)">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv1' }"></div>
 						</div>
@@ -1356,7 +1334,7 @@
 						<div class="np-card np-level-item" :class="{ active: selectedNodeLevel === 'lv2' }" @click="selectNodeLevel('lv2')">
 							<div class="np-level-icon"><img src="./assets/images/vip-2.svg" alt="vip2" /></div>
 							<div class="np-level-main">
-								<h3>中级节点</h3>
+								<h3>{{ nodeLevelMap.lv2.name }}</h3>
 								<div class="np-price">{{ nodeLevelMap.lv2.price }}</div>
 								<p>限量 {{ nodeLevelMap.lv2.totalSeats || '—' }} 席</p>
 							</div>
@@ -1364,7 +1342,7 @@
 								<div>已加入 {{ (nodeLevelMap.lv2.manualJoined && nodeLevelMap.lv2.manualJoined>0) ? nodeLevelMap.lv2.manualJoined : (nodeLevelMap.lv2.joinedCount || 0) }} 席</div>
 								<div>剩余 {{ nodeLevelMap.lv2.remainingCount || 0 }} 席</div>
 								<span>手续费分红池 {{ nodeLevelMap.lv2.feeSharePercent || 20 }}%</span>
-								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('中级节点')">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights(nodeLevelMap.lv2.name)">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv2' }"></div>
 						</div>
@@ -1372,7 +1350,7 @@
 						<div class="np-card np-level-item" :class="{ active: selectedNodeLevel === 'lv3' }" @click="selectNodeLevel('lv3')">
 							<div class="np-level-icon"><img src="./assets/images/vip-3.svg" alt="vip3" /></div>
 							<div class="np-level-main">
-								<h3>高级节点</h3>
+								<h3>{{ nodeLevelMap.lv3.name }}</h3>
 								<div class="np-price">{{ nodeLevelMap.lv3.price }}</div>
 								<p>限量 {{ nodeLevelMap.lv3.totalSeats || '—' }} 席</p>
 							</div>
@@ -1380,7 +1358,7 @@
 								<div>已加入 {{ (nodeLevelMap.lv3.manualJoined && nodeLevelMap.lv3.manualJoined>0) ? nodeLevelMap.lv3.manualJoined : (nodeLevelMap.lv3.joinedCount || 0) }} 席</div>
 								<div>剩余 {{ nodeLevelMap.lv3.remainingCount || 0 }} 席</div>
 								<span>手续费分红池 {{ nodeLevelMap.lv3.feeSharePercent || 20 }}%</span>
-								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('高级节点')">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights(nodeLevelMap.lv3.name)">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv3' }"></div>
 						</div>
@@ -1389,7 +1367,7 @@
 							<div class="np-top-tag">最高等级</div>
 							<div class="np-level-icon"><img src="./assets/images/vip-4.svg" alt="vip4" /></div>
 							<div class="np-level-main">
-								<h3>核心节点</h3>
+								<h3>{{ nodeLevelMap.lv4.name }}</h3>
 								<div class="np-price">{{ nodeLevelMap.lv4.price }}</div>
 								<p>限量 {{ nodeLevelMap.lv4.totalSeats || '—' }} 席</p>
 							</div>
@@ -1397,7 +1375,7 @@
 								<div>已加入 {{ (nodeLevelMap.lv4.manualJoined && nodeLevelMap.lv4.manualJoined>0) ? nodeLevelMap.lv4.manualJoined : (nodeLevelMap.lv4.joinedCount || 0) }} 席</div>
 								<div>剩余 {{ nodeLevelMap.lv4.remainingCount || 0 }} 席</div>
 								<span>手续费分红池 {{ nodeLevelMap.lv4.feeSharePercent || 20 }}%</span>
-								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights('核心节点')">查看权益 ></a>
+								<a href="javascript:void(0)" @click.stop.prevent="onViewNodeRights(nodeLevelMap.lv4.name)">查看权益 ></a>
 							</div>
 							<div class="np-radio" :class="{ checked: selectedNodeLevel === 'lv4' }"></div>
 						</div>
