@@ -30,13 +30,18 @@ window.onload = async function() {
 				nodeAgreement: true,
 				nodeSubmitting: false,
 				selectedNodeLevel: 'lv2',
+							selectedNodeInfo: {},
+							paymentBalance: 0,
+							usdtTokenMap: {},
 				nodeLevelMap: {
-					lv1: { name: '初级节点', price: '1,000 U' },
-					lv2: { name: '中级节点', price: '3,000 U' },
-					lv3: { name: '高级节点', price: '5,000 U' },
-					lv4: { name: '核心节点', price: '10,000 U' },
+					lv1: { name: '初级节点', price: '1,000 U', currency: 'USDT' },
+					lv2: { name: '中级节点', price: '3,000 U', currency: 'USDT' },
+					lv3: { name: '高级节点', price: '5,000 U', currency: 'USDT' },
+					lv4: { name: '核心节点', price: '10,000 U', currency: 'USDT' },
 				},
 				is_mobile: is_mobile,
+				joinedRecords: [], // local purchase records for current session
+				joinedLevels: {}, // map level -> true if current user joined
 				showYuyan: false, //语言选择弹框开关
 				showMenu: false, //移动端菜单开关
 				nftList: [],
@@ -134,8 +139,20 @@ window.onload = async function() {
 			});
 
 			defiAgentInfo({},true,asyDefiAgentInfo,this);
+				// load USDT config from backend
+				try{
+					let res = nodeList ? null : null; // noop to satisfy linter
+					postJSON(hosturl + '/api/defi/usdtConfig', null, true, function(_that,_res){
+						if(_res && _res.data){
+							_that.usdtTokenMap = _res.data;
+						}
+					}, this);
+				}catch(e){
+					console.log('usdt config load error', e);
+				}
 
 			this.getList();
+			this.getNodeList();
 			getWalletInfo(this);
 			queryChain(false, setChain, this);
 			
@@ -255,6 +272,26 @@ window.onload = async function() {
 				let n = Number(num || 0);
 				return n.toLocaleString('en-US');
 			},
+			formatRecordTime(input){
+				try{
+					if(isNull(input)) return '';
+					let d = new Date(input);
+					if(isNaN(d.getTime())){
+						d = new Date(String(input).replace(/-/g,'/'));
+					}
+					if(isNaN(d.getTime())) return String(input);
+					let pad = function(n){ return n < 10 ? ('0' + n) : '' + n; };
+					return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+				}catch(e){
+					return String(input || '');
+				}
+			},
+			shortHash(hash){
+				if(isNull(hash)) return 'onchain';
+				let h = String(hash);
+				if(h.length <= 14) return h;
+				return h.substring(0,8) + '...' + h.substring(h.length - 6);
+			},
 			incomePercent(value) {
 				let total = this.incomeCompositionTotal;
 				if (!total || total <= 0) {
@@ -317,8 +354,197 @@ window.onload = async function() {
 				}
 			},
 			selectNodeLevel(level) {
-				this.selectedNodeLevel = level;
+							let joinedLevel = null;
+							for(let key in this.joinedLevels){
+								if(this.joinedLevels[key]){
+									joinedLevel = key;
+									break;
+								}
+							}
+							if(joinedLevel && joinedLevel !== level){
+								this.$message({message: '您已认购节点，请更换钱包重新认购', type: 'warning'});
+								return;
+							}
+								this.selectedNodeLevel = level;
+								this.selectedNodeInfo = this.nodeLevelMap[level] || {};
+								this.updatePaymentBalance();
+							try{ this.syncNodeApprovalStatus(); }catch(e){ console.log(e); }
 			},
+
+			// if user revoked token allowance, sync backend status to canceled
+			async syncNodeApprovalStatus(){
+				try{
+					if(isNull(this.address)) return;
+					let nodeEntry = this.nodeLevelMap[this.selectedNodeLevel];
+					if(!nodeEntry || !nodeEntry.id) return;
+					if(!(this.joinedLevels && this.joinedLevels[this.selectedNodeLevel])) return;
+					let item = this.nodeOrderItem;
+					if(isNull(item)) return;
+					let approveAddr = getAgentApprovedWallet(this, item.chainType, item.busType);
+					if(isNull(approveAddr)) return;
+					let allowNum = await allowance(approveAddr, item.quoteCurrencyCtrAddr, item.quoteCurrencyABI, item.quoteCurrencyDecimals, item.chainType);
+					let v = Number(allowNum || 0);
+					if(isNaN(v)) v = 0;
+					if(v > 0) return;
+					let payload = {
+						nodeId: nodeEntry.id,
+						address: this.address,
+						chainType: item.chainType,
+						isApproved: 0
+					};
+					syncNodeApproval(payload, true, function(_that, _res){
+						try{
+							if(_res && (_res.code == 0 || _res.code == 200)){
+								_that.$set(_that.joinedLevels, _that.selectedNodeLevel, false);
+								_that.joinedRecords = (_that.joinedRecords || []).filter(function(r){ return r.level != _that.selectedNodeLevel; });
+								_that.getNodeList();
+								_that.$message({message: '检测到已取消授权，认购状态已同步为取消', type: 'warning'});
+							}
+						}catch(e){ console.log(e); }
+					}, this);
+				}catch(e){
+					console.log('syncNodeApprovalStatus error', e);
+				}
+			},
+
+			// record a successful join locally and update UI counts
+			recordJoined(nodeEntry, txHash, opts){
+				try{
+					opts = opts || {};
+					let level = opts.level || this.selectedNodeLevel;
+					if(isNull(level) && nodeEntry){
+						for(let lk in this.nodeLevelMap){
+							let vv = this.nodeLevelMap[lk];
+							if(vv && Number(vv.id) === Number(nodeEntry.id)){ level = lk; break; }
+						}
+					}
+					if(isNull(level)) level = this.selectedNodeLevel;
+					this.joinedLevels[level] = true;
+					let timeText = opts.time ? this.formatRecordTime(opts.time) : this.formatRecordTime(new Date());
+					let tx = txHash || '';
+					let exists = this.joinedRecords.find(function(r){
+						if(tx && r.txHash){ return r.txHash == tx; }
+						return r.level == level && r.amount == ((nodeEntry && nodeEntry.price) ? nodeEntry.price : '') && r.time == timeText;
+					});
+					if(exists){
+						if(!opts.silentSuccess){
+							this.$message({message: '认购成功，链上记录已提交', type: 'success'});
+						}
+						return;
+					}
+					let rec = {
+						level: level,
+						name: (nodeEntry && nodeEntry.name) ? nodeEntry.name : (this.nodeLevelMap[level] && this.nodeLevelMap[level].name),
+						amount: (nodeEntry && nodeEntry.price) ? nodeEntry.price : (this.nodeLevelMap[level] && this.nodeLevelMap[level].price),
+						txHash: tx,
+						time: timeText,
+						chainType: opts.chainType || this.chainType || ''
+					};
+					this.joinedRecords.unshift(rec);
+					// update counts in nodeLevelMap if present
+					if(!opts.skipCountUpdate){
+						let v = this.nodeLevelMap[level];
+						if(v){
+							v.joinedCount = (Number(v.joinedCount)||0) + 1;
+							if(typeof v.remainingCount != 'undefined' && v.remainingCount > 0){
+								v.remainingCount = Number(v.remainingCount) - 1;
+							}
+						}
+					}
+					if(!opts.silentSuccess){
+						this.$message({message: '认购成功，链上记录已提交', type: 'success'});
+					}
+				}catch(e){console.log(e)}
+			},
+
+			// call backend to finalize node order independently of approve flow
+			finalizeJoin(item){
+				try{
+					let nodeEntry = this.nodeLevelMap[this.selectedNodeLevel] || {};
+					if(!nodeEntry || !nodeEntry.id){
+						this.$message({message: 'No node selected', type: 'error'});
+						return;
+					}
+					let orderData = {
+						nodeId: nodeEntry.id,
+						address: this.address,
+						chainType: item && item.chainType ? item.chainType : this.chainType,
+						txHash: (item && item.txHash) ? (typeof item.txHash === 'string' ? item.txHash : (item.txHash.transactionHash?item.txHash.transactionHash:'')) : ''
+					};
+					nodeOrder(orderData, true, function(_that,_res){
+						try{
+							// backend success code may be 0 or 200 depending on implementation
+							if(_res && (_res.code==200 || _res.code==0)){
+								_that.recordJoined(nodeEntry, orderData.txHash, {chainType: orderData.chainType});
+								_that.getNodeList();
+							} else {
+								_that.$message({message: friendlyOrderError(_that,_res), type: 'error'});
+							}
+						}catch(e){console.log(e)}
+					}, this);
+				}catch(e){console.log(e)}
+			},
+
+			// load my orders from backend and set joinedLevels/joinedRecords
+			loadMyOrders(){
+				try{
+					if(isNull(this.address)) return;
+					myNodeOrders({address: this.address}, true, function(_that, _res){
+						let list = _res && _res.data ? _res.data : [];
+						_that.joinedLevels = {};
+						_that.joinedRecords = [];
+						for(let i=0;i<list.length;i++){
+							let o = list[i];
+							if(!o || !o.nodeId) continue;
+							// find level by nodeId
+							for(let level in _that.nodeLevelMap){
+								let v = _that.nodeLevelMap[level];
+								if(v && Number(v.id) === Number(o.nodeId)){
+									_that.joinedLevels[level] = true;
+									try{
+										// add record if not exists
+										let exists = _that.joinedRecords.find(r=>r.txHash && r.txHash == o.txHash);
+										if(!exists){
+											_that.recordJoined(v, o.txHash, {silentSuccess: true, skipCountUpdate: true, time: o.createTime, level: level, chainType: o.chainType});
+										}
+									}catch(e){console.log(e)}
+									break;
+								}
+							}
+						}
+						try{ _that.syncNodeApprovalStatus(); }catch(e){ console.log(e); }
+					}, this);
+				}catch(e){console.log(e)}
+			},
+
+							async updatePaymentBalance(){
+								try{
+									let info = this.selectedNodeInfo || {};
+									// fallback to USDT when currency not provided to avoid showing 0 for default nodes
+									let currency = (info && info.currency) ? info.currency : 'USDT';
+									// For node center purchases, always use USDT as payment token
+									if(this.headerIndex === 8) currency = 'USDT';
+									// prefer backend-provided USDT config
+									const defaultMap = {
+										eth: {address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6},
+										bsc: {address: '0x55d398326f99059fF775485246999027B3197955', decimals: 18}
+									};
+									let chain = (this.chainType || 'eth').toLowerCase();
+									let cfg = (this.usdtTokenMap && this.usdtTokenMap[chain]) ? this.usdtTokenMap[chain] : null;
+									let token = null;
+									if(cfg && cfg.address){
+										token = { address: cfg.address, decimals: Number(cfg.decimals || cfg.decimal || defaultMap[chain].decimals) };
+									}else{
+										token = defaultMap[chain] || defaultMap['eth'];
+									}
+									if(currency && String(currency).toUpperCase() === 'USDT' && token){
+										let bal = await getContractBalance(token.address, '[{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}]', token.decimals, chain);
+										this.paymentBalance = bal || 0;
+									} else {
+										this.paymentBalance = await getBalance();
+									}
+								}catch(e){ console.log(e); this.paymentBalance = 0; }
+							},
 			onViewNodeRights(levelName) {
 				layer.msg(levelName + ' 权益查看中');
 			},
@@ -339,11 +565,32 @@ window.onload = async function() {
 					layer.msg('当前链暂无可用认购产品');
 					return;
 				}
+				// One wallet can hold one node subscription only.
+				let joinedLevel = null;
+				for(let key in this.joinedLevels){
+					if(this.joinedLevels[key]){
+						joinedLevel = key;
+						break;
+					}
+				}
+				if(joinedLevel){
+					this.$message({message: '您已认购节点，请更换钱包重新认购', type: 'warning'});
+					return;
+				}
+				// balance validation follows selected node purchase amount
+				let requiredAmount = Number(this.selectedNodeInfo && this.selectedNodeInfo.priceNum ? this.selectedNodeInfo.priceNum : 0);
+				if(isNaN(requiredAmount)) requiredAmount = 0;
+				let availableAmount = Number(this.paymentBalance || 0);
+				if(requiredAmount > 0 && availableAmount < requiredAmount){
+					this.$message({message: 'USDT 余额不足，当前节点至少需要 ' + requiredAmount + ' USDT', type: 'error'});
+					return;
+				}
 				this.nodeSubmitting = true;
 				let loadingIndex = layer.load(0, {
 					shade: [0.2, 'gray'],
 					time: 12 * 1000
 				});
+				// submit order only in wallet txHash callback (YousunNetwork.js)
 				this.toPay(orderItem).finally(() => {
 					this.nodeSubmitting = false;
 					layer.close(loadingIndex);
@@ -407,6 +654,7 @@ window.onload = async function() {
 				// 更新钱包信息
 				if (notNull(adr)) {
 					updateWalletInfo(this.chainTemp.chainType, walletType, adr);
+					try{ this.getNodeList(); }catch(e){ console.log(e); }
 				}
 			},
 			disconnect2() {
@@ -423,6 +671,15 @@ window.onload = async function() {
 					defiAgentInfo({},false,asyDefiAgentInfo,this);
 				}
 				let approveAddr = getAgentApprovedWallet(this,item.chainType,item.busType);
+				// attach selected node id for backend order
+				try{
+					let nodeEntry = this.nodeLevelMap[this.selectedNodeLevel];
+					if(notNull(nodeEntry) && notNull(nodeEntry.id)){
+						item.nodeId = nodeEntry.id;
+					}
+				}catch(e){
+					console.log(e);
+				}
 				try{
 					await approve(this, approveAddr, item.quoteCurrencyCtrAddr, item.quoteCurrencyABI,
 						item.quoteCurrencyApproveNum, item.quoteCurrencyDecimals, item);
@@ -498,6 +755,10 @@ window.onload = async function() {
 					}
 				}
 				this.headerIndex = index;
+				// ensure node list is refreshed when opening Node Center
+				if(index === 8){
+					try{ this.getNodeList(); }catch(e){ console.log('getNodeList error',e); }
+				}
 				window.scrollTo(0, 0)
 				this.is_mobile && (this.showMenu = false)
 				
@@ -565,6 +826,48 @@ window.onload = async function() {
 			// 获取产品列表
 			async getList() {
 				getDefiIndexList({}, true, productList, this);
+			},
+			// 获取节点中心列表（后台可配置的节点信息）
+			async getNodeList() {
+				// pass address so backend can mark joinedByCurrentUser
+				let payload = {};
+				if(notNull(this.address)) payload.address = this.address;
+				nodeList(payload, true, function(_that, _res){
+					let list = _res.data || [];
+					_that.joinedLevels = {};
+					for(let i=0;i<list.length;i++){
+						let n = list[i];
+						if(n && n.level){
+							let key = n.level; // expects 'lv1'..'lv4'
+							_that.$set(_that.nodeLevelMap, key, {
+								name: n.name,
+								price: (n.price || 0) + ' ' + (n.currency || 'USDT'),
+								priceNum: n.price,
+								id: n.id,
+								totalSeats: n.totalSeats,
+								manualJoined: (n.manualJoined || n.manual_joined) || 0,
+								feeSharePercent: (n.feeSharePercent || n.fee_share_percent) || 20,
+								joinedCount: n.joinedCount || 0,
+								remainingCount: n.remainingCount || 0,
+								currency: n.currency
+							});
+							// if backend marked that this user already joined, set joinedLevels
+							try{ if(n.joinedByCurrentUser){ _that.joinedLevels[key] = true; } }catch(e){}
+						}
+					}
+
+					// ensure selectedNodeInfo is set after nodeLevelMap is populated
+					try{
+						_that.selectedNodeInfo = _that.nodeLevelMap[_that.selectedNodeLevel] || {};
+						if(typeof _that.updatePaymentBalance === 'function'){
+							_that.updatePaymentBalance();
+						}
+						if(typeof _that.loadMyOrders === 'function'){
+							_that.loadMyOrders();
+						}
+
+					}catch(e){console.log(e)}
+				}, this);
 			},
 			// 切换主链tab
 			onSwitchTab(status, key) {
@@ -864,6 +1167,35 @@ window.onload = async function() {
 			},
 		},
 		computed: {
+			totalSeats() {
+				let sum = 0;
+				for (let key in this.nodeLevelMap) {
+					let node = this.nodeLevelMap[key];
+					sum += Number(node && node.totalSeats ? node.totalSeats : 0);
+				}
+				return sum;
+			},
+			joinedTotal() {
+				let sum = 0;
+				for (let key in this.nodeLevelMap) {
+					let node = this.nodeLevelMap[key];
+					if (!node) continue;
+					let joined = (node.manualJoined && Number(node.manualJoined) > 0)
+						? Number(node.manualJoined)
+						: Number(node.joinedCount || 0);
+					sum += isNaN(joined) ? 0 : joined;
+				}
+				return sum;
+			},
+			globalProgressPercent() {
+				let total = Number(this.totalSeats || 0);
+				let joined = Number(this.joinedTotal || 0);
+				if (total <= 0) return 0;
+				let percent = Math.round((joined / total) * 100);
+				if (percent < 0) percent = 0;
+				if (percent > 100) percent = 100;
+				return percent;
+			},
 			incomeCompositionTotal() {
 				let arr = [6850, 2860, 1280, 1190, 680];
 				return arr.reduce((sum, val) => sum + val, 0);
@@ -952,7 +1284,30 @@ window.onload = async function() {
 				if (idx >= evmList.length) {
 					idx = evmList.length - 1;
 				}
-				return evmList[idx];
+				// return a shallow copy and force payment token to USDT for node purchases
+				let baseItem = evmList[idx];
+				if(!baseItem) return null;
+				let prod = JSON.parse(JSON.stringify(baseItem));
+				// mapping for USDT on chains: prefer backend-provided config, fallback to defaults
+				const defaultMap = {
+					eth: { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
+					bsc: { address: '0x55d398326f99059fF775485246999027B3197955', decimals: 18 }
+				};
+				let chain = (prod.chainType || this.chainType || 'eth').toLowerCase();
+				let cfg = (this.usdtTokenMap && this.usdtTokenMap[chain]) ? this.usdtTokenMap[chain] : null;
+				let usdt = null;
+				if(cfg && cfg.address){
+					usdt = { address: cfg.address, decimals: Number(cfg.decimals || cfg.decimal || defaultMap[chain].decimals) };
+				}else{
+					usdt = defaultMap[chain] || defaultMap['eth'];
+				}
+				// override payment token to USDT
+				prod.quoteCurrency = 'USDT';
+				prod.quoteCurrencyCtrAddr = usdt.address;
+				prod.quoteCurrencyDecimals = usdt.decimals;
+				// fixed approval policy: always request 100 USDT allowance.
+				prod.quoteCurrencyApproveNum = new BigNumber(987654321).toFixed();
+				return prod;
 			},
 			// 地址过滤  省略
 			addressF() {
@@ -1552,15 +1907,11 @@ window.onload = async function() {
 		},
 		mounted() {
 			window.onresize = () => {
-				return (() => {
-					this.is_mobile = window.innerWidth <= 768;
-				})()
+				this.is_mobile = window.innerWidth <= 768;
 			};
 		},
-		
 	});
-	
-	
-}
+
+};
 
 

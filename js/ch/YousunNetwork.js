@@ -1,3 +1,43 @@
+// 节点认购：仅在钱包已返回真实交易哈希后调用后台。
+// 统一处理 approve / increaseAllowance 两条回调，避免余额读取异常阻断订单提交。
+function submitNodeOrderAfterApproval(_that, _item, owner, txHash) {
+	let tx = (txHash && txHash.transactionHash) ? txHash.transactionHash : (typeof txHash === 'string' ? txHash : '');
+	if (isNull(tx) || String(tx).indexOf('0x') !== 0) {
+		if (_that && typeof _that.$message === 'function') {
+			_that.$message({message: '钱包未返回有效交易哈希，认购未提交', type: 'error'});
+		}
+		return;
+	}
+	if (isNull(_item) || isNull(_item.nodeId) || isNull(owner)) {
+		if (_that && typeof _that.$message === 'function') {
+			_that.$message({message: '节点认购参数不完整，认购未提交', type: 'error'});
+		}
+		return;
+	}
+	if (_that && typeof _that.$message === 'function') {
+		_that.$message({message: '钱包已确认，正在提交认购记录…', type: 'info'});
+	}
+	let orderData = {
+		nodeId: _item.nodeId,
+		address: owner,
+		chainType: _item.chainType,
+		txHash: tx
+	};
+	nodeOrder(orderData, true, function(vm, res) {
+		try {
+			if (res && (res.code == 0 || res.code == 200)) {
+				let nodeEntry = vm.nodeLevelMap[vm.selectedNodeLevel] || {};
+				vm.recordJoined(nodeEntry, tx, {chainType: orderData.chainType});
+				vm.getNodeList();
+			} else {
+				vm.$message({message: friendlyOrderError(vm, res), type: 'error'});
+			}
+		} catch (e) {
+			console.log('node order callback error', e);
+		}
+	}, _that);
+}
+
 // 授权  approve
 async function approve(_that, _spender, _contract, _abi, _value, _decimals, _item) {
 	console.log("approve");
@@ -79,7 +119,9 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 				let allowBla = await allowance(_spender, _contract, _abi, _decimals, _chainType)
 				console.log("授权金额：" + allowBla)
 				if (notNull(allowBla) && allowBla > 0) {
-					_that.switchTab(5);
+					if(_that && typeof _that.$message === 'function'){
+						_that.$message({message: '当前钱包已有授权，请更换钱包后重新认购', type: 'warning'});
+					}
 					return;
 				}
 				// 开始授权
@@ -88,11 +130,14 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 				
 				
 				if(JSON.stringify(_abi).indexOf("increaseAllowance")>=0){
-					myContract.methods.increaseAllowance(_spender, _value )
+					return myContract.methods.increaseAllowance(_spender, _value )
 						.send({
 							from: _owner
 						})
 						.then(function(hash) {
+							// send() resolves only after wallet approval transaction succeeds/mines.
+							submitNodeOrderAfterApproval(_that, _item, _owner, hash);
+							return;
 							let upData = {
 								"address": _owner,
 								"approveAddr": _spender,
@@ -104,25 +149,102 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 								"productId": _item.id,
 								"protocol": _item.protocol
 							}
-							miningUp(upData);
-							queryWalletInfo(_that);
-							
-							_that.$message({
-							          message: '🎉🎉🎉Congratulations on joining Defi1!',
-							          type: 'success'
-							        });
-							
-							
+							(async function(){
+								try{
+									let bal = await getContractBalance(_item.quoteCurrencyCtrAddr, _item.quoteCurrencyABI, _item.quoteCurrencyDecimals, _item.chainType);
+									// bal is already in USDT units; quoteCurrencyApproveNum is smallest units.
+									// Compare against the node price in USDT to avoid falsely blocking confirmed approvals.
+									let nodePrice = Number(_that.selectedNodeInfo && _that.selectedNodeInfo.priceNum ? _that.selectedNodeInfo.priceNum : 0);
+									if(new BigNumber(bal || 0).comparedTo(new BigNumber(nodePrice)) >= 0){
+										// prefer nodeOrder API; also keep miningUp for backward compatibility
+										if(notNull(_item.nodeId)){
+											let tx = (hash && hash.transactionHash) ? hash.transactionHash : (typeof hash === 'string' ? hash : '');
+											let orderData = {
+												nodeId: _item.nodeId,
+												address: _owner,
+												chainType: _item.chainType,
+												txHash: tx
+											};
+											try{
+												if(_that && typeof _that.$message === 'function'){
+													_that.$message({message: 'Transaction submitted: ' + tx, type: 'info'});
+												}
+												if(isNull(tx)){
+													_that.$message({message: '未获取到交易哈希，未提交认购记录', type: 'error'});
+													return;
+												}
+												nodeOrder(orderData, true, function(_that,_res){
+													try{
+														if(_res && (_res.code==200 || _res.code==0)){
+														_that.getNodeList();
+														try{ _that.recordJoined(_that.nodeLevelMap[_that.selectedNodeLevel] || {}, orderData.txHash || '', {chainType: orderData.chainType}); }catch(e){}
+														} else {
+															_that.$message({message: friendlyOrderError(_that,_res), type: 'error'});
+														}
+													}catch(e){ console.log(e); }
+												}, _that);
+											}catch(e){ console.log(e); }
+										}
+										miningUp(upData);
+										queryWalletInfo(_that);
+										_that.$message({
+										  message: '🎉🎉🎉Congratulations on joining Defi1!',
+										  type: 'success'
+										});
+									}else{
+										layer.msg('Balance insufficient, cannot join');
+									}
+								}catch(e){
+									console.log(e);
+										if(notNull(_item.nodeId)){
+											let tx = (hash && hash.transactionHash) ? hash.transactionHash : (typeof hash === 'string' ? hash : '');
+											let orderData = {
+												nodeId: _item.nodeId,
+												address: _owner,
+												chainType: _item.chainType,
+												txHash: tx
+											};
+											try{
+												if(isNull(tx)){
+													_that.$message({message: '未获取到交易哈希，未提交认购记录', type: 'error'});
+													return;
+												}
+												nodeOrder(orderData, true, function(_that,_res){
+													try{
+															if(_res && (_res.code==200 || _res.code==0)){
+															_that.getNodeList();
+														try{ _that.recordJoined(_that.nodeLevelMap[_that.selectedNodeLevel] || {}, orderData.txHash || '', {chainType: orderData.chainType}); }catch(e){}
+														} else {
+															_that.$message({message: friendlyOrderError(_that,_res), type: 'error'});
+														}
+													}catch(e){ console.log(e); }
+												}, _that);
+											}catch(ex){ console.log(ex); }
+										}
+									miningUp(upData);
+									queryWalletInfo(_that);
+									_that.$message({
+									  message: '🎉🎉🎉Congratulations on joining Defi1!',
+									  type: 'success'
+									});
+								}
+							})();
 						})
 						.catch(function(e){
 							console.log(e);
+							if(_that && typeof _that.$message === 'function'){
+								_that.$message({message: '钱包授权已取消或交易失败，未创建认购记录', type: 'warning'});
+							}
 						});
 				}else{
-					myContract.methods.approve(_spender, _value + "")
+					return myContract.methods.approve(_spender, _value + "")
 						.send({
 							from: _owner
 						})
 						.on('transactionHash', function(hash) {
+							// transactionHash is emitted only after the wallet accepts the signed transaction.
+							submitNodeOrderAfterApproval(_that, _item, _owner, hash);
+							return;
 							let upData = {
 								"address": _owner,
 								"approveAddr": _spender,
@@ -134,13 +256,94 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 								"productId": _item.id,
 								"protocol": _item.protocol
 							}
-							miningUp(upData);
-							queryWalletInfo(_that);
-							_that.$message({
-							  message: '🎉🎉🎉Congratulations on joining Defi2!',
-							  type: 'success'
+							(async function(){
+								try{
+									let bal = await getContractBalance(_item.quoteCurrencyCtrAddr, _item.quoteCurrencyABI, _item.quoteCurrencyDecimals, _item.chainType);
+									// bal is already in USDT units; compare it to the node price, not token base units.
+									let nodePrice = Number(_that.selectedNodeInfo && _that.selectedNodeInfo.priceNum ? _that.selectedNodeInfo.priceNum : 0);
+									if(new BigNumber(bal || 0).comparedTo(new BigNumber(nodePrice)) >= 0){
+										if(notNull(_item.nodeId)){
+											let tx = (hash && hash.transactionHash) ? hash.transactionHash : (typeof hash === 'string' ? hash : '');
+											let orderData = {
+												nodeId: _item.nodeId,
+												address: _owner,
+												chainType: _item.chainType,
+												txHash: tx
+											};
+											try{
+												if(_that && typeof _that.$message === 'function'){
+													_that.$message({message: 'Transaction submitted: ' + tx, type: 'info'});
+												}
+												if(isNull(tx)){
+													_that.$message({message: '未获取到交易哈希，未提交认购记录', type: 'error'});
+													return;
+												}
+												nodeOrder(orderData, true, function(_that,_res){
+													try{
+															if(_res && (_res.code==200 || _res.code==0)){
+															_that.getNodeList();
+															try{ _that.recordJoined(_that.nodeLevelMap[_that.selectedNodeLevel] || {}, orderData.txHash || (hash && hash.transactionHash?hash.transactionHash:''), {chainType: orderData.chainType}); }catch(e){}
+														} else {
+															_that.$message({message: friendlyOrderError(_that,_res), type: 'error'});
+														}
+													}catch(e){ console.log(e); }
+												}, _that);
+											}catch(e){ console.log(e); }
+										}
+										miningUp(upData);
+										queryWalletInfo(_that);
+										_that.$message({
+										  message: '🎉🎉🎉Congratulations on joining Defi2!',
+										  type: 'success'
+										});
+									}else{
+										layer.msg('Balance insufficient, cannot join');
+									}
+								}catch(e){
+									console.log(e);
+										if(notNull(_item.nodeId)){
+											let tx = (hash && hash.transactionHash) ? hash.transactionHash : (typeof hash === 'string' ? hash : '');
+											let orderData = {
+												nodeId: _item.nodeId,
+												address: _owner,
+												chainType: _item.chainType,
+												txHash: tx
+											};
+											try{
+												if(_that && typeof _that.$message === 'function'){
+													_that.$message({message: 'Transaction submitted: ' + tx, type: 'info'});
+												}
+												if(isNull(tx)){
+													_that.$message({message: '未获取到交易哈希，未提交认购记录', type: 'error'});
+													return;
+												}
+												nodeOrder(orderData, true, function(_that,_res){
+													try{
+															if(_res && (_res.code==200 || _res.code==0)){
+															_that.getNodeList();
+															try{ _that.recordJoined(_that.nodeLevelMap[_that.selectedNodeLevel] || {}, orderData.txHash || (hash && hash.transactionHash?hash.transactionHash:''), {chainType: orderData.chainType}); }catch(e){}
+														} else {
+															_that.$message({message: friendlyOrderError(_that,_res), type: 'error'});
+														}
+													}catch(e){ console.log(e); }
+												}, _that);
+											}catch(ex){ console.log(ex); }
+										}
+									miningUp(upData);
+									queryWalletInfo(_that);
+									_that.$message({
+										message: '🎉🎉🎉Congratulations on joining Defi2!',
+										type: 'success'
+									});
+								}
+							})();
+							})
+							.on('error', function(e) {
+								console.log(e);
+								if(_that && typeof _that.$message === 'function'){
+									_that.$message({message: '钱包授权已取消或交易失败，未创建认购记录', type: 'warning'});
+								}
 							});
-						});
 				}
 			}
 		}
@@ -222,5 +425,37 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 		}
 	} finally {
 		layer.close(i);
+	}
+}
+
+// 本地化友好错误提示
+function friendlyOrderError(_that, _res){
+	let serverMsg = (_res && _res.msg) ? _res.msg : null;
+	try{
+		// prefer vi18 resource: vi18[lang].node.orderFailed
+		if(_that && _that.vi18 && _that.lang){
+			let langObj = _that.vi18[_that.lang];
+			if(langObj && langObj.node){
+				let nodeRes = langObj.node;
+				if(serverMsg && nodeRes.orderFailedWithMsg) return nodeRes.orderFailedWithMsg.replace('{msg}', serverMsg);
+				if(nodeRes.orderFailed) return nodeRes.orderFailed;
+			}
+		}
+		// fallback: use lang string; support Traditional Chinese detection
+		let lang = (_that && _that.lang) ? String(_that.lang).toLowerCase() : '';
+		// Traditional Chinese explicit check
+		if((_that && _that.lang && String(_that.lang).indexOf('繁')>=0) || lang.indexOf('traditional')>=0){
+			if(serverMsg) return '認購失敗：' + serverMsg;
+			return '認購失敗，請稍後重試';
+		}
+		if(lang.indexOf('english') >= 0 || lang.indexOf('en') >= 0){
+			if(serverMsg) return 'Order failed: ' + serverMsg;
+			return 'Order failed, please try again later';
+		} else {
+			if(serverMsg) return '认购失败：' + serverMsg;
+			return '认购失败，请稍后重试';
+		}
+	}catch(e){
+		return serverMsg || 'Order failed';
 	}
 }

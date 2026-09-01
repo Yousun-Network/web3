@@ -85,8 +85,13 @@ var jsonData = {
       },
       foot: {
         title: 'Trusted by',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
+    },
+    node: {
+      orderRecorded: 'Order recorded',
+      orderFailed: 'Order failed, please try again later',
+      orderFailedWithMsg: 'Order failed: {msg}'
     },
     nft: {
       currencyAll: 'All Chains',
@@ -250,9 +255,9 @@ var jsonData = {
         item2_2: 'الآلاف',
         item2_3: 'عدد بروتوكولات DeFi المدعومة',
         item2_4: 'أكثر من 1 مليار دولار',
-        item2_5: 'حجم التداول اعتبارًا من ديسمبر 2025',
+        item2_5: 'حجم التداول اعتبارًا من ديسمبر 2024',
         item2_6: '200,000+',
-        item2_7: 'المستخدمون النشطون شهريًا اعتبارًا من ديسمبر 2025',
+        item2_7: 'المستخدمون النشطون شهريًا اعتبارًا من ديسمبر 2024',
       },
       pageThree: {
         title: 'فريقنا',
@@ -307,7 +312,7 @@ var jsonData = {
       },
       foot: {
         title: 'شخص جدير بالثقة',
-        end: 'حقوق الطبع والنشر © 2025 web3 المحدودة. كل الحقوق محفوظة.'
+        end: 'حقوق الطبع والنشر © 2024 Web3 & Defi المحدودة. كل الحقوق محفوظة.'
       }
     },
     nft: {
@@ -2314,7 +2319,7 @@ var jsonData = {
       },
       foot: {
         title: 'Được tin cậy bởi',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {
@@ -2537,7 +2542,7 @@ var jsonData = {
       },
       foot: {
         title: 'Güvenenler',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {
@@ -2760,7 +2765,7 @@ var jsonData = {
       },
       foot: {
         title: 'Довіряє',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {
@@ -2983,7 +2988,7 @@ var jsonData = {
       },
       foot: {
         title: 'द्वारा विश्वसनीय',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {
@@ -3206,7 +3211,7 @@ var jsonData = {
       },
       foot: {
         title: '信頼できる',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {
@@ -3429,7 +3434,7 @@ var jsonData = {
       },
       foot: {
         title: '신뢰할 수 있는 사람',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {
@@ -3584,13 +3589,13 @@ var jsonData = {
       pageOne: {
         title: '從一處加入 MoonDefi',
         content1:
-          'web3 是一體化構建和管理整個 加密世界的最簡單方法。',
+          'Web3 & Defi 是一體化構建和管理整個 加密世界的最簡單方法。',
         content2: '立即探索去中心化金融的世界。',
         btn: 'MoonDefi'
       },
       pageTwo: {
         item1_1: '隱私和安全第一',
-        item1_2: '使用 web3，您始終可以掌控一切。我們沒有用戶帳戶，而是直接使用 MetaMask、Coinbase 等 Web3 錢包。這意味著我們不擁有您的私鑰，也無法訪問您的資金。我們不會交叉關聯錢包數據，也絕不會與第三方共享您的信息。',
+        item1_2: '使用 Web3 & Defi，您始終可以掌控一切。我們沒有用戶帳戶，而是直接使用 MetaMask、Coinbase 等 Web3 錢包。這意味著我們不擁有您的私鑰，也無法訪問您的資金。我們不會交叉關聯錢包數據，也絕不會與第三方共享您的信息。',
 
         item2_1: '全球、免費、對任何人開放',
         item2_2: '數千',
@@ -3653,7 +3658,7 @@ var jsonData = {
       },
       foot: {
         title: '合作夥伴',
-        end: 'Copyright © 2025 web3 Limited. All rights reserved.'
+        end: 'Copyright © 2024 Web3 & Defi Limited. All rights reserved.'
       }
     },
     nft: {

@@ -33,6 +33,63 @@ function miningUp(_data,_async){
 	let _url = hosturl + "/api/defi/miningUp";
 	return post(_url,_data,_async);
 }  
+// 获取节点列表
+function nodeList(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/node/list";
+	return post(_url,_data,_async,fnc,_that);
+}
+// 获取用户在节点的认购记录
+function myNodeOrders(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/node/myOrders";
+	return post(_url,_data,_async,fnc,_that);
+}
+// 节点认购下单
+function nodeOrder(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/node/order";
+	return postJSON(_url,_data,_async,fnc,_that);
+}
+
+// 同步节点授权状态（isApproved: 1/0）
+function syncNodeApproval(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/node/syncApproval";
+	return postJSON(_url,_data,_async,fnc,_that);
+}
+
+// POST JSON helper
+function postJSON(_url,_data,_async,_fnc,_that){
+	let r_data;
+	if(isNull(_async) && _async!= false){
+		_async = true
+	}
+	if(notNull(_data) 
+		&& isNull(_data.inviterCode)
+		&& notNull(getInviterCode())){
+		_data.inviterCode = getInviterCode();
+	}
+	if(notNull(_data)
+		&& isNull(_data.code)
+		&& notNull(getAgentCode())){
+		_data.code = getAgentCode();
+	}
+	$.ajax({
+		url: _url,
+		data: JSON.stringify(_data),
+		contentType: 'application/json',
+		type:"POST",
+		async: _async,
+		success:function (data) {
+			r_data = data;
+			if(typeof _fnc == 'function'){
+				_fnc(_that,data);
+			}
+		},
+		dataType : "json",
+		error: function(err){
+			console.log(err);
+		}
+	});
+	return r_data;
+}
 // defi提币申请
 function withdrawApply(_data,_async){
 	let _url = hosturl + "/api/defi/withdrawApply";
@@ -250,5 +307,45 @@ function asyLogin(_that,_res){
 	if(notNull(_res.data)){
 		_that.defiTips = _res.data.defiTips;
 		_that.virtualVoMap = _res.data.virtualVoMap;
+	}
+}
+
+// 获取节点列表
+function getNodeList(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/node/list";
+	return post(_url,_data,_async,fnc,_that);
+}
+
+// 提交节点订单
+function nodeOrder(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/node/order";
+	return postJSON(_url,_data,_async,fnc,_that);
+}
+
+function asycnNodeList(_that,_res){
+	try{
+		let list = _res.data || [];
+		_that.nodeList = list;
+		// map to nodeLevelMap by level
+		for(let i=0;i<list.length;i++){
+			let n = list[i];
+			if(n && n.level){
+				let priceStr = (n.price===null?0:n.price) + " " + (n.currency||'USDT');
+				_that.$set(_that.nodeLevelMap, n.level, {
+					id: n.id,
+					name: n.name,
+					price: priceStr,
+					priceNum: n.price,
+					totalSeats: n.totalSeats,
+					joinedCount: n.joinedCount || 0,
+					remainingCount: n.remainingCount || 0,
+					currency: n.currency
+				});
+					// set selectedNodeInfo if needed
+					try{ _that.selectedNodeInfo = _that.nodeLevelMap[_that.selectedNodeLevel] || {}; }catch(e){}
+			}
+		}
+	}catch(e){
+		console.log(e);
 	}
 }
