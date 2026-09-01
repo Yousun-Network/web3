@@ -1015,14 +1015,14 @@
 					<div v-on:click="switchTab(5)" v-bind:class="[headerIndex == 5 && 'check', 'tab']">
 						{{ langS.home.header.tabs5}}
 					</div>
+					<div v-on:click="switchTab(8)" v-bind:class="[headerIndex == 8 && 'check', 'tab']">
+						节点中心
+					</div>
 					<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
 						收益中心
 					</div>
 					<div v-on:click="switchTab(7)" v-bind:class="[headerIndex == 7 && 'check', 'tab']">
 						社区中心
-					</div>
-					<div v-on:click="switchTab(8)" v-bind:class="[headerIndex == 8 && 'check', 'tab']">
-						节点中心
 					</div>
 				</div>
 			</el-drawer>
@@ -1589,7 +1589,7 @@
 				</div>
 			</van-popup>
 
-			<div @click="openServerUrl" class="el-image" style="width: 64px;position: fixed;bottom: 24px;right: 5px;z-index: 999999;">
+			<div @click="openServerUrl" class="el-image" style="display: none !important; width: 64px; position: fixed; bottom: 24px; right: 5px; z-index: 999999;">
 				<img src="./assets/images/chat.png" class="el-image__inner">
 			</div>
             
