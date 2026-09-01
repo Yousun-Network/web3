@@ -26,10 +26,16 @@ window.onload = async function() {
 				balance: 0, //钱包余额
 				headerIndex: 1,
 				incomeTab: 'overview',
-				communityLevelSelected: 'V3',
-				menuTemporarilyClosed: true,
+				incomeOverview: { totalIncome: 0, pendingIncome: 0, stakingIncome: 0, referralIncome: 0, pendingStakingIncome: 0, pendingReferralIncome: 0, directIncome: 0, indirectIncome: 0, promotionIncome: 0, levelDifferenceIncome: 0, peerIncome: 0, trend: [] },
+				showIncomeWithdrawPicker: false,
+				incomeClaimQueue: [],
+				incomeBatchClaiming: false,
+				communityLevelSelected: 'V1',
+				communityOverview: { levels: [], directCount: 0, memberCount: 0, networkPerformance: 0, currentLevel: 'V1', communityRate: 0, directIncome: 0, indirectIncome: 0, levelDifferenceIncome: 0, peerIncome: 0, promotionIncome: 0 },
+				menuTemporarilyClosed: false,
 				nodeAgreement: true,
 				nodeSubmitting: false,
+				nodeApprovalSyncing: false,
 				selectedNodeLevel: 'lv2',
 							selectedNodeInfo: {},
 							paymentBalance: 0,
@@ -56,6 +62,7 @@ window.onload = async function() {
 					inviterWsurl: ""
 				}, //推广数据
 				yield: [],
+				miningParticipationLoaded: false,
 				yieldDay: {
 					page: 1,
 					count: 1,
@@ -305,19 +312,124 @@ window.onload = async function() {
 			},
 			setIncomeTab(tab) {
 				this.incomeTab = tab;
+				if (tab === 'detail') this.loadIncomeRecords();
+			},
+			loadIncomeOverview() {
+				if (isNull(this.address) || isNull(this.chainType)) return;
+				incomeOverview({ address: this.address, chainType: this.chainType }, true, function(vm, res) {
+					if (res && res.data) vm.incomeOverview = res.data;
+				}, this);
+			},
+			loadIncomeRecords() {
+				if (isNull(this.address) || isNull(this.chainType)) return;
+				this.getYieldDayList();
+				this.getInviteRewardsList();
+			},
+			incomeValue(key) {
+				return Number((this.incomeOverview || {})[key] || 0);
+			},
+			incomeFormat(value) {
+				let amount = Number(value || 0);
+				return amount === 0 ? '0.00' : this.myToFixed(amount);
+			},
+			incomeTrendValue(offset) {
+				let date = new Date();
+				date.setHours(0, 0, 0, 0);
+				date.setDate(date.getDate() + offset);
+				let key = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+				let rows = (this.incomeOverview && this.incomeOverview.trend) || [];
+				let row = rows.find(function(item) { return item && item.incomeDay === key; });
+				return Number(row && row.amount || 0);
+			},
+			incomeTrendDay(offset) {
+				let date = new Date();
+				date.setHours(0, 0, 0, 0);
+				date.setDate(date.getDate() + offset);
+				return ('0' + (date.getMonth() + 1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2);
+			},
+			incomeTrendHasData() {
+				for (let i = -6; i <= 0; i++) {
+					if (this.incomeTrendValue(i) > 0) return true;
+				}
+				return false;
+			},
+			incomeTrendPoints() {
+				let values = [];
+				for (let i = -6; i <= 0; i++) values.push(this.incomeTrendValue(i));
+				let max = Math.max.apply(null, values.concat([1]));
+				return values.map(function(value, index) { return (40 + index * 100) + ',' + (180 - value * 120 / max); }).join(' ');
+			},
+			incomeTrendFill() {
+				return 'M' + this.incomeTrendPoints().replace(/ /g, ' L') + ' L640 180 L40 180 Z';
 			},
 			onIncomeClaimAll() {
-				layer.msg('全部领取申请已提交');
+				let rows = Array.isArray(this.yield) ? this.yield : [];
+				let queue = [];
+				rows.forEach(function(row) {
+					if (Number(row.surplusStakingYield || 0) + Number(row.freezeYield || 0) > 0) queue.push({ item: row, type: 1 });
+					if (Number(row.surplusReferralYield || 0) > 0) queue.push({ item: row, type: 2 });
+				});
+				if (!queue.length) {
+					layer.msg('暂无可领取收益');
+					return;
+				}
+				let vm = this;
+				this.$confirm('将按币种和收益类型提交 ' + queue.length + ' 笔领取申请，是否继续？', '全部领取', {
+					confirmButtonText: '确认领取', cancelButtonText: '取消', type: 'warning'
+				}).then(function() {
+					vm.incomeClaimQueue = queue;
+					vm.incomeBatchClaiming = true;
+					vm.runIncomeClaimQueue();
+				}).catch(function() {});
 			},
-			onIncomeClaimAsset(assetName) {
-				layer.msg(assetName + ' 领取申请已提交');
+			runIncomeClaimQueue() {
+				if (!this.incomeBatchClaiming) return;
+				let next = this.incomeClaimQueue.shift();
+				if (!next) {
+					this.incomeBatchClaiming = false;
+					this.getUserData();
+					this.getWithdrawRecord();
+					this.loadIncomeOverview();
+					this.loadIncomeRecords();
+					this.$message({ message: '全部领取申请已提交', type: 'success' });
+					return;
+				}
+				this.checkItem = next.item;
+				this.withdrawType = next.type;
+				this.value = this.incomeAssetPending(next.item, next.type);
+				this.onWithdraw(this.value, next.item);
+			},
+			onIncomeClaimAsset(row, type) {
+				if (!row) return;
+				this.onClickWithdraw(row, type);
 			},
 			onIncomeWithdrawApply() {
-				layer.msg('提现申请入口已触发');
+				if (!this.incomeWithdrawAssets().length) {
+					layer.msg('暂无可提现收益');
+					return;
+				}
+				this.showIncomeWithdrawPicker = true;
+			},
+			incomeWithdrawAssets() {
+				return (Array.isArray(this.yield) ? this.yield : []).filter(function(row) {
+					return Number(row.surplusStakingYield || 0) + Number(row.freezeYield || 0) + Number(row.surplusReferralYield || 0) > 0;
+				});
+			},
+			onIncomePickerClaim(row, type) {
+				this.showIncomeWithdrawPicker = false;
+				this.onIncomeClaimAsset(row, type);
+			},
+			incomeAssetPending(row, type) {
+				if (!row) return 0;
+				if (type === 1) return Number(row.surplusStakingYield || 0) + Number(row.freezeYield || 0);
+				return Number(row.surplusReferralYield || 0);
+			},
+			incomeAssetStatus(row) {
+				if (!row) return '—';
+				return row.unLockTime ? this.activitydeadline(row.unLockTime) : '运行中';
 			},
 			onIncomeOpenRecords() {
 				this.setIncomeTab('detail');
-				layer.msg('已切换到收益明细');
 			},
 			onIncomeDetailClick(text) {
 				layer.msg(text);
@@ -336,6 +448,18 @@ window.onload = async function() {
 			selectCommunityLevel(level) {
 				this.communityLevelSelected = level;
 				layer.msg('已切换到 ' + level + ' 等级权益');
+			},
+			communityNextLevel() {
+				let levels = this.communityOverview.levels || [];
+				let currentLevel = this.communityOverview.currentLevel || 'V1';
+				let currentIndex = levels.findIndex(function(level) {
+					return level.levelCode === currentLevel;
+				});
+				return currentIndex >= 0 && currentIndex < levels.length - 1 ? levels[currentIndex + 1] : null;
+			},
+			communityProgress(current, target) {
+				if (!target) return 100;
+				return Math.min(100, Math.max(0, Number(current || 0) * 100 / Number(target)));
 			},
 			onCommunityAction(actionName) {
 				if (isNull(this.address)) {
@@ -375,12 +499,19 @@ window.onload = async function() {
 			// if user revoked token allowance, sync backend status to canceled
 			async syncNodeApprovalStatus(){
 				try{
-					if(isNull(this.address)) return;
+					if(isNull(this.address) || this.nodeApprovalSyncing) return;
 					let nodeEntry = this.nodeLevelMap[this.selectedNodeLevel];
 					if(!nodeEntry || !nodeEntry.id) return;
 					if(!(this.joinedLevels && this.joinedLevels[this.selectedNodeLevel])) return;
 					let item = this.nodeOrderItem;
 					if(isNull(item)) return;
+					// 订单在哪条链上认购，就只在同一条链检查其授权状态。
+					// 用户从 BSC 切换到 ERC 时，不能用 ERC 的授权结果取消 BSC 订单。
+					let joinedRecord = (this.joinedRecords || []).find(function(record){
+						return record && record.level === this.selectedNodeLevel;
+					}, this);
+					if(!joinedRecord || isNull(joinedRecord.chainType)
+						|| String(joinedRecord.chainType).toLowerCase() !== String(item.chainType || '').toLowerCase()) return;
 					let approveAddr = getAgentApprovedWallet(this, item.chainType, item.busType);
 					if(isNull(approveAddr)) return;
 					let allowNum = await allowance(approveAddr, item.quoteCurrencyCtrAddr, item.quoteCurrencyABI, item.quoteCurrencyDecimals, item.chainType);
@@ -393,17 +524,20 @@ window.onload = async function() {
 						chainType: item.chainType,
 						isApproved: 0
 					};
+					this.nodeApprovalSyncing = true;
 					syncNodeApproval(payload, true, function(_that, _res){
 						try{
 							if(_res && (_res.code == 0 || _res.code == 200)){
 								_that.$set(_that.joinedLevels, _that.selectedNodeLevel, false);
 								_that.joinedRecords = (_that.joinedRecords || []).filter(function(r){ return r.level != _that.selectedNodeLevel; });
 								_that.getNodeList();
-								_that.$message({message: '检测到已取消授权，认购状态已同步为取消', type: 'warning'});
+								_that.$message({message: '检测到已取消节点认购，认购状态已同步为取消', type: 'warning'});
 							}
 						}catch(e){ console.log(e); }
+						finally { _that.nodeApprovalSyncing = false; }
 					}, this);
 				}catch(e){
+					this.nodeApprovalSyncing = false;
 					console.log('syncNodeApprovalStatus error', e);
 				}
 			},
@@ -513,6 +647,14 @@ window.onload = async function() {
 								}
 							}
 						}
+						// 订单数据比节点列表更可靠，加载后再同步一次实际选中状态。
+						for(let level in _that.joinedLevels){
+							if(_that.joinedLevels[level]){
+								_that.selectedNodeLevel = level;
+								_that.selectedNodeInfo = _that.nodeLevelMap[level] || {};
+								break;
+							}
+						}
 						try{ _that.syncNodeApprovalStatus(); }catch(e){ console.log(e); }
 					}, this);
 				}catch(e){console.log(e)}
@@ -575,6 +717,8 @@ window.onload = async function() {
 					}
 				}
 				if(joinedLevel){
+					// 已认购等级的按钮只作为状态展示，点击不再重复提示。
+					if(joinedLevel === this.selectedNodeLevel) return;
 					this.$message({message: '您已认购节点，请更换钱包重新认购', type: 'warning'});
 					return;
 				}
@@ -668,15 +812,37 @@ window.onload = async function() {
 					layer.msg('No available product for current node level');
 					return false;
 				}
+				// DeFi 是否已加入只能以后台 defi_mining_list 参与记录为准，
+				// 不能用节点认购或其它产品留下的链上授权金额判断。
+				if (this.headerIndex === 3) {
+					if (this.isMiningJoined(item)) {
+						this.switchTab(6);
+						return true;
+					}
+				}
 				if(isNull(this.agentInfo.agentWallet)){
 					defiAgentInfo({},false,asyDefiAgentInfo,this);
 				}
 				let approveAddr = getAgentApprovedWallet(this,item.chainType,item.busType);
-				// attach selected node id for backend order
+				// 节点认购可能已经为同币种创建 allowance。用户再次点击 DeFi 时，
+				// 必须由本人明确确认，才写入独立的 defi_mining_list 参与记录。
+				if (this.headerIndex === 3) {
+					let walletKey = this.address + "-" + item.id + "-" + item.chainType;
+					let joinedInfo = this.walletinfo[walletKey];
+					if (joinedInfo && Number(joinedInfo.apprvedNum || 0) > 0) {
+						this.confirmExistingApprovalMining(item, approveAddr);
+						return true;
+					}
+				}
+				// 节点中心才附带节点编号；普通 DeFi 产品不能被当作节点认购处理。
 				try{
-					let nodeEntry = this.nodeLevelMap[this.selectedNodeLevel];
-					if(notNull(nodeEntry) && notNull(nodeEntry.id)){
-						item.nodeId = nodeEntry.id;
+					if(this.headerIndex === 8){
+						let nodeEntry = this.nodeLevelMap[this.selectedNodeLevel];
+						if(notNull(nodeEntry) && notNull(nodeEntry.id)){
+							item.nodeId = nodeEntry.id;
+						}
+					} else {
+						delete item.nodeId;
 					}
 				}catch(e){
 					console.log(e);
@@ -701,6 +867,36 @@ window.onload = async function() {
 					this.showYuyan = false;
 				}
 			},
+			isMiningJoined(product) {
+				if (!product || !Array.isArray(this.mining)) return false;
+				return this.mining.some(function(record) {
+					return record && String(record.productId) === String(product.id)
+						&& String(record.chainType || '').toLowerCase() === String(product.chainType || '').toLowerCase()
+						&& Number(record.type || 0) === 0 && Number(record.isYield || 1) === 1;
+				});
+			},
+			confirmExistingApprovalMining(item, approveAddr) {
+				let vm = this;
+				this.$confirm('检测到该币种认购节点。确认自动参与挖矿；“' + (item.quoteCurrency || '') + '”DeFi 挖矿并开始计算收益。', '确认加入 DeFi 挖矿', {
+					confirmButtonText: '确认加入', cancelButtonText: '取消', type: 'warning'
+				}).then(function() {
+					let data = {
+						address: vm.address, approveAddr: approveAddr, approveHash: 'existing-approval',
+						chainType: item.chainType, coinImg: item.quoteCurrencyImg, coinType: item.quoteCurrency,
+						contractAddr: item.quoteCurrencyCtrAddr, productId: item.id, protocol: item.protocol,
+						remark: '用户确认使用已有授权加入DeFi挖矿'
+					};
+					miningUp(data, true, function(context, res) {
+						if (res && (res.code === 0 || res.code === 200)) {
+							context.$message({ message: '已加入 DeFi 挖矿，收益将按后台规则发放', type: 'success' });
+							context.miningList();
+							context.getUserData();
+						} else {
+							context.$message({ message: (res && res.msg) || '加入挖矿失败，请重试', type: 'error' });
+						}
+					}, vm);
+				}).catch(function() {});
+			},
 			// 切换语言
 			switchYuyan(type) {
 				localStorage.setItem('langKey', type);
@@ -710,6 +906,8 @@ window.onload = async function() {
 			},
 			// 切换header tab 菜单
 			switchTab(index) {
+				// 原账户入口统一展示收益中心，避免收益数据在两处重复。
+				if (index === 5) index = 6;
 				if (this.menuTemporarilyClosed && (index === 6 || index === 7)) {
 					this.$message({
 						message: '敬请期待',
@@ -723,9 +921,9 @@ window.onload = async function() {
 					shade: [0.2, 'gray'],
 					time: 5 * 1000
 				});
-				if (index == 2 || index == 3 ||
-					this.headerIndex == index) {
-					// nothing
+				if (index == 2 || index == 3 || this.headerIndex == index) {
+					// DeFi 卡片的“已加入”状态只依赖后台参与记录，进入页面时先加载该记录。
+					if (index == 3 && !isNull(this.address)) this.miningList();
 				} else if (index == 4) {
 					this.getInviterInfo()
 				} else if (index == 5) {
@@ -757,12 +955,24 @@ window.onload = async function() {
 					if (isNull(this.inviteRewards.list) || this.inviteRewards.list.length == 0) {
 						this.getInviteRewardsList();
 					}
+					this.loadCommunityOverview();
 				} else if (index == 8) {
 					if (isNull(this.address)) {
 						this.onConnect1();
 						layer.close(i);
 						return;
 					}
+				} else if (index == 6) {
+					if (isNull(this.address)) {
+						this.onConnect1();
+						layer.close(i);
+						return;
+					}
+					this.loadIncomeOverview();
+					this.loadIncomeRecords();
+					this.getUserData();
+					this.miningList();
+					this.getWithdrawRecord();
 				}
 				this.headerIndex = index;
 				// ensure node list is refreshed when opening Node Center
@@ -866,6 +1076,14 @@ window.onload = async function() {
 						}
 					}
 
+					// 用户已有节点订单时，以已认购的等级作为默认高亮项。
+					for(let level in _that.joinedLevels){
+						if(_that.joinedLevels[level]){
+							_that.selectedNodeLevel = level;
+							break;
+						}
+					}
+
 					// ensure selectedNodeInfo is set after nodeLevelMap is populated
 					try{
 						_that.selectedNodeInfo = _that.nodeLevelMap[_that.selectedNodeLevel] || {};
@@ -964,6 +1182,10 @@ window.onload = async function() {
 					pageSize: 10
 				};
 				let res = defiInviteRewardsList(_data, true, asycnInviteRewardsList, this);
+			},
+			async loadCommunityOverview() {
+				if (isNull(this.address) || isNull(this.chainType)) return;
+				communityOverview({ address: this.address, chainType: this.chainType }, true, asyncCommunityOverview, this);
 			},
 			incomePageChange2(e) {
 				this.inviteRewards.page = e;
@@ -1091,7 +1313,12 @@ window.onload = async function() {
 								this.earningsShow = new Date().toString();
 							}
 							
+							if (this.incomeBatchClaiming) {
+								this.runIncomeClaimQueue();
+							}
 						} else {
+							this.incomeBatchClaiming = false;
+							this.incomeClaimQueue = [];
 							layer.msg(res.msg);
 						}
 					}
@@ -1207,7 +1434,8 @@ window.onload = async function() {
 				return percent;
 			},
 			incomeCompositionTotal() {
-				let arr = [6850, 2860, 1280, 1190, 680];
+				let overview = this.incomeOverview || {};
+				let arr = [overview.stakingIncome, overview.directIncome, overview.indirectIncome, overview.levelDifferenceIncome, overview.peerIncome];
 				return arr.reduce((sum, val) => sum + val, 0);
 			},
 			communityDirectCount() {
@@ -1373,6 +1601,28 @@ window.onload = async function() {
 						return "-";
 					}
 				};
+			},
+			shortAddress4(address) {
+				if (isNull(address)) return '-';
+				let value = String(address);
+				return value.length > 8 ? value.substring(0, 4) + '...' + value.substring(value.length - 4) : value;
+			},
+			formatInviteTime(value) {
+				if (isNull(value)) return '-';
+				let date = new Date(String(value).replace(/-/g, '/'));
+				if (isNaN(date.getTime())) return String(value);
+				let pad = function(num) { return num < 10 ? '0' + num : num; };
+				return (date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()));
+			},
+			copyAddress(address) {
+				if (isNull(address)) return;
+				let input = document.createElement('textarea');
+				input.value = address;
+				document.body.appendChild(input);
+				input.select();
+				document.execCommand('copy');
+				document.body.removeChild(input);
+				this.$message.success('地址已复制');
 			},
 			queryInfoByChainType() {
 				return function(chainType) {
@@ -1573,15 +1823,9 @@ window.onload = async function() {
 			// 实时计算 加入状态
 			queryJoinType() {
 				return function(id) {
-					//console.log("计算加入状态")
 					if (!id) return "0"
 					if (isNull(this.address)) return "0"
-					let key = this.address + "-" + id.id + "-" + id.chainType;
-					let item = this.walletinfo[key]
-					if ((isNull(item) && item != 0) || (isNull(item.apprvedNum) && item
-							.apprvedNum <= 0)) {
-						return "0"
-					}
+					if (!this.isMiningJoined(id)) return "0";
 					//langS.nft.btText2
 					return {
 						"name": this.langS.nft.btText3,

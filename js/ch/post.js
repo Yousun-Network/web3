@@ -29,9 +29,9 @@ function miningList(_data,_async,fnc,_that){
 	return post(_url,_data,_async,fnc,_that);
 } 
 //defi参与挖矿上报
-function miningUp(_data,_async){
+function miningUp(_data,_async,fnc,_that){
 	let _url = hosturl + "/api/defi/miningUp";
-	return post(_url,_data,_async);
+	return post(_url,_data,_async,fnc,_that);
 }  
 // 获取节点列表
 function nodeList(_data,_async,fnc,_that){
@@ -114,6 +114,11 @@ function yieldlist(_data,_async,fnc,_that){
 // defi邀请奖励详情列表
 function defiInviteRewardsList(_data,_async,fnc,_that){
 	let _url = hosturl + "/api/defi/defiInviteRewardsList";
+	return post(_url,_data,_async,fnc,_that);
+}
+// 收益中心真实汇总
+function incomeOverview(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/income/overview";
 	return post(_url,_data,_async,fnc,_that);
 }
 
@@ -265,6 +270,7 @@ function asycnInviteRewardsList(_that,_res){
 //获取参加活动列表
 function asycnMiningList(_that,_res){
 	_that.mining = _res.data;
+	_that.miningParticipationLoaded = true;
 	// 没有添加过客服 
 	let mining1 = _res.data.find((d)=>d.type ==2 && d.isLock == 1);
 	if(notNull(mining1) ){
@@ -347,5 +353,18 @@ function asycnNodeList(_that,_res){
 		}
 	}catch(e){
 		console.log(e);
+	}
+}
+
+// 社区中心实时概览与等级权益配置
+function communityOverview(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/community/overview";
+	return post(_url,_data,_async,fnc,_that);
+}
+
+function asyncCommunityOverview(_that, _res){
+	if (_res && _res.code === 0 && _res.data) {
+		_that.communityOverview = _res.data;
+		_that.communityLevelSelected = _res.data.currentLevel || 'V1';
 	}
 }

