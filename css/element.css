@@ -4422,7 +4422,7 @@
 
 .el-message-box {
     display: inline-block;
-    width: 420px;
+    width: 360px;
     padding-bottom: 10px;
     vertical-align: middle;
     background-color: #FFF;
@@ -4433,7 +4433,8 @@
     text-align: left;
     overflow: hidden;
     -webkit-backface-visibility: hidden;
-    backface-visibility: hidden
+    backface-visibility: hidden;
+    margin: 18px 15px;
 }
 
 .el-message-box__wrapper {

@@ -1,3 +1,47 @@
+@media (max-width: 768px) {
+  .el-message-box.mining-join-confirm {
+    width: calc(100vw - 36px);
+    max-width: 420px;
+    margin: 18px 18px;
+    border-radius: 10px;
+    box-shadow: 0 14px 34px rgba(27, 51, 84, .24);
+  }
+
+  .mining-join-confirm .el-message-box__header {
+    padding: 18px 20px 10px;
+  }
+
+  .mining-join-confirm .el-message-box__title {
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  .mining-join-confirm .el-message-box__content {
+    padding: 12px 20px 16px;
+  }
+
+  .mining-join-confirm .el-message-box__message p {
+    line-height: 22px;
+    word-break: break-word;
+  }
+
+  .mining-join-confirm .el-message-box__btns {
+    display: flex;
+    gap: 10px;
+    padding: 12px 20px 18px;
+  }
+
+  .mining-join-confirm .el-message-box__btns button {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .mining-join-confirm .el-message-box__btns button:nth-child(2) {
+    margin-left: 0;
+  }
+}
 body,
 html {
   margin: 0;
