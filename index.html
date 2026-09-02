@@ -1033,6 +1033,7 @@
 					<div class="income-tabs-row">
 						<span :class="{ active: incomeTab === 'overview' }" @click="setIncomeTab('overview')">收益总览</span>
 						<span :class="{ active: incomeTab === 'detail' }" @click="setIncomeTab('detail')">收益明细</span>
+						<span :class="{ active: incomeTab === 'withdraw' }" @click="setIncomeTab('withdraw')">提现记录</span>
 					</div>
 
 					<template v-if="incomeTab === 'overview'">
@@ -1137,19 +1138,25 @@
 					<p class="income-assets-tip">DeFi 挖矿收益与邀请分润均按币种归集，可分别领取。</p>
 					<div class="income-assets income-card">
 						<div class="income-asset-item" v-for="row in yield" :key="row.id || (row.chainType + '-' + row.coinContractAddr)">
-							<div class="asset-left">
+							<div class="asset-summary">
 								<img :src="row.coinImg" alt="coin" />
-								<div>
+								<div class="asset-summary-text">
 									<strong>{{ row.coinType || '-' }}</strong>
-									<p>挖矿累计 {{ incomeFormat(row.stakingYield) }} · 邀请累计 {{ incomeFormat(row.referralYield) }}</p>
-									<p>参与状态：{{ incomeAssetStatus(row) }}</p>
+									<p>挖矿累计 {{ incomeFormat(incomeAssetTotal(row, 1)) }} · 邀请累计 {{ incomeFormat(incomeAssetTotal(row, 2)) }}</p>
 								</div>
+								<span class="asset-status"><i></i>{{ incomeAssetStatus(row) }}</span>
 							</div>
-							<div class="asset-right">
-								<div>质押待领取 {{ incomeFormat(incomeAssetPending(row, 1)) }} {{ row.coinType }}</div>
-								<div>推荐待领取 {{ incomeFormat(incomeAssetPending(row, 2)) }} {{ row.coinType }}</div>
-								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset(row, 1)">领取质押</a>
-								<a href="javascript:void(0)" @click.prevent="onIncomeClaimAsset(row, 2)">领取推荐</a>
+							<div class="asset-claims">
+								<div class="asset-claim-slot staking">
+									<span>挖矿待领取</span>
+									<div class="asset-claim-amount"><b>{{ incomeFormat(incomeAssetPending(row, 1)) }}</b><em>{{ row.coinType }}</em></div>
+									<button type="button" :disabled="incomeAssetPending(row, 1) <= 0" @click="onIncomeClaimAsset(row, 1)">领取质押</button>
+								</div>
+								<div class="asset-claim-slot referral">
+									<span>推荐待领取</span>
+									<div class="asset-claim-amount"><b>{{ incomeFormat(incomeAssetPending(row, 2)) }}</b><em>{{ row.coinType }}</em></div>
+									<button type="button" :disabled="incomeAssetPending(row, 2) <= 0" @click="onIncomeClaimAsset(row, 2)">领取推荐</button>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -1157,8 +1164,8 @@
 					<div class="income-withdraw income-card">
 						<div>
 							<p>可提现收益</p>
-							<h3>{{ incomeFormat(incomeValue('pendingIncome')) }}</h3>
-							<span>选择币种后可领取挖矿或邀请收益</span>
+							<h3>{{ incomeFormat(incomeWithdrawableTotal()) }}</h3>
+							<span>领取收益后，可选择币种申请提现</span>
 						</div>
 						<button type="button" @click="onIncomeWithdrawApply">选择币种提现</button>
 					</div>
@@ -1169,16 +1176,22 @@
 					</div>
 					</template>
 
-					<template v-else>
+					<template v-else-if="incomeTab === 'detail'">
 						<div class="income-card income-detail-card">
 							<div class="income-card-head">
 								<h3>收益明细</h3>
 								<span>最近收益记录</span>
 							</div>
-							<div class="income-detail-row" v-for="row in yieldDay.list" :key="'yield-' + row.id"><span>挖矿收益 · {{ row.coinType || '-' }}<small>{{ row.yieldDay }}</small></span><b>+{{ myToFixed(row.num) }}</b></div>
-							<div class="income-detail-row" v-for="row in inviteRewards.list" :key="'invite-' + row.id"><span>{{ row.generation ? '第 ' + row.generation + ' 代分润' : '邀请收益' }} · {{ row.coinType || '-' }}<small>{{ row.yieldDay }}</small></span><b>+{{ myToFixed(row.num) }}</b></div>
-							<div class="income-detail-row" v-for="row in withdrawRecord" :key="'withdraw-' + row.id"><span>提现记录 · {{ row.transferCoinName || row.coinType || '-' }}<small>{{ row.transferTime || row.createTime || '-' }}</small></span><b>-{{ myToFixed(row.transferNum || row.quantity) }}</b></div>
-							<div class="income-detail-row" v-if="!yieldDay.list.length && !inviteRewards.list.length && !withdrawRecord.length"><span>暂无收益记录</span><b>—</b></div>
+							<div class="income-detail-row" v-for="row in yieldDay.list" :key="'yield-' + row.id"><span><strong>挖矿收益 · {{ row.coinType || '-' }}</strong><small>{{ incomeRecordTime(row) }}</small></span><b>+{{ incomeFormat(row.num) }}</b></div>
+							<div class="income-detail-row" v-for="row in inviteRewards.list" :key="'invite-' + row.id"><span><strong>{{ row.generation ? '第 ' + row.generation + ' 代分润' : '邀请收益' }} · {{ row.coinType || '-' }}</strong><small>{{ incomeRecordTime(row) }}</small></span><b>+{{ incomeFormat(row.num) }}</b></div>
+							<div class="income-detail-row" v-if="!yieldDay.list.length && !inviteRewards.list.length"><span>暂无收益记录</span><b>—</b></div>
+						</div>
+					</template>
+					<template v-else>
+						<div class="income-card income-detail-card">
+							<div class="income-card-head"><h3>提现记录</h3><span>最近提现申请</span></div>
+							<div class="income-detail-row" v-for="row in withdrawRecord" :key="'withdraw-' + row.id"><span><strong>提现 · {{ row.transferCoinName || row.coinType || '-' }}</strong><small>{{ incomeRecordTime(row) }}</small></span><div class="income-withdraw-state"><i :class="withdrawStatus(row).className">{{ withdrawStatus(row).text }}</i><b>-{{ incomeFormat(row.transferNum || row.quantity) }}</b></div></div>
+							<div class="income-detail-row" v-if="!withdrawRecord.length"><span>暂无提现记录</span><b>—</b></div>
 						</div>
 					</template>
 				</div>
@@ -1188,10 +1201,10 @@
 			<van-popup v-model="showIncomeWithdrawPicker" round position="bottom">
 				<div class="income-picker">
 					<div class="income-picker-head"><strong>选择币种提现</strong><i class="el-icon-close" @click="showIncomeWithdrawPicker = false"></i></div>
-					<p>请选择要领取的收益类型</p>
+					<p>请选择要提现的已领取收益</p>
 					<div class="income-picker-item" v-for="row in incomeWithdrawAssets()" :key="'picker-' + (row.id || row.coinContractAddr)">
-						<div><strong>{{ row.coinType }}</strong><span>挖矿待领 {{ myToFixed(incomeAssetPending(row, 1)) }} · 邀请待领 {{ myToFixed(incomeAssetPending(row, 2)) }}</span></div>
-						<div class="income-picker-actions"><button :disabled="incomeAssetPending(row, 1) <= 0" @click="onIncomePickerClaim(row, 1)">领取挖矿</button><button :disabled="incomeAssetPending(row, 2) <= 0" @click="onIncomePickerClaim(row, 2)">领取邀请</button></div>
+						<div><strong>{{ row.coinType }}</strong><span>挖矿可提 {{ incomeFormat(incomeAssetWithdrawable(row, 1)) }} · 邀请可提 {{ incomeFormat(incomeAssetWithdrawable(row, 2)) }}</span></div>
+						<div class="income-picker-actions"><button :disabled="incomeAssetWithdrawable(row, 1) <= 0" @click="onIncomePickerWithdraw(row, 1)">提现挖矿</button><button :disabled="incomeAssetWithdrawable(row, 2) <= 0" @click="onIncomePickerWithdraw(row, 2)">提现邀请</button></div>
 					</div>
 				</div>
 			</van-popup>
