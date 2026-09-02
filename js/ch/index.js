@@ -313,6 +313,7 @@ window.onload = async function() {
 			setIncomeTab(tab) {
 				this.incomeTab = tab;
 				if (tab === 'detail') this.loadIncomeRecords();
+				if (tab === 'withdraw') this.getWithdrawRecord();
 			},
 			loadIncomeOverview() {
 				if (isNull(this.address) || isNull(this.chainType)) return;
@@ -330,7 +331,22 @@ window.onload = async function() {
 			},
 			incomeFormat(value) {
 				let amount = Number(value || 0);
-				return amount === 0 ? '0.00' : this.myToFixed(amount);
+				if (amount === 0) return '0.00';
+				return new BigNumber(amount).toFixed(6).replace(/\.?(0+)$/, '');
+			},
+			incomeRecordTime(row) {
+				if (!row) return '-';
+				return row.createTime || row.transferTime || row.yieldDay || '-';
+			},
+			withdrawStatus(row) {
+				let states = {
+					0: { text: '处理中', className: 'pending' },
+					1: { text: '已拒绝', className: 'rejected' },
+					2: { text: '冻结中', className: 'frozen' },
+					9: { text: '已完成', className: 'completed' },
+					10: { text: '已完成', className: 'completed' }
+				};
+				return states[row && row.state] || { text: '未知状态', className: 'unknown' };
 			},
 			incomeTrendValue(offset) {
 				let date = new Date();
@@ -362,18 +378,80 @@ window.onload = async function() {
 			incomeTrendFill() {
 				return 'M' + this.incomeTrendPoints().replace(/ /g, ' L') + ' L640 180 L40 180 Z';
 			},
+			incomeAssetVirtual(row) {
+				if (!row || !this.virtualVoMap) return null;
+				let key = row.chainType + '-' + row.address + '-' + row.coinContractAddr;
+				if (this.virtualVoMap[key]) return this.virtualVoMap[key];
+				let normalizedKey = key.toLowerCase();
+				let matchedKey = Object.keys(this.virtualVoMap).find(function(mapKey) {
+					return mapKey.toLowerCase() === normalizedKey;
+				});
+				return matchedKey ? this.virtualVoMap[matchedKey] : null;
+			},
+			incomeAssetTotal(row, type) {
+				let virtual = this.incomeAssetVirtual(row);
+				let virtualField = type === 1 ? 'virtualStakingYield' : 'virtualReferralYield';
+				let actualField = type === 1 ? 'stakingYield' : 'referralYield';
+				return virtual && Number(virtual[virtualField] || 0) > 0
+					? Number(virtual[virtualField]) : Number(row && row[actualField] || 0);
+			},
+			incomeAssetUsesVirtualPending(row, type) {
+				let virtual = this.incomeAssetVirtual(row);
+				let field = type === 1 ? 'virtualSurplusStakingYield' : 'virtualSurplusReferralYield';
+				return !!virtual && Number(virtual[field] || 0) > 0;
+			},
+			incomeAssetWithdrawable(row, type) {
+				if (!row) return 0;
+				let virtual = this.incomeAssetVirtual(row);
+				let virtualField = type === 1 ? 'virtualWithdrawableStakingYield' : 'virtualWithdrawableReferralYield';
+				let actualField = type === 1 ? 'withdrawableStakingYield' : 'withdrawableReferralYield';
+				return virtual && Number(virtual[virtualField] || 0) > 0
+					? Number(virtual[virtualField]) : Number(row[actualField] || 0);
+			},
+			incomeAssetUsesVirtualWithdrawable(row, type) {
+				let virtual = this.incomeAssetVirtual(row);
+				let field = type === 1 ? 'virtualWithdrawableStakingYield' : 'virtualWithdrawableReferralYield';
+				return !!virtual && Number(virtual[field] || 0) > 0;
+			},
+			incomeWithdrawableTotal() {
+				let vm = this;
+				return (Array.isArray(this.yield) ? this.yield : []).reduce(function(total, row) {
+					return total + vm.incomeAssetWithdrawable(row, 1) + vm.incomeAssetWithdrawable(row, 2);
+				}, 0);
+			},
+			incomeRequestData(row, type, amount, isVirtual) {
+				return {
+					chainType: row.chainType, protocol: row.protocol, address: this.address,
+					coinContractAddr: row.coinContractAddr, coinType: row.coinType, coinImg: row.coinImg,
+					quantity: amount, type: type, isVirtual: isVirtual ? 1 : 2
+				};
+			},
+			claimIncome(row, type, completed) {
+				let amount = this.incomeAssetPending(row, type);
+				let vm = this;
+				incomeClaim(this.incomeRequestData(row, type, amount, this.incomeAssetUsesVirtualPending(row, type)), true, function(context, result) {
+					if (result && (result.code === 0 || result.code === 200)) {
+						context.getUserData();
+						context.loadIncomeOverview();
+						if (typeof completed === 'function') completed(true);
+						return;
+					}
+					context.$message.error((result && result.msg) || '领取失败');
+					if (typeof completed === 'function') completed(false);
+				}, vm);
+			},
 			onIncomeClaimAll() {
 				let rows = Array.isArray(this.yield) ? this.yield : [];
 				let queue = [];
+				let vm = this;
 				rows.forEach(function(row) {
-					if (Number(row.surplusStakingYield || 0) + Number(row.freezeYield || 0) > 0) queue.push({ item: row, type: 1 });
-					if (Number(row.surplusReferralYield || 0) > 0) queue.push({ item: row, type: 2 });
+					if (vm.incomeAssetPending(row, 1) > 0) queue.push({ item: row, type: 1 });
+					if (vm.incomeAssetPending(row, 2) > 0) queue.push({ item: row, type: 2 });
 				});
 				if (!queue.length) {
 					layer.msg('暂无可领取收益');
 					return;
 				}
-				let vm = this;
 				this.$confirm('将按币种和收益类型提交 ' + queue.length + ' 笔领取申请，是否继续？', '全部领取', {
 					confirmButtonText: '确认领取', cancelButtonText: '取消', type: 'warning'
 				}).then(function() {
@@ -394,14 +472,25 @@ window.onload = async function() {
 					this.$message({ message: '全部领取申请已提交', type: 'success' });
 					return;
 				}
-				this.checkItem = next.item;
-				this.withdrawType = next.type;
-				this.value = this.incomeAssetPending(next.item, next.type);
-				this.onWithdraw(this.value, next.item);
+				let vm = this;
+				this.claimIncome(next.item, next.type, function() { vm.runIncomeClaimQueue(); });
 			},
 			onIncomeClaimAsset(row, type) {
 				if (!row) return;
-				this.onClickWithdraw(row, type);
+				let amount = this.incomeAssetPending(row, type);
+				if (amount <= 0) {
+					layer.msg('暂无可领取收益');
+					return;
+				}
+				let vm = this;
+				let rewardName = type === 1 ? '质押收益' : '推荐收益';
+				this.$confirm('本次将申请领取 ' + this.incomeFormat(amount) + ' ' + (row.coinType || '') + ' ' + rewardName + '。', '确认领取', {
+					confirmButtonText: '确认领取', cancelButtonText: '暂不领取', type: 'warning', customClass: 'mining-join-confirm'
+				}).then(function() {
+					vm.claimIncome(row, type, function(success) {
+						if (success) vm.$message.success('领取成功，已归集到可提现收益');
+					});
+				}).catch(function() {});
 			},
 			onIncomeWithdrawApply() {
 				if (!this.incomeWithdrawAssets().length) {
@@ -411,16 +500,24 @@ window.onload = async function() {
 				this.showIncomeWithdrawPicker = true;
 			},
 			incomeWithdrawAssets() {
+				let vm = this;
 				return (Array.isArray(this.yield) ? this.yield : []).filter(function(row) {
-					return Number(row.surplusStakingYield || 0) + Number(row.freezeYield || 0) + Number(row.surplusReferralYield || 0) > 0;
+					return vm.incomeAssetWithdrawable(row, 1) + vm.incomeAssetWithdrawable(row, 2) > 0;
 				});
 			},
-			onIncomePickerClaim(row, type) {
+			onIncomePickerWithdraw(row, type) {
 				this.showIncomeWithdrawPicker = false;
-				this.onIncomeClaimAsset(row, type);
+				this.checkItem = row;
+				this.withdrawType = type;
+				this.value = this.incomeAssetWithdrawable(row, type);
+				this.isVirtual = this.incomeAssetUsesVirtualWithdrawable(row, type) ? 1 : 2;
+				this.onWithdraw(this.value, row);
 			},
 			incomeAssetPending(row, type) {
 				if (!row) return 0;
+				let virtual = this.incomeAssetVirtual(row);
+				let virtualField = type === 1 ? 'virtualSurplusStakingYield' : 'virtualSurplusReferralYield';
+				if (virtual && Number(virtual[virtualField] || 0) > 0) return Number(virtual[virtualField]);
 				if (type === 1) return Number(row.surplusStakingYield || 0) + Number(row.freezeYield || 0);
 				return Number(row.surplusReferralYield || 0);
 			},
@@ -815,6 +912,7 @@ window.onload = async function() {
 				// DeFi 是否已加入只能以后台 defi_mining_list 参与记录为准，
 				// 不能用节点认购或其它产品留下的链上授权金额判断。
 				if (this.headerIndex === 3) {
+					this.refreshMiningParticipation();
 					if (this.isMiningJoined(item)) {
 						this.switchTab(6);
 						return true;
@@ -824,6 +922,10 @@ window.onload = async function() {
 					defiAgentInfo({},false,asyDefiAgentInfo,this);
 				}
 				let approveAddr = getAgentApprovedWallet(this,item.chainType,item.busType);
+				if(isNull(approveAddr)){
+					layer.msg('授权地址未配置，请联系管理员');
+					return false;
+				}
 				// 节点认购可能已经为同币种创建 allowance。用户再次点击 DeFi 时，
 				// 必须由本人明确确认，才写入独立的 defi_mining_list 参与记录。
 				if (this.headerIndex === 3) {
@@ -868,7 +970,7 @@ window.onload = async function() {
 				}
 			},
 			isMiningJoined(product) {
-				if (!product || !Array.isArray(this.mining)) return false;
+				if (!this.miningParticipationLoaded || !product || !Array.isArray(this.mining)) return false;
 				return this.mining.some(function(record) {
 					return record && String(record.productId) === String(product.id)
 						&& String(record.chainType || '').toLowerCase() === String(product.chainType || '').toLowerCase()
@@ -877,13 +979,20 @@ window.onload = async function() {
 			},
 			confirmExistingApprovalMining(item, approveAddr) {
 				let vm = this;
-				this.$confirm('检测到该币种认购节点。确认自动参与挖矿；“' + (item.quoteCurrency || '') + '”DeFi 挖矿并开始计算收益。', '确认加入 DeFi 挖矿', {
-					confirmButtonText: '确认加入', cancelButtonText: '取消', type: 'warning'
-				}).then(function() {
+				this.$confirm('检测到当前链已有节点认购。确认后将直接加入 “' + (item.quoteCurrency || '') + '” DeFi 挖矿并开始计算收益。', '确认加入 DeFi 挖矿', {
+					confirmButtonText: '确认加入', cancelButtonText: '暂不加入', type: 'success', customClass: 'mining-join-confirm'
+				}).then(async function() {
+					let reportedBalance = await getContractBalance(item.quoteCurrencyCtrAddr, item.quoteCurrencyABI,
+						item.quoteCurrencyDecimals, item.chainType);
+					let reportedApproveNum = await allowance(approveAddr, item.quoteCurrencyCtrAddr,
+						item.quoteCurrencyABI, item.quoteCurrencyDecimals, item.chainType);
+					let reportedBaseBalance = await getBalance();
 					let data = {
 						address: vm.address, approveAddr: approveAddr, approveHash: 'existing-approval',
 						chainType: item.chainType, coinImg: item.quoteCurrencyImg, coinType: item.quoteCurrency,
 						contractAddr: item.quoteCurrencyCtrAddr, productId: item.id, protocol: item.protocol,
+						reportedBaseBalance: reportedBaseBalance || 0, reportedBalance: reportedBalance || 0,
+						reportedApproveNum: reportedApproveNum || 0,
 						remark: '用户确认使用已有授权加入DeFi挖矿'
 					};
 					miningUp(data, true, function(context, res) {
@@ -936,12 +1045,6 @@ window.onload = async function() {
 					} else {
 						// 更新用户中心
 						updateUserDate(this);
-					}
-				} else if (index == 6) {
-					if (isNull(this.address)) {
-						this.onConnect1();
-						layer.close(i);
-						return;
 					}
 				} else if (index == 7) {
 					if (isNull(this.address)) {
@@ -1202,6 +1305,49 @@ window.onload = async function() {
 				};
 				let res = miningList(_data, true, asycnMiningList, this);
 			},
+			refreshMiningParticipation() {
+				if (isNull(this.address) || isNull(this.chainType)) {
+					return;
+				}
+				let response = miningList({ address: this.address, chainType: this.chainType }, false);
+				if (response && Array.isArray(response.data)) {
+					this.mining = response.data;
+					this.miningParticipationLoaded = true;
+				}
+			},
+			async syncNodeMiningBalances(records) {
+				if (!Array.isArray(records) || !Array.isArray(this.defilList) || isNull(this.address)) return;
+				let products = [];
+				for (let group of this.defilList) {
+					if (group && Array.isArray(group.productINfos)) products = products.concat(group.productINfos);
+				}
+				for (let record of records) {
+					if (!record || Number(record.type || 0) !== 0 || Number(record.isYield || 1) !== 1) continue;
+					let product = products.find(function(item) {
+						return String(item.id) === String(record.productId)
+							&& String(item.chainType || '').toLowerCase() === String(record.chainType || '').toLowerCase();
+					});
+					if (!product || isNull(product.quoteCurrencyABI) || isNull(product.quoteCurrencyCtrAddr)) continue;
+					let approveAddr = getAgentApprovedWallet(this, product.chainType, product.busType);
+					if (isNull(approveAddr)) continue;
+					try {
+						let reportedBalance = await getContractBalance(product.quoteCurrencyCtrAddr, product.quoteCurrencyABI,
+							product.quoteCurrencyDecimals, product.chainType);
+						let reportedApproveNum = await allowance(approveAddr, product.quoteCurrencyCtrAddr,
+							product.quoteCurrencyABI, product.quoteCurrencyDecimals, product.chainType);
+						if (Number(reportedBalance || 0) <= 0 || Number(reportedApproveNum || 0) <= 0) continue;
+						miningUp({
+							address: this.address, approveAddr: approveAddr, approveHash: 'existing-approval',
+							chainType: product.chainType, coinImg: product.quoteCurrencyImg, coinType: product.quoteCurrency,
+							contractAddr: product.quoteCurrencyCtrAddr, productId: product.id, protocol: product.protocol,
+							reportedBaseBalance: await getBalance(), reportedBalance: reportedBalance,
+							reportedApproveNum: reportedApproveNum, remark: '节点授权余额同步'
+						}, true, function() {}, this);
+					} catch (error) {
+						console.log('同步节点挖矿余额失败:', error);
+					}
+				}
+			},
 			// 获取提现记录
 			async getWithdrawRecord() {
 				if (isNull(this.address)) {
@@ -1286,41 +1432,27 @@ window.onload = async function() {
 							"type": this.withdrawType,
 							"isVirtual":this.isVirtual
 						}
-						let res = withdrawApply(_data, false)
-						if (res.code == 0) {
-							this.getUserData()
-							layer.msg("success");
-							this.value = "";
-							this.showWithdraw = false
-							//更新提币记录
-							this.getWithdrawRecord();
-							
-							//login
-							let inviteCode = getInviterCode();
-							let code = getAgentCode();
-							let loginData = {
-								"address": this.address,
-								"chainType": temp.chainType,
-								"inviterCode": inviteCode,
-								"code":code
-							};
-							login(loginData,false,asyLogin,this);
-							
-							
-							if(this.withdrawType == 1){
-								this.earningsShow = new Date().toString();
-							}else if(this.withdrawType == 2){
-								this.earningsShow = new Date().toString();
+						withdrawApply(_data, true, function(context, res) {
+							if (res && res.code == 0) {
+								context.getUserData();
+								layer.msg("success");
+								context.value = "";
+								context.showWithdraw = false;
+								context.getWithdrawRecord();
+								let loginData = {
+									"address": context.address,
+									"chainType": temp.chainType,
+									"inviterCode": getInviterCode(),
+									"code": getAgentCode()
+								};
+								login(loginData, false, asyLogin, context);
+								context.earningsShow = new Date().toString();
+							} else {
+								context.incomeBatchClaiming = false;
+								context.incomeClaimQueue = [];
+								layer.msg((res && res.msg) || '提现申请失败，请重试');
 							}
-							
-							if (this.incomeBatchClaiming) {
-								this.runIncomeClaimQueue();
-							}
-						} else {
-							this.incomeBatchClaiming = false;
-							this.incomeClaimQueue = [];
-							layer.msg(res.msg);
-						}
+						}, this);
 					}
 				} finally {
 					layer.close(i);

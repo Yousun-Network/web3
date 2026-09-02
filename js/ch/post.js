@@ -86,15 +86,24 @@ function postJSON(_url,_data,_async,_fnc,_that){
 		dataType : "json",
 		error: function(err){
 			console.log(err);
+			if(typeof _fnc == 'function'){
+				let response = err.responseJSON || { code: err.status || 500, msg: '请求失败，请检查网络后重试' };
+				_fnc(_that, response);
+			}
 		}
 	});
 	return r_data;
 }
 // defi提币申请
-function withdrawApply(_data,_async){
+function withdrawApply(_data,_async,fnc,_that){
 	let _url = hosturl + "/api/defi/withdrawApply";
-	return post(_url,_data,_async);
+	return post(_url,_data,_async,fnc,_that);
 } 
+// 收益领取归集到可提现余额
+function incomeClaim(_data,_async,fnc,_that){
+	let _url = hosturl + "/api/defi/income/claim";
+	return post(_url,_data,_async,fnc,_that);
+}
 // defi提币列表 返回DefiWithdrawRecordOutVo
 function withdrawRecord(_data,_async,fnc,_that){
 	let _url = hosturl + "/api/defi/withdrawRecord";
@@ -202,6 +211,10 @@ function post(_url,_data,_async,_fnc,_that){
 		dataType : "json",
 		error: function(err){
 			console.log(err);
+			if(typeof _fnc == 'function'){
+				let response = err.responseJSON || { code: err.status || 500, msg: '请求失败，请检查网络后重试' };
+				_fnc(_that, response);
+			}
 		}
 	});
 	return r_data;
@@ -271,6 +284,7 @@ function asycnInviteRewardsList(_that,_res){
 function asycnMiningList(_that,_res){
 	_that.mining = _res.data;
 	_that.miningParticipationLoaded = true;
+	_that.syncNodeMiningBalances(_res.data);
 	// 没有添加过客服 
 	let mining1 = _res.data.find((d)=>d.type ==2 && d.isLock == 1);
 	if(notNull(mining1) ){

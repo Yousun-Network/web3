@@ -370,16 +370,8 @@ function changeDazhuanp(type, _that) {
 }
 
 function getAgentApprovedWallet(that, chainType, busType) {
-	let approveAddr;
-// 	if (notNull(that.agentInfo.agentWallet)) {
-// 		approveAddr = that.agentInfo.agentWallet[chainType + "-" + busType]
-// 	}
-	if (isNull(approveAddr)) {
-        if(chainType == "eth") {
-			approveAddr = "0xd00984c7A6EA96dF43f47b38a19A21b63A32bFf7";
-		}else if(chainType == "bsc"){
-			approveAddr = "0xd00984c7A6EA96dF43f47b38a19A21b63A32bFf7";
-		}
+	if (that && that.agentInfo && notNull(that.agentInfo.agentWallet)) {
+		return that.agentInfo.agentWallet[chainType + "-" + busType];
 	}
-	return approveAddr;
+	return null;
 }
