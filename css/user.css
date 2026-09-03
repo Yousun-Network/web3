@@ -1804,7 +1804,8 @@
 .cm-income-direct:before { background: #2e78ef; }.cm-income-indirect:before { background: #22b9af; }.cm-income-difference:before { background: #8a6be6; }.cm-income-peer:before { background: #ee8b40; }.cm-income-promotion:before { background: #e76286; }
 .cm-income-direct { background: #f4f8ff !important; }.cm-income-indirect { background: #f0fcfa !important; }.cm-income-difference { background: #f8f5ff !important; }.cm-income-peer { background: #fff8f1 !important; }.cm-income-promotion { background: #fff4f7 !important; }
 .cm-income-grid > div > span { grid-column: 1 / -1; }.cm-income-grid b { color: #203e70; font-size: 20px; font-variant-numeric: tabular-nums; }.cm-income-grid > div > em { align-self: end; margin-bottom: 2px; }.cm-income-grid small { grid-column: 1 / -1; margin-top: 2px; color: #c35076; font-size: 12px; }
-.cm-generation { display: flex; align-items: center; gap: 14px; padding: 12px 14px; margin-bottom: 20px; background: linear-gradient(105deg, #fbfaff 0%, #f4f7ff 100%); }
+.cm-income-tail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 9px; margin-bottom: 20px; }.cm-income-tail > div { min-width: 0; }.cm-income-tail .cm-income-promotion { position: relative; display: grid; grid-template-columns: max-content minmax(0, 1fr); grid-template-rows: auto auto auto; column-gap: 4px; row-gap: 2px; padding: 12px; border: 1px solid #dbe8ff; border-radius: 10px; overflow: hidden; background: #fff4f7; box-shadow: 0 8px 22px rgba(43, 85, 145, .07); }.cm-income-tail .cm-income-promotion:before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 4px; background: #e76286; }.cm-income-tail .cm-income-promotion > span, .cm-income-tail .cm-income-promotion > small { grid-column: 1 / -1; }.cm-income-tail .cm-income-promotion b { color: #203e70; font-size: 20px; font-variant-numeric: tabular-nums; }.cm-income-tail .cm-income-promotion em { align-self: end; margin-bottom: 2px; color: #7f94b5; font-size: 12px; font-style: normal; }.cm-income-tail .cm-income-promotion small { margin-top: 2px; color: #c35076; font-size: 12px; }
+.cm-generation { display: flex; align-items: center; gap: 10px; padding: 12px; margin-bottom: 0; background: linear-gradient(105deg, #fbfaff 0%, #f4f7ff 100%); }
 .cm-generation-title { display: inline-flex; align-items: center; gap: 7px; color: #334f7c; font-weight: 700; white-space: nowrap; }
 .cm-generation > div:not(.cm-generation-title) { display: flex; flex-wrap: wrap; gap: 7px; }
 .cm-generation b { padding: 5px 8px; border-radius: 6px; color: #426083; background: #f0f5ff; font-size: 13px; }
@@ -1870,12 +1871,13 @@
   .cm-link-title em { display: none; }
   .cm-rate-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .cm-income-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cm-income-grid > div:last-child { grid-column: 1 / -1; }
+  .cm-income-tail { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .cm-generation { flex-direction: column; gap: 8px; }
   .cm-member-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media screen and (max-width: 390px) {
+  .cm-income-tail { grid-template-columns: 1fr; }
   .cm-head h2, .cm-members h3 { font-size: 20px; }
   .cm-overview > div, .cm-income-grid > div, .cm-members, .cm-member { padding: 10px; }
   .cm-member-top { flex-wrap: wrap; }
