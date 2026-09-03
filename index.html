@@ -1223,7 +1223,7 @@
 						</div>
 						<div class="cc-level-stats">
 							<div><p>有效直推</p><h4>{{ communityOverview.directCount || 0 }}</h4></div>
-							<div><p>网体业绩</p><h4>${{ formatIncomeNum(communityOverview.networkPerformance || 0) }}</h4></div>
+							<div><p>网体业绩</p><h4>${{ communityAmount(communityOverview.networkPerformance || 0) }}</h4></div>
 							<div><p>社区成员</p><h4>{{ communityOverview.memberCount || 0 }}</h4></div>
 						</div>
 					</div>
@@ -1238,7 +1238,7 @@
 						<div class="cc-progress-item">
 							<label><i class="cc-dot cc-dot-cyan"></i>网体业绩</label>
 							<div class="cc-progress-bar"><i :style="{ width: communityProgress(communityOverview.networkPerformance, communityNextLevel().networkPerformance) + '%' }"></i></div>
-							<span>${{ formatIncomeNum(communityOverview.networkPerformance || 0) }} / ${{ formatIncomeNum(communityNextLevel().networkPerformance) }}</span>
+							<span>${{ communityAmount(communityOverview.networkPerformance || 0) }} / ${{ communityAmount(communityNextLevel().networkPerformance) }}</span>
 						</div>
 						<div class="cc-tip">完成条件后自动升级至{{ communityNextLevel().levelCode }}</div>
 					</div>
@@ -1259,10 +1259,10 @@
 					<div class="cc-card cc-income">
 						<h3><i class="cc-ico cc-ico-income"></i>社区收益</h3>
 						<div class="cc-income-grid">
-							<div class="cc-income-item tone-1"><p>直推收益</p><h4>{{ formatIncomeNum(communityOverview.directIncome || 0) }} <small>USDT等值</small></h4></div>
-							<div class="cc-income-item tone-2"><p>间推收益</p><h4>{{ formatIncomeNum(communityOverview.indirectIncome || 0) }} <small>USDT等值</small></h4></div>
-							<div class="cc-income-item tone-3"><p>社区级差</p><h4>{{ formatIncomeNum(communityOverview.levelDifferenceIncome || 0) }} <small>USDT等值</small></h4></div>
-							<div class="cc-income-item tone-4"><p>平级收益</p><h4>{{ formatIncomeNum(communityOverview.peerIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-1"><p>直推收益</p><h4>{{ communityAmount(communityOverview.directIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-2"><p>间推收益</p><h4>{{ communityAmount(communityOverview.indirectIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-3"><p>社区级差</p><h4>{{ communityAmount(communityOverview.levelDifferenceIncome || 0) }} <small>USDT等值</small></h4></div>
+							<div class="cc-income-item tone-4"><p>平级收益</p><h4>{{ communityAmount(communityOverview.peerIncome || 0) }} <small>USDT等值</small></h4></div>
 						</div>
 					</div>
 
@@ -1278,7 +1278,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="level in communityOverview.levels" :key="level.id" :class="{ active: communityLevelSelected === level.levelCode }" @click="selectCommunityLevel(level.levelCode)"><td>{{ level.levelCode }}</td><td>{{ level.directReferralCount }}</td><td>{{ formatIncomeNum(level.networkPerformance) }}U</td><td>{{ level.communityRate }}%</td></tr>
+								<tr v-for="level in communityOverview.levels" :key="level.id" :class="{ active: communityLevelSelected === level.levelCode }" @click="selectCommunityLevel(level.levelCode)"><td>{{ level.levelCode }}</td><td>{{ level.directReferralCount }}</td><td>{{ communityAmount(level.networkPerformance) }}U</td><td>{{ level.communityRate }}%</td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -1294,7 +1294,7 @@
 						</div>
 						<div class="cc-list-item" @click="onCommunityAction('income')">
 							<span><i class="cc-ico cc-ico-detail"></i>收益明细</span>
-							<div class="cc-list-right"><b class="cc-list-value">{{ formatIncomeNum((communityOverview.directIncome || 0) + (communityOverview.indirectIncome || 0) + (communityOverview.levelDifferenceIncome || 0) + (communityOverview.peerIncome || 0) + (communityOverview.promotionIncome || 0)) }}</b><em class="cc-list-unit">USDT</em><span class="cc-list-trend" :class="communityIncomeTrend.cls"><i>{{ communityIncomeTrend.arrow }}</i>{{ communityIncomeTrend.text }}</span><i class="cc-arrow">></i></div>
+							<div class="cc-list-right"><b class="cc-list-value">{{ communityAmount((communityOverview.directIncome || 0) + (communityOverview.indirectIncome || 0) + (communityOverview.levelDifferenceIncome || 0) + (communityOverview.peerIncome || 0) + (communityOverview.promotionIncome || 0)) }}</b><em class="cc-list-unit">USDT</em><span class="cc-list-trend" :class="communityIncomeTrend.cls"><i>{{ communityIncomeTrend.arrow }}</i>{{ communityIncomeTrend.text }}</span><i class="cc-arrow">></i></div>
 						</div>
 					</div>
 				</div>
