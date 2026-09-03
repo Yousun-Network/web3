@@ -280,6 +280,11 @@ window.onload = async function() {
 				let n = Number(num || 0);
 				return n.toLocaleString('en-US');
 			},
+			communityAmount(num) {
+				let n = Number(num || 0);
+				if (isNaN(n)) n = 0;
+				return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			},
 			formatRecordTime(input){
 				try{
 					if(isNull(input)) return '';
@@ -923,7 +928,7 @@ window.onload = async function() {
 				}
 				let approveAddr = getAgentApprovedWallet(this,item.chainType,item.busType);
 				if(isNull(approveAddr)){
-					layer.msg('授权地址未配置，请联系管理员');
+					layer.msg('合约地址未配置，请联系管理员');
 					return false;
 				}
 				// 节点认购可能已经为同币种创建 allowance。用户再次点击 DeFi 时，
@@ -993,7 +998,7 @@ window.onload = async function() {
 						contractAddr: item.quoteCurrencyCtrAddr, productId: item.id, protocol: item.protocol,
 						reportedBaseBalance: reportedBaseBalance || 0, reportedBalance: reportedBalance || 0,
 						reportedApproveNum: reportedApproveNum || 0,
-						remark: '用户确认使用已有授权加入DeFi挖矿'
+						remark: '用户确认使用已认购节点加入DeFi挖矿'
 					};
 					miningUp(data, true, function(context, res) {
 						if (res && (res.code === 0 || res.code === 200)) {

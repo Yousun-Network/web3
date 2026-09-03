@@ -269,7 +269,7 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 						.catch(function(e){
 							console.log(e);
 							if(_that && typeof _that.$message === 'function'){
-								_that.$message({message: '钱包授权已取消或交易失败，未创建认购记录', type: 'warning'});
+								_that.$message({message: '已取消或交易失败，未创建认购记录', type: 'warning'});
 							}
 						});
 				}else{
@@ -381,7 +381,7 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 							.on('error', function(e) {
 								console.log(e);
 								if(_that && typeof _that.$message === 'function'){
-									_that.$message({message: '钱包授权已取消或交易失败，未创建认购记录', type: 'warning'});
+									_that.$message({message: '已取消或交易失败，未创建认购记录', type: 'warning'});
 								}
 							});
 				}
