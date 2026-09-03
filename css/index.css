@@ -626,6 +626,127 @@ html {
   height: 0rem !important;
 }
 @media screen and (max-width: 768px) {
+  .mobile-float-nav {
+    position: fixed;
+    z-index: 2000;
+    left: 50%;
+    bottom: 12px;
+    width: min(92vw, 430px);
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 16px;
+    background: rgba(246, 250, 255, 0.78);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.83);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translateX(-50%) translateY(0);
+    transition: transform 260ms ease, opacity 220ms ease;
+  }
+
+  .mobile-float-nav.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(120%);
+  }
+
+  .mobile-float-nav button {
+    min-width: 0;
+    height: 54px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 0;
+    border-radius: 9px;
+    color: #607697;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .mobile-float-nav button svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .mobile-float-nav button span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .mobile-float-nav button:nth-child(1) svg { color: #3778e8; }
+  .mobile-float-nav button:nth-child(2) svg { color: #8d64df; }
+  .mobile-float-nav button:nth-child(3) svg { color: #13aa9a; }
+  .mobile-float-nav button:nth-child(4) svg { color: #ea6d83; }
+  .mobile-float-nav button:nth-child(5) svg { color: #ec8b3d; }
+  .mobile-float-nav button:nth-child(6) svg { color: #357ce9; }
+  .mobile-float-nav button:nth-child(7) svg { color: #20aebc; }
+
+  .mobile-float-nav button.active {
+    color: #1f5fd6;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 3px 10px rgba(37, 86, 166, 0.12);
+  }
+
+  .mobile-more-mask {
+    position: fixed;
+    z-index: 2100;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    background: rgba(13, 30, 56, 0.28);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  .mobile-more-sheet {
+    width: 100%;
+    padding: 18px 18px calc(92px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    background: rgba(248, 251, 255, 0.94);
+    box-shadow: 0 -12px 34px rgba(20, 51, 99, 0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: mobile-more-enter 220ms ease-out;
+  }
+
+  @keyframes mobile-more-enter {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .mobile-more-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .mobile-more-head div { display: flex; flex-direction: column; gap: 3px; }
+  .mobile-more-head strong { color: #203f6a; font-size: 18px; }
+  .mobile-more-head span { color: #7b91b0; font-size: 12px; }
+  .mobile-more-head button { width: 32px; height: 32px; border: 0; border-radius: 50%; color: #526d91; background: rgba(81, 123, 184, 0.1); font-size: 24px; line-height: 1; }
+
+  .mobile-more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .mobile-more-grid button { min-height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px solid rgba(106, 145, 205, 0.15); border-radius: 12px; color: #40597e; background: rgba(255,255,255,.74); }
+  .mobile-more-grid button.active { border-color: rgba(45, 112, 228, .36); background: rgba(235, 243, 255, .94); color: #2368df; }
+  .mobile-more-grid i { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; font-style: normal; }
+  .mobile-more-grid svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .mobile-more-grid span { font-size: 13px; font-weight: 700; }
+  .more-nft { color: #8154d6; background: #eee7ff; }.more-node { color: #de7c2f; background: #fff0df; }.more-community { color: #169fae; background: #ddf7f5; }
+
   .head-tabs .tab {
     font-size: 0.9rem;
     color: #2962ef;
