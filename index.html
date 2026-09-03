@@ -108,7 +108,7 @@
 							<div v-on:click="switchTab(3)" v-bind:class="[headerIndex == 3 && 'check', 'tab']">
 								{{ langS.home.header.tabs3}}
 							</div>
-							<div v-on:click="switchTab(4)" v-bind:class="[headerIndex == 4 && 'check', 'tab']">
+							<div v-on:click="switchTab(9)" v-bind:class="[headerIndex == 9 && 'check', 'tab']">
 								{{ langS.home.header.tabs4 }}
 							</div>
 							<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
@@ -981,32 +981,24 @@
 			</template>
 
 
-			<!-- 移动端菜单框 -->
-			<el-drawer title="" width="44%" :visible.sync="showMenu" direction="rtl">
-				<div class="head-tabs color-primary">
-					<div v-on:click="switchTab(1)" v-bind:class="[headerIndex == 1 && 'check', 'tab']">
-						{{ langS.home.header.tabs1 }}
-					</div>
-					<div v-on:click="switchTab(2)" v-bind:class="[headerIndex == 2 && 'check', 'tab']">
-						{{ langS.home.header.tabs2 }}
-					</div>
-					<div v-on:click="switchTab(3)" v-bind:class="[headerIndex == 3 && 'check', 'tab']">
-						{{ langS.home.header.tabs3}}
-					</div>
-					<div v-on:click="switchTab(4)" v-bind:class="[headerIndex == 4 && 'check', 'tab']">
-						{{ langS.home.header.tabs4 }}
-					</div>
-					<div v-on:click="switchTab(8)" v-bind:class="[headerIndex == 8 && 'check', 'tab']">
-						节点中心
-					</div>
-					<div v-on:click="switchTab(6)" v-bind:class="[headerIndex == 6 && 'check', 'tab']">
-						收益中心
-					</div>
-					<div v-on:click="switchTab(7)" v-bind:class="[headerIndex == 7 && 'check', 'tab']">
-						社区中心
+			<!-- 移动端底部玻璃导航 -->
+			<nav v-if="is_mobile" class="mobile-float-nav" :class="{ 'is-hidden': !bottomNavVisible }">
+				<button type="button" :class="{ active: headerIndex == 1 }" @click="switchTab(1)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-6h6v6"/></svg><span>首页</span></button>
+				<button type="button" :class="{ active: headerIndex == 3 }" @click="switchTab(3)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M6 16l4-5 3 3 5-7"/><circle cx="18" cy="7" r="2"/></svg><span>DeFi</span></button>
+				<button type="button" :class="{ active: headerIndex == 9 }" @click="switchTab(9)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M12 9 7 14M12 9l5 5"/><circle cx="12" cy="4" r="2"/><circle cx="6" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></svg><span>推荐</span></button>
+				<button type="button" :class="{ active: headerIndex == 6 }" @click="switchTab(6)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>收益中心</span></button>
+				<button type="button" :class="{ active: showMenu || headerIndex == 2 || headerIndex == 7 || headerIndex == 8 }" @click="showMenu = !showMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="5" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="19" cy="5" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="19" r="1.5"/><circle cx="12" cy="19" r="1.5"/><circle cx="19" cy="19" r="1.5"/></svg><span>更多</span></button>
+			</nav>
+			<div v-if="is_mobile && showMenu" class="mobile-more-mask" @click.self="showMenu = false">
+				<div class="mobile-more-sheet">
+					<div class="mobile-more-head"><div><strong>更多服务</strong><span>探索更多 Web3 功能</span></div><button type="button" title="关闭" @click="showMenu = false">×</button></div>
+					<div class="mobile-more-grid">
+						<button type="button" :class="{ active: headerIndex == 2 }" @click="switchTab(2)"><i class="more-nft"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 7 4v10l-7 4-7-4V7z"/><path d="m12 7 4 2.3v5.4L12 17l-4-2.3V9.3z"/></svg></i><span>NFT 质押</span></button>
+						<button type="button" :class="{ active: headerIndex == 8 }" @click="switchTab(8)"><i class="more-node"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 20V9l6-5 6 5v11M9 20v-5h6v5"/></svg></i><span>节点中心</span></button>
+						<button type="button" :class="{ active: headerIndex == 7 }" @click="switchTab(7)"><i class="more-community"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2 21c.6-4.2 2.7-6.2 6-6.2s5.4 2 6 6.2M14 15c3.2 0 5.2 2 5.8 6"/></svg></i><span>社区中心</span></button>
 					</div>
 				</div>
-			</el-drawer>
+			</div>
 
 			<!-- 收益中心 -->
 			<template v-if="headerIndex == 6">
@@ -1296,6 +1288,31 @@
 							<span><i class="cc-ico cc-ico-detail"></i>收益明细</span>
 							<div class="cc-list-right"><b class="cc-list-value">{{ communityAmount((communityOverview.directIncome || 0) + (communityOverview.indirectIncome || 0) + (communityOverview.levelDifferenceIncome || 0) + (communityOverview.peerIncome || 0) + (communityOverview.promotionIncome || 0)) }}</b><em class="cc-list-unit">USDT</em><span class="cc-list-trend" :class="communityIncomeTrend.cls"><i>{{ communityIncomeTrend.arrow }}</i>{{ communityIncomeTrend.text }}</span><i class="cc-arrow">></i></div>
 						</div>
+					</div>
+				</div>
+			</template>
+
+			<!-- 邀请与社区成员明细 -->
+			<template v-if="headerIndex == 9">
+				<div class="community-members-page layout2">
+					<div class="cm-overview">
+						<div class="cm-code"><i class="cm-icon cm-icon-code"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3 7 21M17 3l-2 18M4 9h16M3 15h16"/></svg></i><span>我的邀请码</span><strong>{{ tgData.referralCode || '--' }}</strong><small>分享邀请码，建立您的社区网络</small></div>
+						<div class="cm-total"><i class="cm-icon cm-icon-users"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2"/><path d="M3.5 20c.5-4 2.4-6 5.5-6s5 2 5.5 6M14 17c.6-2.5 2-3.8 4.2-3.8 1.4 0 2.2.4 2.8 1.1"/></svg></i><span>总推荐人数</span><strong>{{ communityOverview.memberCount || communityMembers.length }}</strong><div class="cm-total-detail"><em>位成员</em><b>直推 {{ communityOverview.directCount || 0 }}</b><b>间推 {{ Math.max(0, (communityOverview.memberCount || communityMembers.length) - (communityOverview.directCount || 0)) }}</b></div></div>
+						<div class="cm-link"><div class="cm-link-title"><i class="cm-icon cm-icon-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg></i><span>邀请链接</span><em>好友通过此链接加入您的社区</em><button type="button" title="复制邀请链接" @click="onCopy(tgData.referralCode)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg><span>复制</span></button></div><div class="cm-link-value"><b>{{ inviterUrl(tgData.referralCode) }}</b></div></div>
+					</div>
+					<div class="cm-section-title"><i class="cm-icon cm-icon-income"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M16 7.5c0-1.4-1.8-2.5-4-2.5S8 6.1 8 7.5 9.8 10 12 10s4 1.1 4 2.5-1.8 2.5-4 2.5-4-1.1-4-2.5"/></svg></i><div><h3>分润概览</h3><p>按收益类型与推荐层级统计</p></div></div>
+					<div class="cm-income-grid"><div class="cm-income-direct"><span>直推分润</span><b>{{ communityAmount(communityIncome.directIncome || 0) }}</b><em>USDT</em><i class="cm-income-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3"/><path d="M5 21c.5-4 2.8-6 7-6s6.5 2 7 6"/></svg></i></div><div class="cm-income-indirect"><span>间推分润</span><b>{{ communityAmount(communityIncome.indirectIncome || 0) }}</b><em>USDT</em><i class="cm-income-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="16" r="2.5"/><path d="m9 9 6 5M10 7h5"/></svg></i></div><div class="cm-income-difference"><span>级差分润</span><b>{{ communityAmount(communityIncome.levelDifferenceIncome || 0) }}</b><em>USDT</em><i class="cm-income-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 16v-5M12 16V7M17 16V4"/></svg></i></div><div class="cm-income-peer"><span>平级分润</span><b>{{ communityAmount(communityIncome.peerIncome || 0) }}</b><em>USDT</em><i class="cm-income-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M16 8l4 4-4 4M8 8l-4 4 4 4"/></svg></i></div><div class="cm-income-promotion"><span>推广分润</span><b>{{ communityAmount(communityIncome.promotionIncome || 0) }}</b><em>USDT</em><small>多代网络奖励</small><i class="cm-income-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.4 6 .9-4.3 4.2 1 6-5.4-2.9-5.4 2.9 1-6-4.3-4.2 6-.9z"/></svg></i></div></div>
+					<div class="cm-generation"><div class="cm-generation-title"><i class="cm-icon cm-icon-generation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M12 9 7 14M12 9l5 5M12 4v1"/><circle cx="12" cy="3" r="1.5"/><circle cx="6" cy="16" r="2"/><circle cx="18" cy="16" r="2"/></svg></i><span>各代分润</span></div><div v-if="communityGenerationIncome.length"><b v-for="item in communityGenerationIncome" :key="item.generation">第 {{ item.generation }} 代 <em>{{ communityAmount(item.income) }} USDT</em></b></div><p v-else>暂无分润记录</p></div>
+					<div class="cm-rate-card"><div class="cm-rate-head"><i class="cm-icon cm-icon-rate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 16v-5M12 16V7M17 16V4"/></svg></i><div><strong>{{ communityOverview.currentLevel || 'V1' }} 级分润比例</strong><span>1-20 代收益比例</span></div></div><div v-if="communityGenerationRates.length" class="cm-rate-grid"><div v-for="item in communityGenerationRates" :key="item.generation"><span>{{ item.generation }}代</span><b>{{ item.rate }}%</b></div></div><p v-else>暂未配置分润比例</p></div>
+					<div class="cm-members">
+						<div class="cm-members-head"><div><div class="cm-member-title"><i class="cm-icon cm-icon-members"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2.5 20c.5-4 2.4-6 5.5-6s5 2 5.5 6M13 14c3.1 0 5 2 5.5 6"/></svg></i><h3>社区成员</h3></div><p>包含直推及其下级成员</p></div><span>{{ communityMemberList().length }} 位</span></div>
+						<div class="cm-filter"><button type="button" :class="{ active: communityMemberFilter === 'all' }" @click="communityMemberFilter = 'all'">全部</button><button type="button" :class="{ active: communityMemberFilter === 'direct' }" @click="communityMemberFilter = 'direct'">直推</button><button type="button" :class="{ active: communityMemberFilter === 'indirect' }" @click="communityMemberFilter = 'indirect'">间推</button></div>
+						<div class="cm-member" v-for="member in communityMemberList()" :key="member.address">
+							<div class="cm-member-top"><i class="cm-avatar">{{ member.relation === 'direct' ? '1' : '2' }}</i><strong>{{ addressF2(member.address) }}</strong><span :class="member.relation">{{ member.relation === 'direct' ? '直推' : '间推' }}</span><em>第 {{ member.generation }} 代</em></div>
+							<div class="cm-member-stats"><div><span>USDT余额</span><b>{{ communityAmount(member.usdtBalance) }}</b></div><div><span>挖矿状态</span><b :class="{ joined: member.miningCount }">{{ member.miningCount ? '已加入' : '未加入' }}</b></div><div><span>节点身份</span><b :class="{ joined: member.nodeJoined }">{{ member.nodeJoined ? '已加入' : '未加入' }}</b></div><div><span>直属下级</span><b>{{ member.childCount || 0 }} 人</b></div><div><span>贡献分润</span><b class="cm-reward">{{ communityAmount(member.rewardIncome) }}</b></div></div>
+							<p>邀请时间 {{ member.inviteTime ? member.inviteTime.replace('T', ' ').substring(0, 19) : '--' }}</p>
+						</div>
+						<div v-if="!communityMemberList().length" class="cm-empty">暂无符合条件的社区成员</div>
 					</div>
 				</div>
 			</template>
