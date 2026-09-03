@@ -1893,16 +1893,16 @@
   }
 
   .cc-income-grid p {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .cc-income-grid h4 {
-    font-size: 16px;
+    font-size: 20px;
     gap: 4px;
   }
 
   .cc-income-grid h4 small {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .cc-table th,
