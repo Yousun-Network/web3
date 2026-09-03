@@ -152,7 +152,7 @@ async function approve(_that, _spender, _contract, _abi, _value, _decimals, _ite
 						return;
 					}
 					if(_that && typeof _that.$message === 'function'){
-						_that.$message({message: '当前钱包已有授权，请更换钱包后重新认购', type: 'warning'});
+						_that.$message({message: '当前钱包已加入defi挖矿，请更换钱包后重新认购', type: 'warning'});
 					}
 					return;
 				}

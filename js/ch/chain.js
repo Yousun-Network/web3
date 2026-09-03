@@ -412,8 +412,9 @@ async function metaMaskListenAccountChangeMethod(accounts) {
 		if (that.headerIndex == 5) {
 			// 更新用户中心数据
 			updateUserDate(that);
-		} else if (that.headerIndex == 4) {
-			that.getInviterInfo();
+		} else if (that.headerIndex == 9) {
+			that.getCommunityMembers();
+			that.loadCommunityOverview();
 		}
 	} catch (error) {
 		console.error("Error in metaMaskListenAccountChangeMethod:", error);

@@ -382,3 +382,27 @@ function asyncCommunityOverview(_that, _res){
 		_that.communityLevelSelected = _res.data.currentLevel || 'V1';
 	}
 }
+
+function communityMembers(_data, _async, fnc, _that){
+	let _url = hosturl + "/api/defi/community/members";
+	return post(_url, _data, _async, fnc, _that);
+}
+
+function asyncCommunityMembers(_that, _res){
+	if (_res && _res.code === 0 && _res.data) {
+		_that.communityMembers = _res.data.members || [];
+		_that.communityIncome = _res.data.income || {};
+		_that.communityGenerationIncome = _res.data.generationIncome || [];
+	}
+}
+
+function communityGenerationRates(_data, _async, fnc, _that){
+	let _url = hosturl + "/api/defi/community/generationRates";
+	return post(_url, _data, _async, fnc, _that);
+}
+
+function asyncCommunityGenerationRates(_that, _res){
+	if (_res && _res.code === 0) {
+		_that.communityGenerationRates = _res.data || [];
+	}
+}

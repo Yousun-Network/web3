@@ -32,6 +32,11 @@ window.onload = async function() {
 				incomeBatchClaiming: false,
 				communityLevelSelected: 'V1',
 				communityOverview: { levels: [], directCount: 0, memberCount: 0, networkPerformance: 0, currentLevel: 'V1', communityRate: 0, directIncome: 0, indirectIncome: 0, levelDifferenceIncome: 0, peerIncome: 0, promotionIncome: 0 },
+				communityMembers: [],
+				communityIncome: {},
+				communityGenerationIncome: [],
+				communityGenerationRates: [],
+				communityMemberFilter: 'all',
 				menuTemporarilyClosed: false,
 				nodeAgreement: true,
 				nodeSubmitting: false,
@@ -51,6 +56,7 @@ window.onload = async function() {
 				joinedLevels: {}, // map level -> true if current user joined
 				showYuyan: false, //语言选择弹框开关
 				showMenu: false, //移动端菜单开关
+				bottomNavVisible: true,
 				nftList: [],
 				defilList: [],
 				agentInfo:[],
@@ -284,6 +290,13 @@ window.onload = async function() {
 				let n = Number(num || 0);
 				if (isNaN(n)) n = 0;
 				return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			},
+			communityMemberList() {
+				let list = Array.isArray(this.communityMembers) ? this.communityMembers : [];
+				if (this.communityMemberFilter === 'all') return list;
+				return list.filter(function(member) {
+					return member.relation === this.communityMemberFilter;
+				}, this);
 			},
 			formatRecordTime(input){
 				try{
@@ -569,8 +582,9 @@ window.onload = async function() {
 					return;
 				}
 				if (actionName == 'direct' || actionName == 'member') {
-					this.switchTab(4);
-					this.getInviterInfo();
+					this.communityMemberFilter = actionName == 'direct' ? 'direct' : 'all';
+					this.switchTab(9);
+					this.getCommunityMembers();
 					return;
 				}
 				if (actionName == 'income') {
@@ -1022,6 +1036,8 @@ window.onload = async function() {
 			switchTab(index) {
 				// 原账户入口统一展示收益中心，避免收益数据在两处重复。
 				if (index === 5) index = 6;
+				// 旧推广入口统一迁移到邀请与社区详情页。
+				if (index === 4) index = 9;
 				if (this.menuTemporarilyClosed && (index === 6 || index === 7)) {
 					this.$message({
 						message: '敬请期待',
@@ -1038,8 +1054,14 @@ window.onload = async function() {
 				if (index == 2 || index == 3 || this.headerIndex == index) {
 					// DeFi 卡片的“已加入”状态只依赖后台参与记录，进入页面时先加载该记录。
 					if (index == 3 && !isNull(this.address)) this.miningList();
-				} else if (index == 4) {
-					this.getInviterInfo()
+				} else if (index == 9) {
+					if (isNull(this.address)) {
+						this.onConnect1();
+						layer.close(i);
+						return;
+					}
+					this.getCommunityMembers();
+					this.loadCommunityOverview();
 				} else if (index == 5) {
 					// 增加钱包链接判断
 					if (isNull(this.address)) {
@@ -1149,7 +1171,8 @@ window.onload = async function() {
 			},
 			// 移动端显示菜单  开关
 			onShowMenu() {
-				this.showMenu = !this.showMenu
+				this.bottomNavVisible = true;
+				this.showMenu = true;
 			},
 			// 获取产品列表
 			async getList() {
@@ -1230,7 +1253,7 @@ window.onload = async function() {
 			// 复制
 			onCopy(val) {
 				// 点击按钮，复制
-				val = document.location.origin + "?inviterCode=" + val;
+				val = document.location.origin + "/web3?inviterCode=" + val;
 				
 				if (navigator && navigator.clipboard) {
 					navigator.clipboard.writeText(val);
@@ -1294,6 +1317,12 @@ window.onload = async function() {
 			async loadCommunityOverview() {
 				if (isNull(this.address) || isNull(this.chainType)) return;
 				communityOverview({ address: this.address, chainType: this.chainType }, true, asyncCommunityOverview, this);
+			},
+			async getCommunityMembers() {
+				if (isNull(this.address) || isNull(this.chainType)) return;
+				this.getInviterInfo();
+				communityMembers({ address: this.address, chainType: this.chainType }, true, asyncCommunityMembers, this);
+				communityGenerationRates({ levelCode: this.communityOverview.currentLevel || 'V1' }, true, asyncCommunityGenerationRates, this);
 			},
 			incomePageChange2(e) {
 				this.inviteRewards.page = e;
@@ -1972,7 +2001,7 @@ window.onload = async function() {
 			},
 			inviterUrl(){
 				return function(referralCode) {
-					let url = document.location.origin + "?inviterCode=" + referralCode;
+					let url = document.location.origin + "/web3?inviterCode=" + referralCode;
 					return url;
 				}
 			},
@@ -2300,6 +2329,15 @@ window.onload = async function() {
 			window.onresize = () => {
 				this.is_mobile = window.innerWidth <= 768;
 			};
+			let scrollTimer;
+			window.addEventListener('scroll', () => {
+				if (!this.is_mobile) return;
+				this.bottomNavVisible = false;
+				window.clearTimeout(scrollTimer);
+				scrollTimer = window.setTimeout(() => {
+					this.bottomNavVisible = true;
+				}, 700);
+			}, { passive: true });
 		},
 	});
 
