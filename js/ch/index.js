@@ -11,7 +11,7 @@ window.onload = async function() {
 		el: '#app',
 		data() {
 			return {
-				lang: "English",
+				lang: "zh",
 				vi18: jsonData,
 				showType: false, //选择链类型开关
 				chainList: [],
