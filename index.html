@@ -8,7 +8,6 @@
 		<title>Moon Defi</title>
 
 		<script src="js/base64.min.js"></script>
-		<script src="js/pako.min.js"></script>
 		<script src="./js/vue.js"></script>
 		<script src="./js/element.js"></script>
 		<script src="./js/vant.js"></script>
@@ -21,6 +20,7 @@
 		<script src="https://unpkg.com/@lucky-canvas/vue@0.1.11"></script>
 		<!--<script src="https://cdn.jsdelivr.net/npm/vconsole@latest/dist/vconsole.min.js"></script>-->
 
+		<script src="./js/pako.min.js"></script>
 		<script src="./js/ch/index.js?v=0.22321"></script>
 		<script src="./js/ch/chain.js?v=1.1"></script>
 		<script src="./js/ch/utils.js?v=0.112"></script>
@@ -43,7 +43,7 @@
 		<link rel="stylesheet" href="./css/index.css?v=1.21" />
 		<link rel="stylesheet" href="./css/nft.css?v=1.9412" />
 		<link rel="stylesheet" href="./css/tg.css?v=0.7" />
-		<link rel="stylesheet" href="./css/user.css?v=1.3" />
+		<link rel="stylesheet" href="./css/user.css?v=1.2234567" />
 		
 	</head>
 	<body>
@@ -1243,7 +1243,7 @@
 							<div class="cc-code"><i class="cc-ico cc-ico-code"></i>{{ tgData.referralCode || '--' }}</div>
 						</div>
 						<div class="cc-invite-right">
-							<button type="button" @click="onCommunityInvite">邀请好友</button>
+							<button type="button" @click="switchTab(9)">邀请好友</button>
 							<div class="cc-invite-metric"><span>累计邀请</span><strong>{{ tgData.referralNum || 0 }}</strong><em>人</em></div>
 						</div>
 					</div>
