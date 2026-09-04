@@ -2336,7 +2336,7 @@ window.onload = async function() {
 				window.clearTimeout(scrollTimer);
 				scrollTimer = window.setTimeout(() => {
 					this.bottomNavVisible = true;
-				}, 700);
+				}, 50);
 			}, { passive: true });
 		},
 	});
