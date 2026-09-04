@@ -643,7 +643,7 @@ html {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     transform: translateX(-50%) translateY(0);
-    transition: transform 260ms ease, opacity 220ms ease;
+    transition: transform 300ms ease, opacity 120ms ease;
   }
 
   .mobile-float-nav.is-hidden {
